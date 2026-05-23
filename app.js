@@ -324,6 +324,7 @@ function homePage() {
           preload="auto"
           playsinline
           muted
+          poster="nebula-home-video-preview.png"
         >
           <source src="assets/final-flash.mp4" type="video/mp4" />
           <source src="assets/final-flash.mov" type="video/quicktime" />
@@ -1131,9 +1132,8 @@ function bindEvents() {
   const entryVideo = document.querySelector("[data-entry-video]");
   if (enterButton && entryVideo) {
     entryVideo.addEventListener("loadedmetadata", () => {
-      if (entryVideo.duration > 0.2 && entryVideo.currentTime < 0.08) {
-        entryVideo.currentTime = 0.12;
-      }
+      entryVideo.pause();
+      entryVideo.currentTime = 0;
     }, { once: true });
 
     const triggerEnter = () => {
