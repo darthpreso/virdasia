@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 360" role="img" aria-labelledby="title">
+  <title id="title">Placeholder sakura artwork</title>
+  <rect width="560" height="360" fill="#fff"/>
+  <path d="M-10 314C68 292 92 230 124 173c31-56 80-91 148-104" fill="none" stroke="#1a1717" stroke-width="16" stroke-linecap="round"/>
+  <path d="M99 211c54-38 126-48 216-28" fill="none" stroke="#2c2222" stroke-width="9" stroke-linecap="round"/>
+  <path d="M156 144c64-28 139-35 226-19" fill="none" stroke="#2c2222" stroke-width="7" stroke-linecap="round"/>
+  <path d="M243 101c44-36 93-56 148-60" fill="none" stroke="#2c2222" stroke-width="5" stroke-linecap="round"/>
+  <g fill="#f3c8d4">
+    <circle cx="220" cy="119" r="9"/><circle cx="240" cy="126" r="7"/><circle cx="263" cy="104" r="8"/>
+    <circle cx="294" cy="139" r="9"/><circle cx="317" cy="117" r="7"/><circle cx="349" cy="128" r="9"/>
+    <circle cx="381" cy="96" r="8"/><circle cx="404" cy="64" r="7"/><circle cx="439" cy="48" r="8"/>
+    <circle cx="178" cy="168" r="8"/><circle cx="207" cy="184" r="6"/><circle cx="261" cy="181" r="7"/>
+    <circle cx="323" cy="186" r="8"/><circle cx="362" cy="196" r="6"/>
+  </g>
+  <g fill="#111">
+    <path d="M216 221c18-29 47-29 68 0l-11 53h-46l-11-53Z"/>
+    <path d="M275 220c18-25 43-24 61 2l-8 52h-45l-8-54Z"/>
+  </g>
+  <path d="M236 211c10-11 25-11 36 0" fill="none" stroke="#fff" stroke-width="3"/>
+  <path d="M291 212c9-10 23-10 33 0" fill="none" stroke="#fff" stroke-width="3"/>
+</svg>

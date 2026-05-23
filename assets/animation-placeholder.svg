@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">Animation placeholder</title>
+  <desc id="desc">A minimal white scene with orbiting placeholder shapes.</desc>
+  <rect width="960" height="540" fill="#fff"/>
+  <path d="M161 295c99-122 209-177 330-164 139 15 237 102 306 262" fill="none" stroke="#dfe6f1" stroke-width="2"/>
+  <path d="M218 360c97-65 196-87 297-64 111 25 187 88 228 189" fill="none" stroke="#e8edf5" stroke-width="2"/>
+  <circle cx="480" cy="270" r="86" fill="#f7f9fc" stroke="#111" stroke-width="2"/>
+  <circle cx="480" cy="270" r="38" fill="#fff" stroke="#75829a" stroke-width="2"/>
+  <path d="M462 246h36l23 48h-82l23-48Z" fill="#111"/>
+  <circle cx="250" cy="186" r="13" fill="#75829a"/>
+  <circle cx="694" cy="174" r="9" fill="#111"/>
+  <circle cx="746" cy="378" r="16" fill="#d9b76d"/>
+  <circle cx="333" cy="382" r="7" fill="#d9b76d"/>
+</svg>

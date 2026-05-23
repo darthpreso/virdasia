@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 330 520" role="img" aria-labelledby="title">
+  <title id="title">Placeholder oracle artwork</title>
+  <rect width="330" height="520" fill="#fff"/>
+  <path d="M166 28c36 39 56 74 59 106-38-18-76-18-114 0 3-35 21-70 55-106Z" fill="#f8fbff" stroke="#9f7f31" stroke-width="6"/>
+  <circle cx="167" cy="140" r="55" fill="#101525" stroke="#9f7f31" stroke-width="5"/>
+  <circle cx="167" cy="140" r="21" fill="#5fb2e7" stroke="#fff" stroke-width="3"/>
+  <path d="M97 203c-54 9-82 28-85 56 40-2 70-14 91-36" fill="none" stroke="#151515" stroke-width="12" stroke-linecap="round"/>
+  <path d="M231 203c54 9 82 28 85 56-40-2-70-14-91-36" fill="none" stroke="#151515" stroke-width="12" stroke-linecap="round"/>
+  <path d="M106 199c40-31 80-31 120 0l-19 186h-82L106 199Z" fill="#141722" stroke="#111" stroke-width="5"/>
+  <path d="M126 206c7 49 20 92 40 129 20-38 34-81 42-129" fill="none" stroke="#d8b65d" stroke-width="7"/>
+  <path d="M111 238C70 298 55 374 65 467c46-71 68-142 66-214" fill="#fff" fill-opacity=".75" stroke="#b9a471" stroke-width="4"/>
+  <path d="M220 238c41 60 56 136 46 229-46-71-68-142-66-214" fill="#fff" fill-opacity=".75" stroke="#b9a471" stroke-width="4"/>
+  <path d="M129 386l-20 99h116l-21-99" fill="#111522" stroke="#111" stroke-width="5"/>
+  <circle cx="166" cy="286" r="8" fill="#5fb2e7" stroke="#d8b65d" stroke-width="3"/>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 620" role="img" aria-labelledby="title">
+  <title id="title">Black and gold jacket placeholder</title>
+  <rect width="520" height="620" fill="#fff"/>
+  <path d="M151 134h218l52 78 49 351H50l49-351 52-78Z" fill="#202122" stroke="#111" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M197 134h126l-24 50h-78l-24-50Z" fill="#1a1b1c" stroke="#111" stroke-width="5"/>
+  <path d="M231 184h58v379h-58V184Z" fill="#f2d847" stroke="#111" stroke-width="5"/>
+  <path d="M151 505h338v44H31v-44h120Z" fill="#4db2ea" stroke="#111" stroke-width="5"/>
+  <path d="M181 145l50 39-65 61-65-42 80-58Z" fill="#202122" stroke="#111" stroke-width="5"/>
+  <path d="M339 145l-50 39 65 61 65-42-80-58Z" fill="#202122" stroke="#111" stroke-width="5"/>
+  <path d="M260 184v379M71 505h379" fill="none" stroke="#111" stroke-width="5"/>
+  <g fill="#111"><circle cx="260" cy="232" r="7"/><circle cx="260" cy="301" r="7"/><circle cx="260" cy="370" r="7"/><circle cx="260" cy="439" r="7"/></g>
+</svg>

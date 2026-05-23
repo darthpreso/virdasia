@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 620" role="img" aria-labelledby="title">
+  <title id="title">Purple jacket placeholder</title>
+  <rect width="520" height="620" fill="#fff"/>
+  <path d="M164 108h192l48 72 57 394H59l57-394 48-72Z" fill="#765090" stroke="#111" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M178 108h164l-31 58H209l-31-58Z" fill="#3d263f" stroke="#111" stroke-width="5"/>
+  <path d="M209 166h102v408H209V166Z" fill="#6c4785" stroke="#111" stroke-width="5"/>
+  <path d="M170 115l39 51-53 70-44-54 58-67Z" fill="#765090" stroke="#111" stroke-width="5"/>
+  <path d="M350 115l-39 51 53 70 44-54-58-67Z" fill="#765090" stroke="#111" stroke-width="5"/>
+  <path d="M99 545h322v42H99z" fill="#5f4176" stroke="#111" stroke-width="5"/>
+  <path d="M174 316c35-50 74-67 117-52M152 378l69 17-74 24M326 299c23 12 42 31 57 57M344 394c16-21 36-25 59-14" fill="none" stroke="#65417f" stroke-width="8" stroke-linecap="round"/>
+  <path d="M213 177h94M260 166v408M116 480h55M349 480h55" fill="none" stroke="#111" stroke-width="5"/>
+  <g fill="#111"><circle cx="260" cy="225" r="6"/><circle cx="260" cy="292" r="6"/><circle cx="260" cy="359" r="6"/><circle cx="260" cy="426" r="6"/></g>
+</svg>

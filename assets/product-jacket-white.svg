@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 620" role="img" aria-labelledby="title">
+  <title id="title">White jacket placeholder</title>
+  <rect width="520" height="620" fill="#fff"/>
+  <path d="M178 155h164l48 64 54 294H76l54-294 48-64Z" fill="#ffffff" stroke="#111" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M197 155h126l-25 58h-76l-25-58Z" fill="#eef6ff" stroke="#111" stroke-width="4"/>
+  <path d="M223 213h75v300h-75V213Z" fill="#fff" stroke="#111" stroke-width="4"/>
+  <path d="M204 167l19 46-38 47-54-43 73-50Z" fill="#fff" stroke="#111" stroke-width="4"/>
+  <path d="M317 167l-19 46 38 47 54-43-73-50Z" fill="#fff" stroke="#111" stroke-width="4"/>
+  <path d="M91 487h338v38H91z" fill="#f7f9fc" stroke="#111" stroke-width="4"/>
+  <path d="M159 303c33 7 50 27 51 59M338 294c-29 20-42 46-40 78M169 407c29-23 59-25 89-6M310 415c25-21 50-22 75-3" fill="none" stroke="#d7dee8" stroke-width="7" stroke-linecap="round"/>
+  <path d="M260 213v300M128 421h45M347 421h45" fill="none" stroke="#111" stroke-width="4"/>
+  <g fill="#69468a"><circle cx="260" cy="257" r="6"/><circle cx="260" cy="315" r="6"/><circle cx="260" cy="373" r="6"/><circle cx="260" cy="431" r="6"/></g>
+</svg>
