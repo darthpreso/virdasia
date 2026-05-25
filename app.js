@@ -165,14 +165,8 @@ const products = [
 const styleOptions = [
   ["default", "Default", "Floating artworks"],
   ["sakura", "Sakura", "Sky backdrop, white panel"],
-  ["sakura-3d", "Sakura 3D", "Sky backdrop, framed tiles"],
+  ["sakura-3d", "Sakura Polaroid", "Polaroid-framed photo cards"],
   ["vapourwave", "Vapourwave", "Aesthetic OS dreamscape"],
-];
-
-const sakura3dOptions = [
-  ["polaroid", "Polaroid", "Framed pastel photo cards"],
-  ["glass", "Glass", "Clean translucent display panels"],
-  ["game", "Game", "Retro desktop windows"],
 ];
 
 const launchModes = [
@@ -201,6 +195,9 @@ const state = {
     style: "default",
     sakura3dVariant: "polaroid",
   }),
+  waitlist: readJson("nebula-waitlist", []),
+  waitlistEmail: readJson("nebula-waitlist-email", ""),
+  waitlistModal: null,
   auth: {
     client: null,
     configured: false,
@@ -246,6 +243,7 @@ function setRoute() {
 function header() {
   const count = state.cart.reduce((sum, item) => sum + item.qty, 0);
   const active = state.route;
+  const showCart = state.settings.launchMode !== "pre";
 
   return `
     <header class="site-header">
@@ -258,10 +256,10 @@ function header() {
         <a class="nav-link ${active === "about" ? "active" : ""}" href="#/about">About</a>
       </nav>
       <div class="header-actions">
-        <a class="icon-link" href="#/cart" aria-label="Shopping cart">
+        ${showCart ? `<a class="icon-link" href="#/cart" aria-label="Shopping cart">
           ${icons.bag}
           <span class="cart-count ${count ? "visible" : ""}">${count}</span>
-        </a>
+        </a>` : ""}
         <a class="icon-link" href="#/settings" aria-label="Settings">${icons.gear}</a>
       </div>
     </header>
@@ -271,22 +269,17 @@ function header() {
 function pageShell(content, options = {}) {
   const headerMarkup = options.hideHeader ? "" : header();
   const footerMarkup = options.hideFooter ? "" : footer();
-  return `<div class="site-shell ${options.shellClass || ""}">${headerMarkup}${content}${footerMarkup}<div id="toast" class="toast"></div></div>`;
+  return `<div class="site-shell ${options.shellClass || ""}">${headerMarkup}${content}${footerMarkup}${waitlistModalMarkup()}<div id="toast" class="toast"></div></div>`;
 }
 
 function footer() {
   return `
     <footer class="site-footer">
-      <a class="brand footer-brand" href="#/home" aria-label="Nebula home">
-        <span class="brand-mark">Nebula</span>
-        <span class="brand-kana">ネビュラ</span>
-      </a>
       <nav class="footer-nav" aria-label="Footer">
         <a href="#/terms">Terms Of Service</a>
         <a href="#/privacy">Privacy Policy</a>
         <a href="#/contact">Contact</a>
       </nav>
-      <p>Prototype storefront. Legal copy is draft placeholder content.</p>
     </footer>
   `;
 }
@@ -314,6 +307,47 @@ function productRouteId() {
   return state.route.replace(/^product\//, "");
 }
 
+function knownWaitlistEmail() {
+  return state.auth.user?.email || state.waitlistEmail || "";
+}
+
+function waitlistModalMarkup() {
+  if (!state.waitlistModal) return "";
+  const product = productById(state.waitlistModal.productId);
+  if (!product) return "";
+  const email = knownWaitlistEmail();
+  const hasEmail = Boolean(email);
+
+  return `
+    <div class="modal-backdrop" role="presentation" data-modal-close>
+      <section class="waitlist-modal" role="dialog" aria-modal="true" aria-labelledby="waitlist-title">
+        <button class="modal-close" type="button" aria-label="Close waitlist modal" data-modal-close>×</button>
+        <p class="modal-eyebrow">Pre-Launch Waitlist</p>
+        <h2 id="waitlist-title">${hasEmail ? "Waitlist this item?" : "Join The Waitlist"}</h2>
+        <p class="modal-product">${product.name}</p>
+        <p class="modal-copy">
+          ${hasEmail
+            ? `Use ${escapeHtml(email)} for this waitlist request. You will get a confirmation email and priority ordering period when this item comes out.`
+            : "If you are interested in this item, enter your email to join the waitlist. You will get an email and priority ordering period when it comes out."
+          }
+        </p>
+        <form class="waitlist-form" data-waitlist-form>
+          ${hasEmail ? "" : `
+            <label class="field">
+              <span>Email</span>
+              <input name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+            </label>
+          `}
+          <div class="modal-actions">
+            <button class="secondary-button" type="button" data-modal-close>Cancel</button>
+            <button class="primary-button" type="submit">${hasEmail ? "Confirm Waitlist" : "Join Waitlist"}</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  `;
+}
+
 function homePage() {
   return pageShell(`
     <main class="home-page">
@@ -330,6 +364,10 @@ function homePage() {
           <source src="assets/final-flash.mov" type="video/quicktime" />
         </video>
         <div class="home-vignette" aria-hidden="true"></div>
+        <a class="home-brand" href="#/home" aria-label="Nebula home">
+          <span class="brand-mark">Nebula</span>
+          <span class="brand-kana">ネビュラ</span>
+        </a>
         <button class="shop-enter-button" type="button" data-enter-shop aria-label="Play animation and enter shop">
           <span class="shop-enter-title">Shop</span>
           <span class="shop-enter-kana">ショップ</span>
@@ -427,11 +465,12 @@ function contactPage() {
 }
 
 function shopPage() {
-  const actionLabel = state.settings.launchMode === "pre" ? "Join Waitlist" : "Add To Cart";
+  const actionLabel = state.settings.launchMode === "pre" ? "Waitlist · 0/50" : "Add To Cart";
   const isSakura = state.settings.style === "sakura";
   const isSakura3d = state.settings.style === "sakura-3d";
   const isVapourwave = state.settings.style === "vapourwave";
   const isSakuraScene = isSakura || isSakura3d;
+  const showListingActions = state.settings.launchMode !== "pre";
   const sakura3dVariant = state.settings.sakura3dVariant || "polaroid";
   const shopControls = isSakuraScene
     ? `
@@ -511,7 +550,7 @@ function shopPage() {
       ${shopControls}
       ${isVapourwave ? vapourwaveLayout(actionLabel) : `
         <section class="product-grid ${isSakura ? "sakura-product-panel" : ""} ${isSakura3d ? `sakura-3d-grid sakura-3d-grid-${sakura3dVariant}` : ""}" aria-label="Products">
-          ${products.map((product) => productCard(product, actionLabel, isSakura3d ? sakura3dVariant : "")).join("")}
+          ${products.map((product) => productCard(product, actionLabel, isSakura3d ? sakura3dVariant : "", showListingActions)).join("")}
         </section>
       `}
     </main>
@@ -519,6 +558,7 @@ function shopPage() {
 }
 
 function vapourwaveHeader() {
+  const cartCount = state.cart.reduce((sum, item) => sum + item.qty, 0);
   return `
     <header class="vapourwave-header">
       <a class="vapourwave-brand" href="#/home">Aesthetic + <span>美学 · 未来 · 根性</span></a>
@@ -531,14 +571,19 @@ function vapourwaveHeader() {
       </nav>
       <div class="vapourwave-actions">
         <span>Search</span>
-        <a href="#/cart">Cart (${state.cart.reduce((sum, item) => sum + item.qty, 0)})</a>
-        <a href="#/cart" aria-label="Cart">${icons.bag}</a>
+        ${state.settings.launchMode === "pre" ? "" : `<a href="#/cart">Cart (${cartCount})</a><a href="#/cart" aria-label="Cart">${icons.bag}</a>`}
       </div>
     </header>
   `;
 }
 
 function vapourwaveLayout(actionLabel) {
+  const showListingActions = state.settings.launchMode !== "pre";
+  const vapourwaveProducts = [
+    products.find((product) => product.id === "eternal-mangekyo-denim-jacket"),
+    ...products.filter((product) => product.id !== "eternal-mangekyo-denim-jacket"),
+  ].filter(Boolean);
+
   return `
     <section class="vapourwave-shop-surface" aria-label="Vapourwave products">
       <aside class="vapourwave-sidebar">
@@ -567,17 +612,20 @@ function vapourwaveLayout(actionLabel) {
         </div>
       </aside>
       <section class="vapourwave-grid" aria-label="Products">
-        ${products.map((product) => productCard(product, actionLabel, "vapourwave")).join("")}
+        ${vapourwaveProducts.map((product) => productCard(product, actionLabel, "vapourwave", showListingActions)).join("")}
       </section>
     </section>
   `;
 }
 
-function productCard(product, actionLabel, frameStyle = "") {
+function productCard(product, actionLabel, frameStyle = "", showAction = true) {
   if (frameStyle === "vapourwave") {
     return `
       <article class="product-card vapourwave-card">
-        <div class="vapour-window-bar"><span>⚙ +</span><span>− □ ×</span></div>
+        <div class="vapour-window-bar">
+          <span class="vapour-window-tools">⚙ +</span>
+          <span class="vapour-window-controls"><i>−</i><i>□</i><i>×</i></span>
+        </div>
         <div class="vapour-window-body">
           <a class="product-card-link" href="${productUrl(product)}" aria-label="View ${escapeHtml(product.name)}">
             <h3>"${product.osName}"</h3>
@@ -587,7 +635,7 @@ function productCard(product, actionLabel, frameStyle = "") {
           </a>
           <div class="vapour-card-footer">
             <strong>${priceLabel(product)}</strong>
-            <button type="button" data-add-product="${product.id}" aria-label="${actionLabel} ${escapeHtml(product.name)}">${icons.bag}</button>
+            ${showAction ? `<button type="button" data-add-product="${product.id}" aria-label="${actionLabel} ${escapeHtml(product.name)}">${icons.bag}</button>` : ""}
           </div>
         </div>
         <div class="vapour-status-bar"><span></span><i></i></div>
@@ -596,10 +644,17 @@ function productCard(product, actionLabel, frameStyle = "") {
   }
 
   if (frameStyle) {
-    const gameTitle = `${product.shortName.replaceAll(" ", "_")}.exe`;
+    const gameTitle = `${product.shortName.split(" ")[0]}.exe`;
     const frameHeader = frameStyle === "game"
-      ? `<div class="game-window-bar"><span class="game-window-icon"></span><strong>"${gameTitle}"</strong><span class="game-window-controls">− □ ×</span></div>`
-      : `<div class="sakura-frame-label">✦ ✦ ✦ Aesthetic ✦ ✦ ✦</div>`;
+      ? `<div class="game-window-bar"><span class="game-window-icon"></span><strong>"${gameTitle}"</strong><span class="game-window-controls"><i>−</i><i>□</i><i>×</i></span></div>`
+      : frameStyle === "glass"
+        ? `<div class="sakura-frame-label">✦ ✦ ✦ Aesthetic ✦ ✦ ✦</div>`
+        : "";
+    const frameFooter = frameStyle === "game"
+      ? `<div class="game-window-footer"><span><i></i>Start</span><strong>Aesthetic</strong><span>◉ 12:00 PM</span></div>`
+      : frameStyle === "polaroid"
+        ? `<div class="polaroid-footer"><strong>Aesthetic</strong><span></span><i>◉</i></div>`
+        : "";
 
     return `
       <article class="product-card sakura-3d-card sakura-3d-card-${frameStyle}">
@@ -608,11 +663,12 @@ function productCard(product, actionLabel, frameStyle = "") {
           <a class="product-image-wrap product-card-link" href="${productUrl(product)}" aria-label="View ${escapeHtml(product.name)}">
             <img src="${product.image}" alt="${escapeHtml(product.name)}" />
           </a>
-          <div class="product-meta">
-            <a class="product-name product-card-link" href="${productUrl(product)}">${product.name}</a>
-            <div class="product-price">${priceLabel(product)}</div>
-            <button class="product-action" type="button" data-add-product="${product.id}">${actionLabel}</button>
-          </div>
+          ${frameFooter}
+        </div>
+        <div class="product-meta">
+          <a class="product-name product-card-link" href="${productUrl(product)}">${product.name}</a>
+          <div class="product-price">${priceLabel(product)}</div>
+          ${showAction ? `<button class="product-action" type="button" data-add-product="${product.id}">${actionLabel}</button>` : ""}
         </div>
       </article>
     `;
@@ -626,7 +682,7 @@ function productCard(product, actionLabel, frameStyle = "") {
       <div class="product-meta">
         <a class="product-name product-card-link" href="${productUrl(product)}">${product.name}</a>
         <div class="product-price">${priceLabel(product)}</div>
-        <button class="product-action" type="button" data-add-product="${product.id}">${actionLabel}</button>
+        ${showAction ? `<button class="product-action" type="button" data-add-product="${product.id}">${actionLabel}</button>` : ""}
       </div>
     </article>
   `;
@@ -647,7 +703,7 @@ function productDetailPage() {
     `);
   }
 
-  const actionLabel = state.settings.launchMode === "pre" ? "Join Waitlist" : "Add To Cart";
+  const actionLabel = state.settings.launchMode === "pre" ? "Waitlist · 0/50" : "Add To Cart";
   const isSakuraScene = state.settings.style === "sakura" || state.settings.style === "sakura-3d";
   const isVapourwave = state.settings.style === "vapourwave";
   const shellClass = `${isSakuraScene ? "sakura-shell" : ""} ${isVapourwave ? "vapourwave-shell" : ""}`;
@@ -661,62 +717,89 @@ function productDetailPage() {
       <td>${row.sleeve}</td>
     </tr>
   `).join("");
+  const relatedProducts = products.filter((item) => item.id !== product.id).slice(0, 4);
+  const detailActionLabel = state.settings.launchMode === "pre" ? "Waitlist · 0/50" : "Add To Cart";
+  const secondaryDescription = product.id === "pirate-king-hybrid-jacket"
+    ? [...product.description, "The purple buttons and lining add a hidden pop of color, making the jacket feel more designed without overcrowding the front of the garment."]
+    : product.description;
 
   return pageShell(`
     <main class="page product-detail-page ${pageClass}">
       ${isVapourwave ? vapourwaveHeader() : ""}
+      <div class="product-detail-breadcrumb">
+        ${breadcrumb(product.name, `<a href="#/shop">Shop</a>`)}
+      </div>
       <section class="product-detail-shell">
         <div class="product-detail-media">
           <img src="${product.image}" alt="${escapeHtml(product.name)}" />
+          <p class="section-label product-badge">${product.badge}</p>
         </div>
         <article class="product-detail-info">
-          ${breadcrumb(product.name, `<a href="#/shop">Shop</a>`)}
-          <p class="section-label product-badge">${product.badge}</p>
           <h1>${product.name}</h1>
-          <p class="product-detail-price">${priceLabel(product)}</p>
           <p class="product-subtitle">${product.subtitle}</p>
-          <div class="product-selectors" aria-label="Product options">
-            <div>
-              <span>Color</span>
-              <strong>${product.colorway}</strong>
-            </div>
-            <div>
-              <span>Size</span>
-              <div class="size-pills">${product.sizeGuide.map((row) => `<button type="button">${row.size}</button>`).join("")}</div>
-            </div>
+          <p class="product-detail-price">${priceLabel(product)}</p>
+          <div class="product-size-row">
+            <span>Size</span>
+            <button class="size-guide-link" type="button" data-scroll-target="size-guide">Size Guide</button>
           </div>
-          <button class="primary-button product-detail-action" type="button" data-add-product="${product.id}">${actionLabel}</button>
-          <p class="helper-copy">Free shipping threshold, processing time, return window, and preorder rules will be finalized here.</p>
+          <div class="size-pills">${product.sizeGuide.map((row) => `<button type="button">${row.size}</button>`).join("")}</div>
+          <button class="primary-button product-detail-action" type="button" data-add-product="${product.id}">${detailActionLabel}</button>
+          <div class="product-quick-specs">
+            <p><strong>Category:</strong> ${product.category}</p>
+            <p><strong>Fit:</strong> ${product.fit}</p>
+            <p><strong>Colorway:</strong> ${product.colorway}</p>
+          </div>
+          <section class="product-accordions" aria-label="Product information">
+            <details open>
+              <summary>Description <span aria-hidden="true">⌃</span></summary>
+              ${secondaryDescription.map((paragraph) => `<p>${paragraph}</p>`).join("")}
+            </details>
+            <details>
+              <summary>Details <span aria-hidden="true">⌄</span></summary>
+              <ul>${product.details.map((detail) => `<li>${detail}</li>`).join("")}</ul>
+            </details>
+            <details>
+              <summary>Materials & Construction <span aria-hidden="true">⌄</span></summary>
+              <ul>${product.materials.map((material) => `<li>${material}</li>`).join("")}</ul>
+            </details>
+            <details>
+              <summary>Size & Fit <span aria-hidden="true">⌄</span></summary>
+              <p>${product.sizeFit}</p>
+            </details>
+            <details>
+              <summary>Care <span aria-hidden="true">⌄</span></summary>
+              <p>${product.care}</p>
+            </details>
+            <details>
+              <summary>Shipping & Returns <span aria-hidden="true">⌄</span></summary>
+              <p>Shipping, preorder timing, and return details will be finalized before launch.</p>
+            </details>
+          </section>
         </article>
       </section>
-      <section class="product-copy-grid">
-        <article>
-          <h2>Description</h2>
-          ${product.description.map((paragraph) => `<p>${paragraph}</p>`).join("")}
-        </article>
-        <article>
-          <h2>Details</h2>
-          <ul>${product.details.map((detail) => `<li>${detail}</li>`).join("")}</ul>
-        </article>
-        <article>
-          <h2>Materials</h2>
-          <ul>${product.materials.map((material) => `<li>${material}</li>`).join("")}</ul>
-        </article>
-        <article>
-          <h2>Size & Fit</h2>
-          <p>${product.sizeFit}</p>
-          <div class="size-table-wrap">
-            <table>
-              <caption>Measurements in ${product.sizeGuideUnit}.</caption>
-              <thead><tr><th scope="col">Size</th><th scope="col">Chest</th><th scope="col">Length</th><th scope="col">Sleeve</th></tr></thead>
-              <tbody>${tableRows}</tbody>
-            </table>
-          </div>
-        </article>
-        <article class="product-care">
-          <h2>Care</h2>
-          <p>${product.care}</p>
-        </article>
+      <section id="size-guide" class="product-size-guide">
+        <h2>Size Guide</h2>
+        <p>Measurements in ${product.sizeGuideUnit === "in" ? "inches" : "centimeters"}. Approximate; may vary slightly with production.</p>
+        <div class="size-table-wrap">
+          <table>
+            <thead><tr><th scope="col">Size</th><th scope="col">Chest</th><th scope="col">Length</th><th scope="col">Sleeve</th></tr></thead>
+            <tbody>${tableRows}</tbody>
+          </table>
+        </div>
+      </section>
+      <section class="related-products" aria-label="You may also like">
+        <h2>You may also like</h2>
+        <div class="related-product-grid">
+          ${relatedProducts.map((item) => `
+            <article class="related-product-card">
+              <a href="${productUrl(item)}" aria-label="View ${escapeHtml(item.name)}">
+                <img src="${item.image}" alt="${escapeHtml(item.name)}" />
+                <strong>${item.name}</strong>
+                <span>${priceLabel(item)}</span>
+              </a>
+            </article>
+          `).join("")}
+        </div>
       </section>
     </main>
   `, { hideHeader: isVapourwave, shellClass });
@@ -830,16 +913,6 @@ function settingsPage() {
             ${styleOptions.map((option) => optionCard("style", option, state.settings.style)).join("")}
           </div>
         </section>
-        ${state.settings.style === "sakura-3d" ? `
-          <div class="rule"></div>
-          <section>
-            <h2 class="section-label">Sakura 3D</h2>
-            <p class="option-copy">Choose the product frame treatment for the Sakura 3D shop.</p>
-            <div class="option-grid option-grid-three">
-              ${sakura3dOptions.map((option) => optionCard("sakura3dVariant", option, state.settings.sakura3dVariant)).join("")}
-            </div>
-          </section>
-        ` : ""}
       </section>
     </main>
   `);
@@ -1051,6 +1124,31 @@ function showToast(message) {
   showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1800);
 }
 
+function openWaitlistModal(productId) {
+  state.waitlistModal = { productId };
+  render();
+}
+
+function closeWaitlistModal() {
+  state.waitlistModal = null;
+  render();
+}
+
+function saveWaitlistIntent(productId, email) {
+  const normalizedEmail = email.trim();
+  if (normalizedEmail) {
+    state.waitlistEmail = normalizedEmail;
+    writeJson("nebula-waitlist-email", state.waitlistEmail);
+  }
+
+  const waitlistEmail = normalizedEmail || knownWaitlistEmail();
+  const exists = state.waitlist.some((entry) => entry.productId === productId && entry.email === waitlistEmail);
+  if (!exists) {
+    state.waitlist.push({ productId, email: waitlistEmail, createdAt: new Date().toISOString() });
+    writeJson("nebula-waitlist", state.waitlist);
+  }
+}
+
 function startShopTransition() {
   if (document.body.classList.contains("is-transitioning")) return;
   const existingOverlay = document.querySelector(".shop-transition");
@@ -1157,7 +1255,7 @@ function bindEvents() {
     button.addEventListener("click", () => {
       const productId = button.dataset.addProduct;
       if (state.settings.launchMode === "pre") {
-        showToast("Added To Waitlist");
+        openWaitlistModal(productId);
         return;
       }
 
@@ -1172,6 +1270,37 @@ function bindEvents() {
       showToast("Added To Cart");
     });
   });
+
+  document.querySelectorAll("[data-scroll-target]").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.getElementById(button.dataset.scrollTarget)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  });
+
+  document.querySelectorAll("[data-modal-close]").forEach((control) => {
+    control.addEventListener("click", (event) => {
+      if (event.target === control || control.matches("button")) {
+        closeWaitlistModal();
+      }
+    });
+  });
+
+  const waitlistForm = document.querySelector("[data-waitlist-form]");
+  if (waitlistForm) {
+    waitlistForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const productId = state.waitlistModal?.productId;
+      if (!productId) return;
+      const email = waitlistForm.email?.value.trim() || knownWaitlistEmail();
+      if (!email) {
+        showToast("Email Required");
+        return;
+      }
+      saveWaitlistIntent(productId, email);
+      closeWaitlistModal();
+      showToast("Waitlist Interest Saved");
+    });
+  }
 
   document.querySelectorAll("[data-option-type]").forEach((button) => {
     button.addEventListener("click", () => {
