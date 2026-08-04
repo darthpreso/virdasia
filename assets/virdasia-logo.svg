@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+  <!-- V (left + right diagonals meeting at bottom) -->
+  <path d="M 24 12 L 52 108" />
+  <path d="M 66 12 L 52 108" />
+  <!-- D vertical stem -->
+  <path d="M 54 18 L 54 108" />
+  <!-- D curved bump (right semicircle) -->
+  <path d="M 54 18 A 45 45 0 0 1 54 108" />
+</svg>

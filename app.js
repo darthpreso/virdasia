@@ -4,16 +4,24 @@ const products = [
     name: '"Shadow Grin" Fleece',
     shortName: "Shadow Grin",
     osName: "shadow_grin_fleece",
-    category: "Fleece jacket",
+    category: "outerwear",
+    categoryLabel: "Fleece jacket",
+    colors: ["Purple"],
     colorway: "Purple fleece + dark purple artwork + red lining",
     fit: "Relaxed menswear fit",
     badge: "Fall/Winter / Fleece",
-    price: 145,
-    image: "assets/product-shadow-grin-fleece.png",
-    subtitle: "A relaxed purple fleece jacket with dark tonal artwork, red lining, side pockets, and a black front zipper.",
+    price: 40,
+    image: "assets/shadow-grin-fleece-front.png",
+    gallery: [
+      "assets/shadow-grin-fleece-front.png",
+      "assets/shadow-grin-fleece-back.png",
+      "assets/shadow-grin-fleece-model-1.png",
+      "assets/shadow-grin-fleece-model-2.png",
+      "assets/shadow-grin-fleece-model-3.png",
+    ],
+    subtitle: "Regular fit jacket made with premium cotton fabric. Zipped front closure and welt pockets on the side.",
     description: [
-      "A relaxed purple fleece jacket with dark tonal artwork worked across the body and sleeves. The soft low-pile fleece shell, red lining, side welt pockets, and black front zipper give it a quiet supernatural energy without making the piece feel too loud.",
-      "Built for fall and winter layering, this jacket balances soft texture with graphic detail. The purple fleece body keeps the look wearable, while the dark purple artwork adds depth across the garment."
+      "Regular fit jacket made with premium cotton fabric. Zipped front closure and welt pockets on the side.",
     ],
     details: ["Relaxed menswear fit", "Low-pile unbrushed fleece body", "Dark purple all-over sublimation-style artwork", "Black #5 front zipper", "Side welt pockets", "Red inner lining and inner facing", "Available in S, M, L"],
     materials: ["Main fabric: 100% polyester fleece", "Fleece weight: 280-320 GSM", "Inner lining: 100% polyester taffeta", "Inner facing: 100% polyester woven fabric", "Zipper: black metal zipper"],
@@ -27,16 +35,25 @@ const products = [
     name: '"Pirate King" Hybrid Jacket',
     shortName: "Pirate King",
     osName: "pirate_king_hybrid_jacket",
-    category: "Cotton / sherpa hybrid jacket",
+    category: "outerwear",
+    categoryLabel: "Cotton / sherpa hybrid jacket",
+    colors: ["White"],
     colorway: "White cotton + white sherpa + grey artwork + purple lining/buttons",
     fit: "Relaxed menswear fit",
     badge: "Fall/Winter / Cotton + Sherpa",
-    price: 185,
-    image: "assets/product-pirate-king-hybrid-jacket.png",
-    subtitle: "A white heavyweight cotton jacket with sherpa trim, subtle grey artwork, purple lining, and purple buttons.",
+    price: 70,
+    image: "assets/pirate-king-hybrid-jacket-front.png",
+    gallery: [
+      "assets/pirate-king-hybrid-jacket-front.png",
+      "assets/pirate-king-hybrid-jacket-back.png",
+      "assets/pirate-king-hybrid-jacket-model-1.png",
+      "assets/pirate-king-hybrid-jacket-model-2.png",
+      "assets/pirate-king-hybrid-jacket-model-3.png",
+      "assets/pirate-king-hybrid-jacket-model-4.png",
+    ],
+    subtitle: "Regular fit jacket made with premium cotton fabric and soft sherpa fabric on collar, sleeve cuffs and bottom hem. Welt pockets, buttoned cuffs and button-front closure. Taffeta inner lining.",
     description: [
-      "A relaxed white cotton jacket with soft sherpa accents and subtle grey artwork across the body and sleeves. The structured heavyweight twill gives it shape, while the sherpa collar, cuffs, and hem add warmth and texture.",
-      "This is a cleaner, brighter statement piece built around contrast: structured cotton against soft sherpa, white outer fabric against a purple inner lining, and subtle grey artwork across the panels."
+      "Regular fit jacket made with premium cotton fabric and soft sherpa fabric on collar, sleeve cuffs and bottom hem. Welt pockets, buttoned cuffs and button-front closure. Taffeta inner lining.",
     ],
     details: ["Relaxed menswear fit", "Heavyweight white cotton twill body", "White high-pile sherpa collar, sleeve cuffs, and bottom hem", "Subtle grey all-over printed artwork", "Purple polyester taffeta lining", "Purple front buttons and cuff buttons", "Available in S, M, L"],
     materials: ["Main fabric: 100% cotton twill", "Main fabric weight: 380-420 GSM / approx. 12 oz per square yard", "Secondary fabric: 100% polyester sherpa fleece", "Sherpa weight: 350-400 GSM", "Inner lining: 100% polyester taffeta"],
@@ -50,16 +67,23 @@ const products = [
     name: '"Son of Nolan" Jacket',
     shortName: "Son of Nolan",
     osName: "son_of_nolan_jacket",
-    category: "Cotton panel jacket",
+    category: "outerwear",
+    categoryLabel: "Cotton panel jacket",
+    colors: ["Blue", "Yellow", "Black"],
     colorway: "Black + yellow + blue",
     fit: "Relaxed menswear fit",
     badge: "Fall/Winter / Cotton",
-    price: 165,
-    image: "assets/product-son-of-nolan-jacket.png",
-    subtitle: "A bold black, yellow, and blue cotton jacket built with cut-and-sewn color panels.",
+    price: 35,
+    image: "assets/son-of-nolan-jacket-front.png",
+    gallery: [
+      "assets/son-of-nolan-jacket-front.png",
+      "assets/son-of-nolan-jacket-back.png",
+      "assets/son-of-nolan-jacket-model-1.png",
+      "assets/son-of-nolan-jacket-model-2.png",
+    ],
+    subtitle: "Regular fit color block jacket made with premium cotton fabric. Welt pockets, buttoned cuffs and button-front closure.",
     description: [
-      "A bold relaxed cotton jacket built with cut-and-sewn black, yellow, and blue color panels. The structured heavyweight cotton twill gives it a clean outerwear shape, while the contrast placket, cuffs, and hem create a sharp hero-inspired look.",
-      "Because the color is built through cut-and-sewn panels rather than only print, the design feels more integrated into the garment construction."
+      "Regular fit color block jacket made with premium cotton fabric. Welt pockets, buttoned cuffs and button-front closure.",
     ],
     details: ["Relaxed menswear fit", "100% heavyweight cotton twill", "Cut-and-sewn color panels", "Black body panels", "Yellow front placket and sleeve cuffs", "Blue bottom hem", "Matte black front buttons", "Available in S, M, L"],
     materials: ["Main fabric: 100% cotton twill", "Heavyweight fabric, approx. 12 oz per square yard", "Handfeel: smooth, slightly stiff / structured", "Buttons: 22mm matte black plastic buttons", "Thread: 100% polyester in matching panel colors"],
@@ -73,16 +97,23 @@ const products = [
     name: '"Legendary" Corduroy Jacket',
     shortName: "Legendary",
     osName: "legendary_corduroy_jacket",
-    category: "Corduroy panel jacket",
+    category: "outerwear",
+    categoryLabel: "Corduroy panel jacket",
+    colors: ["Purple", "White", "Red"],
     colorway: "Purple + pink + white + black",
     fit: "Relaxed menswear fit",
     badge: "Fall/Winter / Corduroy",
-    price: 175,
-    image: "assets/product-legendary-corduroy-jacket.png",
-    subtitle: "A textured corduroy jacket with purple, pink, white, and black cut-and-sewn panels.",
+    price: 40,
+    image: "assets/legendary-corduroy-jacket-front.png",
+    gallery: [
+      "assets/legendary-corduroy-jacket-front.png",
+      "assets/legendary-corduroy-jacket-back.png",
+      "assets/legendary-corduroy-jacket-model-1.png",
+      "assets/legendary-corduroy-jacket-model-2.png",
+    ],
+    subtitle: "Regular fit corduroy jacket. Welt pockets, buttoned cuffs and button-front closure. Taffeta inner lining.",
     description: [
-      "A relaxed corduroy jacket built with bold purple, pink, white, and black cut-and-sewn panels. The heavyweight 9-wale cotton corduroy gives it a soft textured feel, while the panel layout creates a clean collectible-inspired graphic look.",
-      "This jacket uses color blocking as the main design language. The panel breaks create a strong front and back visual while keeping the silhouette simple and wearable."
+      "Regular fit corduroy jacket. Welt pockets, buttoned cuffs and button-front closure. Taffeta inner lining.",
     ],
     details: ["Relaxed menswear fit", "100% cotton corduroy", "Heavyweight 9-wale woven pile fabric", "Purple, pink, white, and black cut-and-sewn panels", "Pointed collar with structure", "Front button placket", "Side welt pockets", "Available in S, M, L"],
     materials: ["Main fabric: 100% cotton corduroy", "Fabric type: woven pile fabric", "Weight: heavyweight, 9-wale corduroy", "Pocket bags: lightweight cotton twill", "Buttons: 22mm plastic buttons"],
@@ -96,16 +127,24 @@ const products = [
     name: '"Wild Encounter" Knit Sweater',
     shortName: "Wild Encounter",
     osName: "wild_encounter_knit_sweater",
-    category: "Knit crewneck sweater",
+    category: "tops",
+    categoryLabel: "Knit crewneck sweater",
+    colors: ["Green"],
     colorway: "Dark green knit + multi-color jacquard artwork",
     fit: "Regular menswear fit",
     badge: "Fall/Winter / Knitwear",
-    price: 135,
-    image: "assets/product-wild-encounter-knit-sweater.png",
-    subtitle: "A dark green 7-gauge knit crewneck with pixel-style jacquard artwork on the lower sleeves and cuffs.",
+    price: 50,
+    image: "assets/wild-encounter-knit-sweater-front.png",
+    gallery: [
+      "assets/wild-encounter-knit-sweater-front.png",
+      "assets/wild-encounter-knit-sweater-back.png",
+      "assets/wild-encounter-knit-sweater-model-1.png",
+      "assets/wild-encounter-knit-sweater-model-2.png",
+      "assets/wild-encounter-knit-sweater-model-3.png",
+    ],
+    subtitle: "Regular fit sweater knit in cotton and wool blend. Woven embroidery on sleeves.",
     description: [
-      "A dark green knit crewneck sweater with subtle pixel-style jacquard artwork knitted into the lower sleeves and cuffs. The 7-gauge jersey knit gives it a medium-weight feel with a soft, structured drape.",
-      "Because the artwork is knitted directly into the fabric, it feels more integrated than a surface print. The dark green base makes the multicolor sleeve details feel more intentional and wearable."
+      "Regular fit sweater knit in cotton and wool blend. Woven embroidery on sleeves.",
     ],
     details: ["Regular menswear fit", "Crewneck sweater", "7GG jersey knit construction", "Cotton/wool blend yarn", "Dark green main body", "Pixel-style jacquard artwork on lower sleeves and cuffs", "Ribbed neckband and bottom band", "Available in S, M, L"],
     materials: ["Main yarn: cotton/wool blend", "Knit gauge: 7GG jersey stitch", "Medium-weight knit structure", "Jacquard yarns: teal, dark blue, olive green, red, white, pink, and blue", "Sewing/topstitching thread: 100% polyester"],
@@ -119,12 +158,20 @@ const products = [
     name: '"Six Paths" Sherpa Jacket',
     shortName: "Six Paths",
     osName: "six_paths_sherpa_jacket",
-    category: "Sherpa jacket",
+    category: "outerwear",
+    categoryLabel: "Sherpa jacket",
+    colors: ["Purple"],
     colorway: "Light purple sherpa + black artwork + black lining/binding",
     fit: "Relaxed menswear fit",
     badge: "Fall/Winter / Sherpa",
-    price: 195,
-    image: "assets/product-six-paths-sherpa-jacket.png",
+    price: 50,
+    image: "assets/six-paths-sherpa-jacket-front.png",
+    gallery: [
+      "assets/six-paths-sherpa-jacket-front.png",
+      "assets/six-paths-sherpa-jacket-back.png",
+      "assets/six-paths-sherpa-jacket-model-1.png",
+      "assets/six-paths-sherpa-jacket-model-2.png",
+    ],
     subtitle: "A light purple sherpa jacket with bold black all-over artwork, black lining, and snap-button front.",
     description: [
       "A light purple sherpa jacket covered in bold black all-over graphic artwork. Built with a soft sherpa fleece outer, black inner lining, side welt pockets, and a snap-button placket, this piece is warm, textured, and visually striking.",
@@ -142,12 +189,15 @@ const products = [
     name: '"Eternal Mangekyo" Denim Jacket',
     shortName: "Eternal Mangekyo",
     osName: "eternal_mangekyo_denim_jacket",
-    category: "Embroidered denim jacket",
+    category: "outerwear",
+    categoryLabel: "Embroidered denim jacket",
+    colors: ["Blue"],
     colorway: "Blue denim + tonal blue embroidery",
     fit: "Relaxed menswear fit",
     badge: "Fall/Winter / Denim",
-    price: null,
-    image: "assets/product-eternal-mangekyo-denim-jacket.png",
+    price: 85,
+    comingSoon: true,
+    image: "assets/eternal-mangekyo-denim-jacket-front.png",
     subtitle: "A relaxed blue denim jacket with large tonal blue embroidery across the front, back, and sleeves.",
     description: [
       "A relaxed blue denim jacket with large tonal blue embroidery across the front, back, and sleeves. Made from heavyweight 100% cotton denim, it combines a classic trucker-style shape with expressive illustrated embroidery.",
@@ -165,7 +215,6 @@ const products = [
 const styleOptions = [
   ["default", "Default", "Floating artworks"],
   ["sakura", "Sakura", "Sky backdrop, white panel"],
-  ["sakura-3d", "Sakura Polaroid", "Polaroid-framed photo cards"],
   ["vapourwave", "Vapourwave", "Aesthetic OS dreamscape"],
 ];
 
@@ -185,6 +234,76 @@ const backgroundArts = [
 
 const legalUpdated = "May 23, 2026";
 
+// Worldwide country -> currency. Rates are approximate units-per-USD and are for
+// display/preview only; real charges happen in USD via Stripe at launch.
+// [ISO code, display name, currency code, symbol]
+const COUNTRIES = [
+  ["US", "United States", "USD", "$"],
+  ["CA", "Canada", "CAD", "$"],
+  ["GB", "United Kingdom", "GBP", "£"],
+  ["AU", "Australia", "AUD", "$"],
+  ["NZ", "New Zealand", "NZD", "$"],
+  ["IE", "Ireland", "EUR", "€"],
+  ["FR", "France", "EUR", "€"],
+  ["DE", "Germany", "EUR", "€"],
+  ["ES", "Spain", "EUR", "€"],
+  ["IT", "Italy", "EUR", "€"],
+  ["NL", "Netherlands", "EUR", "€"],
+  ["BE", "Belgium", "EUR", "€"],
+  ["PT", "Portugal", "EUR", "€"],
+  ["AT", "Austria", "EUR", "€"],
+  ["GR", "Greece", "EUR", "€"],
+  ["FI", "Finland", "EUR", "€"],
+  ["CH", "Switzerland", "CHF", "CHF"],
+  ["SE", "Sweden", "SEK", "kr"],
+  ["NO", "Norway", "NOK", "kr"],
+  ["DK", "Denmark", "DKK", "kr"],
+  ["PL", "Poland", "PLN", "zł"],
+  ["CZ", "Czechia", "CZK", "Kč"],
+  ["HU", "Hungary", "HUF", "Ft"],
+  ["RO", "Romania", "RON", "lei"],
+  ["JP", "Japan", "JPY", "¥"],
+  ["CN", "China", "CNY", "¥"],
+  ["HK", "Hong Kong", "HKD", "$"],
+  ["SG", "Singapore", "SGD", "$"],
+  ["KR", "South Korea", "KRW", "₩"],
+  ["IN", "India", "INR", "₹"],
+  ["TW", "Taiwan", "TWD", "$"],
+  ["TH", "Thailand", "THB", "฿"],
+  ["MY", "Malaysia", "MYR", "RM"],
+  ["ID", "Indonesia", "IDR", "Rp"],
+  ["PH", "Philippines", "PHP", "₱"],
+  ["VN", "Vietnam", "VND", "₫"],
+  ["AE", "United Arab Emirates", "AED", "AED"],
+  ["SA", "Saudi Arabia", "SAR", "SAR"],
+  ["QA", "Qatar", "QAR", "QAR"],
+  ["IL", "Israel", "ILS", "₪"],
+  ["TR", "Türkiye", "TRY", "₺"],
+  ["ZA", "South Africa", "ZAR", "R"],
+  ["NG", "Nigeria", "NGN", "₦"],
+  ["EG", "Egypt", "EGP", "E£"],
+  ["KE", "Kenya", "KES", "Sh"],
+  ["BR", "Brazil", "BRL", "R$"],
+  ["MX", "Mexico", "MXN", "$"],
+  ["AR", "Argentina", "ARS", "$"],
+  ["CL", "Chile", "CLP", "$"],
+  ["CO", "Colombia", "COP", "$"],
+  ["PK", "Pakistan", "PKR", "₨"],
+  ["BD", "Bangladesh", "BDT", "৳"],
+  ["LK", "Sri Lanka", "LKR", "₨"],
+];
+
+const CURRENCY_RATES = {
+  USD: 1, CAD: 1.37, GBP: 0.79, AUD: 1.52, NZD: 1.65, EUR: 0.92, CHF: 0.90,
+  SEK: 10.6, NOK: 10.7, DKK: 6.9, PLN: 3.95, CZK: 23, HUF: 360, RON: 4.6,
+  JPY: 155, CNY: 7.2, HKD: 7.8, SGD: 1.35, KRW: 1370, INR: 83, TWD: 32,
+  THB: 36, MYR: 4.7, IDR: 16000, PHP: 58, VND: 25000, AED: 3.67, SAR: 3.75,
+  QAR: 3.64, ILS: 3.7, TRY: 32, ZAR: 18.5, NGN: 1500, EGP: 48, KES: 130,
+  BRL: 5.4, MXN: 18, ARS: 900, CLP: 950, COP: 3900, PKR: 278, BDT: 118, LKR: 300,
+};
+
+const ZERO_DECIMAL_CURRENCIES = new Set(["JPY", "KRW", "VND", "IDR", "CLP", "COP", "HUF"]);
+
 const state = {
   route: "home",
   cart: readJson("nebula-cart", []),
@@ -195,9 +314,19 @@ const state = {
     style: "default",
     sakura3dVariant: "polaroid",
   }),
-  waitlist: readJson("nebula-waitlist", []),
+  filters: readJson("nebula-filters", {
+    category: "all",
+    colors: [],
+    priceMin: null,
+    priceMax: null,
+  }),
+  sort: readJson("nebula-sort", "name"),
+  filterOpen: false,
+  sortOpen: false,
+  waitlist: [],
   waitlistEmail: readJson("nebula-waitlist-email", ""),
   waitlistModal: null,
+  orders: readJson("nebula-orders", []),
   auth: {
     client: null,
     configured: false,
@@ -209,6 +338,71 @@ const state = {
 };
 
 state.settings.sakura3dVariant ||= "polaroid";
+if (state.settings.style === "sakura-3d") state.settings.style = "sakura";
+
+// Profile + shipping address live in settings (localStorage now, Supabase-ready later).
+state.settings.profile ||= { fullName: "", phone: "" };
+state.settings.address ||= { line1: "", line2: "", city: "", region: "", postal: "", country: "" };
+
+// Normalize cart line items to the size-aware shape { id, size, qty }.
+state.cart = (state.cart || [])
+  .filter((item) => item && item.id)
+  .map((item) => ({ id: item.id, size: item.size || null, qty: Math.max(1, Number(item.qty) || 1) }));
+
+const CATEGORY_OPTIONS = [
+  ["all", "All Products"],
+  ["tops", "Tops"],
+  ["bottoms", "Bottoms"],
+  ["outerwear", "Outerwear"],
+];
+
+const SORT_OPTIONS = [
+  ["name", "Name (A–Z)"],
+  ["price-asc", "Price: Low to High"],
+  ["price-desc", "Price: High to Low"],
+];
+
+const COLOR_OPTIONS = [
+  ["Black", "#111111"],
+  ["Blue", "#2f6fdc"],
+  ["Green", "#3aa64f"],
+  ["Purple", "#7a4bbf"],
+  ["Red", "#d0424a"],
+  ["White", "#ffffff"],
+  ["Yellow", "#f2c94a"],
+];
+
+function saveFilters() { writeJson("nebula-filters", state.filters); }
+function saveSort() { writeJson("nebula-sort", state.sort); }
+
+function filteredProducts() {
+  const { category, colors, priceMin, priceMax } = state.filters;
+  let list = products.slice();
+  if (category !== "all") list = list.filter((p) => p.category === category);
+  if (colors && colors.length) {
+    list = list.filter((p) => (p.colors || []).some((c) => colors.includes(c)));
+  }
+  if (Number.isFinite(priceMin)) list = list.filter((p) => Number.isFinite(p.price) && p.price >= priceMin);
+  if (Number.isFinite(priceMax)) list = list.filter((p) => Number.isFinite(p.price) && p.price <= priceMax);
+  const sort = state.sort;
+  const cmp = sort === "price-asc"
+    ? (a, b) => (a.price ?? Infinity) - (b.price ?? Infinity)
+    : sort === "price-desc"
+      ? (a, b) => (b.price ?? -Infinity) - (a.price ?? -Infinity)
+      : (a, b) => a.name.localeCompare(b.name);
+  const available = list.filter((p) => !p.comingSoon).sort(cmp);
+  const soon = list.filter((p) => p.comingSoon).sort(cmp);
+  return [...available, ...soon];
+}
+
+function activeFilterCount() {
+  const { category, colors, priceMin, priceMax } = state.filters;
+  let n = 0;
+  if (category !== "all") n++;
+  if (colors && colors.length) n++;
+  if (Number.isFinite(priceMin) || Number.isFinite(priceMax)) n++;
+  return n;
+}
 
 const icons = {
   gear: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.8 1.8 0 0 0 .36 1.98l.04.04a2.1 2.1 0 0 1-2.97 2.97l-.04-.04a1.8 1.8 0 0 0-1.98-.36 1.8 1.8 0 0 0-1.09 1.65V21.3a2.1 2.1 0 0 1-4.2 0v-.06a1.8 1.8 0 0 0-1.09-1.65 1.8 1.8 0 0 0-1.98.36l-.04.04a2.1 2.1 0 0 1-2.97-2.97l.04-.04A1.8 1.8 0 0 0 3.85 15a1.8 1.8 0 0 0-1.65-1.09H2.1a2.1 2.1 0 0 1 0-4.2h.1a1.8 1.8 0 0 0 1.65-1.09 1.8 1.8 0 0 0-.36-1.98l-.04-.04a2.1 2.1 0 0 1 2.97-2.97l.04.04a1.8 1.8 0 0 0 1.98.36 1.8 1.8 0 0 0 1.09-1.65V2.1a2.1 2.1 0 0 1 4.2 0v.27a1.8 1.8 0 0 0 1.09 1.65 1.8 1.8 0 0 0 1.98-.36l.04-.04a2.1 2.1 0 0 1 2.97 2.97l-.04.04a1.8 1.8 0 0 0-.36 1.98c.28.68.94 1.11 1.67 1.11h.06a2.1 2.1 0 0 1 0 4.2h-.06A1.8 1.8 0 0 0 19.4 15Z"/></svg>`,
@@ -231,7 +425,7 @@ function writeJson(key, value) {
 function routeFromHash() {
   const route = window.location.hash.replace(/^#\/?/, "") || "home";
   if (route.startsWith("product/")) return route;
-  return ["home", "shop", "about", "settings", "cart", "terms", "privacy", "contact"].includes(route) ? route : "home";
+  return ["home", "shop", "about", "settings", "cart", "checkout", "terms", "privacy", "shipping", "contact"].includes(route) ? route : "home";
 }
 
 function setRoute() {
@@ -241,26 +435,25 @@ function setRoute() {
 }
 
 function header() {
-  const count = state.cart.reduce((sum, item) => sum + item.qty, 0);
+  const count = cartCount();
   const active = state.route;
-  const showCart = state.settings.launchMode !== "pre";
 
   return `
     <header class="site-header">
-      <a class="brand" href="#/home" aria-label="Nebula home">
-        <span class="brand-mark">Nebula</span>
-        <span class="brand-kana">ネビュラ</span>
+      <a class="brand" href="#/home" aria-label="Virdasia home">
+        <span class="brand-logo" aria-hidden="true"></span>
+        <span class="brand-mark">Virdasia</span>
       </a>
       <nav class="main-nav" aria-label="Primary">
         <a class="nav-link ${active === "shop" || active.startsWith("product/") ? "active" : ""}" href="#/shop">Shop</a>
         <a class="nav-link ${active === "about" ? "active" : ""}" href="#/about">About</a>
       </nav>
       <div class="header-actions">
-        ${showCart ? `<a class="icon-link" href="#/cart" aria-label="Shopping cart">
+        <a class="icon-link ${active === "cart" || active === "checkout" ? "active" : ""}" href="#/cart" aria-label="Shopping cart">
           ${icons.bag}
           <span class="cart-count ${count ? "visible" : ""}">${count}</span>
-        </a>` : ""}
-        <a class="icon-link" href="#/settings" aria-label="Settings">${icons.gear}</a>
+        </a>
+        <a class="icon-link ${active === "settings" ? "active" : ""}" href="#/settings" aria-label="Settings">${icons.gear}</a>
       </div>
     </header>
   `;
@@ -269,13 +462,23 @@ function header() {
 function pageShell(content, options = {}) {
   const headerMarkup = options.hideHeader ? "" : header();
   const footerMarkup = options.hideFooter ? "" : footer();
-  return `<div class="site-shell ${options.shellClass || ""}">${headerMarkup}${content}${footerMarkup}${waitlistModalMarkup()}<div id="toast" class="toast"></div></div>`;
+  let shellClass = options.shellClass || "";
+  if (!options.rawShell) {
+    const style = state.settings.style;
+    if (style === "sakura" || style === "sakura-3d") {
+      if (!shellClass.includes("sakura-shell")) shellClass += " sakura-shell";
+    } else if (style === "vapourwave") {
+      if (!shellClass.includes("vapourwave-shell")) shellClass += " vapourwave-shell";
+    }
+  }
+  return `<div class="site-shell ${shellClass.trim()}">${headerMarkup}${content}${footerMarkup}${waitlistModalMarkup()}<div id="toast" class="toast"></div></div>`;
 }
 
 function footer() {
   return `
     <footer class="site-footer">
       <nav class="footer-nav" aria-label="Footer">
+        <a href="#/shipping">Shipping & Returns</a>
         <a href="#/terms">Terms Of Service</a>
         <a href="#/privacy">Privacy Policy</a>
         <a href="#/contact">Contact</a>
@@ -295,8 +498,84 @@ function productById(id) {
   return products.find((product) => product.id === id);
 }
 
+function productSizes(product) {
+  return (product.sizeGuide || []).map((row) => row.size);
+}
+
+function qtyStepperMarkup(value = 1, scope = "pdp") {
+  return `
+    <div class="qty-stepper" data-qty-scope="${scope}">
+      <button type="button" class="qty-btn" data-qty-dec aria-label="Decrease quantity">−</button>
+      <span class="qty-value" data-qty-value>${value}</span>
+      <button type="button" class="qty-btn" data-qty-inc aria-label="Increase quantity">+</button>
+    </div>
+  `;
+}
+
+function cartCount() {
+  return state.cart.reduce((sum, item) => sum + item.qty, 0);
+}
+
+function cartTotal() {
+  return state.cart.reduce((sum, item) => {
+    const product = productById(item.id);
+    return product && Number.isFinite(product.price) ? sum + product.price * item.qty : sum;
+  }, 0);
+}
+
+function addToCart(productId, size, qty) {
+  const existing = state.cart.find((item) => item.id === productId && item.size === size);
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    state.cart.push({ id: productId, size, qty });
+  }
+  writeJson("nebula-cart", state.cart);
+}
+
+function updateCartQty(productId, size, delta) {
+  const item = state.cart.find((entry) => entry.id === productId && entry.size === size);
+  if (!item) return;
+  item.qty = Math.max(1, item.qty + delta);
+  writeJson("nebula-cart", state.cart);
+}
+
+function removeCartItem(productId, size) {
+  state.cart = state.cart.filter((entry) => !(entry.id === productId && entry.size === size));
+  writeJson("nebula-cart", state.cart);
+}
+
+function activeCurrency() {
+  const code = state.settings.address?.country;
+  const entry = COUNTRIES.find((c) => c[0] === code);
+  if (entry && CURRENCY_RATES[entry[2]]) {
+    return { currency: entry[2], symbol: entry[3] };
+  }
+  return { currency: "USD", symbol: "$" };
+}
+
+// Convert a USD amount to the active currency and format it.
+function money(usd) {
+  if (!Number.isFinite(usd)) return usd;
+  const { currency, symbol } = activeCurrency();
+  const rate = CURRENCY_RATES[currency] || 1;
+  const value = usd * rate;
+  const decimals = ZERO_DECIMAL_CURRENCIES.has(currency) ? 0 : 2;
+  const formatted = value.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+  return currency === "USD" ? `${symbol}${formatted}` : `${symbol}${formatted} ${currency}`;
+}
+
+function countrySelectMarkup(id, selectedCode) {
+  const options = [`<option value="">Select country</option>`]
+    .concat(COUNTRIES.map(([code, name]) =>
+      `<option value="${code}"${code === selectedCode ? " selected" : ""}>${name}</option>`
+    ));
+  return `<select id="${id}" data-country-select autocomplete="country">${options.join("")}</select>`;
+}
+
 function priceLabel(product) {
-  return Number.isFinite(product.price) ? `$${product.price}` : "Price TBD";
+  if (product.comingSoon) return "Coming Soon";
+  return Number.isFinite(product.price) ? money(product.price) : "Price TBD";
 }
 
 function productUrl(product) {
@@ -315,34 +594,37 @@ function waitlistModalMarkup() {
   if (!state.waitlistModal) return "";
   const product = productById(state.waitlistModal.productId);
   if (!product) return "";
-  const email = knownWaitlistEmail();
-  const hasEmail = Boolean(email);
+  const { size, qty } = state.waitlistModal;
+  const signedIn = Boolean(state.auth.user);
+  const email = state.auth.user?.email || "";
+
+  const bodyMarkup = signedIn
+    ? `
+        <p class="modal-copy">Joining as ${escapeHtml(email)}. You'll get a confirmation email now and a reminder when this piece drops, with a priority ordering window.</p>
+        <form class="waitlist-form" data-waitlist-form>
+          <div class="modal-actions">
+            <button class="secondary-button" type="button" data-modal-close>Cancel</button>
+            <button class="primary-button" type="submit">Confirm Waitlist</button>
+          </div>
+        </form>
+      `
+    : `
+        <p class="modal-copy">Waitlisting is reserved for members. Create a free Virdasia account (or sign in) to lock in this piece — we'll email you the moment it drops.</p>
+        <div class="modal-actions">
+          <button class="secondary-button" type="button" data-modal-close>Cancel</button>
+          <button class="primary-button" type="button" data-waitlist-signin>Sign In / Create Account</button>
+        </div>
+      `;
 
   return `
     <div class="modal-backdrop" role="presentation" data-modal-close>
       <section class="waitlist-modal" role="dialog" aria-modal="true" aria-labelledby="waitlist-title">
         <button class="modal-close" type="button" aria-label="Close waitlist modal" data-modal-close>×</button>
         <p class="modal-eyebrow">Pre-Launch Waitlist</p>
-        <h2 id="waitlist-title">${hasEmail ? "Waitlist this item?" : "Join The Waitlist"}</h2>
+        <h2 id="waitlist-title">${signedIn ? "Waitlist this item?" : "Members Only"}</h2>
         <p class="modal-product">${product.name}</p>
-        <p class="modal-copy">
-          ${hasEmail
-            ? `Use ${escapeHtml(email)} for this waitlist request. You will get a confirmation email and priority ordering period when this item comes out.`
-            : "If you are interested in this item, enter your email to join the waitlist. You will get an email and priority ordering period when it comes out."
-          }
-        </p>
-        <form class="waitlist-form" data-waitlist-form>
-          ${hasEmail ? "" : `
-            <label class="field">
-              <span>Email</span>
-              <input name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
-            </label>
-          `}
-          <div class="modal-actions">
-            <button class="secondary-button" type="button" data-modal-close>Cancel</button>
-            <button class="primary-button" type="submit">${hasEmail ? "Confirm Waitlist" : "Join Waitlist"}</button>
-          </div>
-        </form>
+        <p class="modal-selection">Size ${escapeHtml(size || "—")} · Qty ${qty || 1}</p>
+        ${bodyMarkup}
       </section>
     </div>
   `;
@@ -360,14 +642,15 @@ function homePage() {
           muted
           poster="nebula-home-video-preview.png"
         >
+          <source src="assets/home-animation-v2.mov" type="video/quicktime" />
           <source src="assets/final-flash.mp4" type="video/mp4" />
           <source src="assets/final-flash.mov" type="video/quicktime" />
         </video>
         <div class="home-vignette" aria-hidden="true"></div>
-        <a class="home-brand" href="#/home" aria-label="Nebula home">
-          <span class="brand-mark">Nebula</span>
-          <span class="brand-kana">ネビュラ</span>
-        </a>
+        <a class="home-brand" href="#/home" aria-label="Virdasia home">
+          <span class="brand-logo" aria-hidden="true"></span>
+          <span class="brand-mark">Virdasia</span>
+          </a>
         <button class="shop-enter-button" type="button" data-enter-shop aria-label="Play animation and enter shop">
           <span class="shop-enter-title">Shop</span>
           <span class="shop-enter-kana">ショップ</span>
@@ -375,46 +658,99 @@ function homePage() {
         <p class="press-enter">Press To Enter</p>
       </section>
     </main>
-  `, { hideHeader: true, hideFooter: true, shellClass: "home-shell" });
+  `, { hideHeader: true, hideFooter: true, shellClass: "home-shell", rawShell: true });
 }
 
 function aboutPage() {
   return pageShell(`
     <main class="page about-page">
-      <section class="narrow">
+      <section class="narrow about-inner">
         <p class="eyebrow">About</p>
-        <h1 class="display-title">A house of myths.</h1>
+
+        <h1 class="display-title about-heading">The Vision</h1>
         <div class="about-copy">
-          <p>Nebula is a placeholder brand statement. We make small-batch garments inspired by anime, folklore, and the quiet pull of distant galaxies.</p>
-          <p>Every drop is a chapter -- characters, colors, and glyphs woven into wearable pieces. This copy will be replaced with the real story shortly.</p>
-          <p>Founded between two cities. Made for the wanderers in between.</p>
+          <p>Virdasia is a place of fantasy. The name is ours, an invented land, somewhere verdant and half-remembered, the kind of world you read your way into as a kid and never fully left.</p>
+          <p>Fantasy and fiction isn't just about escaping reality, it's about imagination and expression. Our clothes are for those who want to embody the characters and worlds they love. Not just through embodying them visually but daring to dress bold like they do.</p>
+          <p>For those who felt seen by a story in a way they couldn't in the real world. For those who want to wear their childhood heroes out loud, in a language only some people will catch. And lastly for those who dare to dress bold.</p>
+        </div>
+
+        <div class="lookbook-row lookbook-row-wide">
+          <figure class="lookbook-figure"><img src="assets/lookbook-3.png" alt="Virdasia lookbook" loading="lazy" /></figure>
+          <figure class="lookbook-figure"><img src="assets/lookbook-4.jpg" alt="Virdasia lookbook" loading="lazy" /></figure>
+        </div>
+
+        <h2 class="display-title about-heading">The Purpose</h2>
+        <div class="about-copy">
+          <p>The problem was simple: nobody was making this well. Most fandom clothing brands feature loud graphic tees that live in the back of a drawer. In our pieces, fiction is subtly woven into modern fashionable clothes that can be a part of your actual closet. Things you'd actually reach for when you want to look good.</p>
+          <p>Each and every Virdasia piece cleverly carries a character, world or fantasy. But you'd never mistake it for a costume. It's a fashion statement first and a love letter second.</p>
+        </div>
+
+        <div class="lookbook-row lookbook-row-tall">
+          <figure class="lookbook-figure"><img src="assets/lookbook-1.png" alt="Virdasia lookbook" loading="lazy" /></figure>
+          <figure class="lookbook-figure"><img src="assets/lookbook-2.png" alt="Virdasia lookbook" loading="lazy" /></figure>
         </div>
       </section>
     </main>
   `);
 }
 
+const legalContent = {
+  shipping: {
+    title: "Shipping & Returns",
+    sections: [
+      ["Overview", "This draft Shipping & Returns policy explains how Virdasia expects to fulfill orders, handle preorders and waitlisted drops, and process returns or exchanges. Details are placeholders and will be finalized before launch."],
+      ["Processing Time", "In-stock pieces are expected to ship within 2-5 business days. Waitlisted and preorder pieces ship after the drop's production window closes; the estimated window will be shown on the product page and in your order confirmation."],
+      ["Shipping Rates & Delivery", "Shipping options, rates, and estimated delivery times are calculated at checkout based on destination. Domestic and international carriers, duties, and taxes will be confirmed before launch."],
+      ["Order Tracking", "Once an order ships, a tracking number will be emailed to the address on the order. Order status will also appear under Order History in your settings."],
+      ["Returns & Exchanges", "We expect to accept returns and exchanges on unworn, unwashed pieces with tags attached within 14 days of delivery. Made-to-order, final-sale, and heavily discounted pieces may be excluded. Final return rules will be posted before launch."],
+      ["How To Start A Return", "To start a return or exchange, contact support with your order number. Approved returns will receive instructions and, where offered, a prepaid label. Refunds are issued to the original payment method after the return is received and inspected."],
+      ["Damaged Or Incorrect Items", "If a piece arrives damaged, defective, or incorrect, contact support within 7 days of delivery with photos so we can arrange a replacement or refund at no additional cost."],
+    ],
+  },
+};
+
 function legalPage(type) {
+  if (legalContent[type]) {
+    const { title, sections } = legalContent[type];
+    return pageShell(`
+      <main class="page legal-page">
+        <section class="narrow">
+          ${breadcrumb(title)}
+          <h1 class="display-title">${title}</h1>
+          <p class="legal-updated">Draft updated ${legalUpdated}</p>
+          <div class="legal-copy">
+            ${sections.map(([heading, copy]) => `
+              <section>
+                <h2>${heading}</h2>
+                <p>${copy}</p>
+              </section>
+            `).join("")}
+          </div>
+        </section>
+      </main>
+    `);
+  }
+
   const isPrivacy = type === "privacy";
   const title = isPrivacy ? "Privacy Policy" : "Terms Of Service";
   const sections = isPrivacy
     ? [
-        ["Overview", "This draft Privacy Policy explains how Nebula may collect, use, and protect customer information when visitors use this website, create an account, join a waitlist, place an order, or contact us."],
+        ["Overview", "This draft Privacy Policy explains how Virdasia may collect, use, and protect customer information when visitors use this website, create an account, join a waitlist, place an order, or contact us."],
         ["Information We Collect", "We may collect account details such as name, email address, authentication identifiers, order details, shipping information, support messages, device data, and website usage data."],
         ["How We Use Information", "We use information to provide account access, process orders, manage waitlists, respond to support requests, improve the store experience, prevent fraud, and send transactional or marketing communications where permitted."],
-        ["Service Providers", "We may share information with vendors that help run the store, including authentication, payment, shipping, analytics, hosting, email, and customer support providers. They should only use information to provide services to Nebula."],
+        ["Service Providers", "We may share information with vendors that help run the store, including authentication, payment, shipping, analytics, hosting, email, and customer support providers. They should only use information to provide services to Virdasia."],
         ["Cookies And Local Storage", "The website may use cookies, browser storage, and similar technologies to keep users signed in, remember preferences, maintain carts, measure site performance, and improve product discovery."],
         ["Your Choices", "Customers may request account updates, unsubscribe from marketing emails, or ask for deletion of personal information where applicable law allows. Some order records may need to be retained for legal, tax, or fraud-prevention reasons."],
         ["Security", "We use reasonable technical and organizational safeguards, including Supabase Auth for account access. No online service is completely secure, so this section should be reviewed by counsel before launch."],
       ]
     : [
-        ["Overview", "These draft Terms of Service govern access to and use of the Nebula website, product pages, accounts, waitlists, carts, and related services. They are placeholder terms and should be reviewed before launch."],
+        ["Overview", "These draft Terms of Service govern access to and use of the Virdasia website, product pages, accounts, waitlists, carts, and related services. They are placeholder terms and should be reviewed before launch."],
         ["Eligibility", "By using this website, customers confirm they can enter into a binding agreement and will provide accurate account, contact, billing, and shipping information."],
-        ["Accounts", "Customers are responsible for keeping login credentials secure and for activity that occurs through their account. Nebula may suspend or close accounts that violate these terms, misuse the site, or create operational risk."],
+        ["Accounts", "Customers are responsible for keeping login credentials secure and for activity that occurs through their account. Virdasia may suspend or close accounts that violate these terms, misuse the site, or create operational risk."],
         ["Products And Availability", "Product descriptions, prices, images, sizing, inventory, launch modes, preorder status, and availability may change. Prototype pages may contain placeholder details until final production information is confirmed."],
         ["Orders, Payments, And Shipping", "Final checkout, payment processing, shipping timelines, taxes, duties, cancellations, and return rules will be shown during checkout or in a dedicated shipping and returns policy before launch."],
-        ["Intellectual Property", "The Nebula name, website design, product photography, product artwork, copy, and other content are owned by Nebula or its licensors and may not be copied or reused without permission."],
-        ["Limitation Of Liability", "To the extent permitted by law, Nebula is not liable for indirect, incidental, special, or consequential damages arising from use of the website or products. Final legal language should be reviewed by counsel."],
+        ["Intellectual Property", "The Virdasia name, website design, product photography, product artwork, copy, and other content are owned by Virdasia or its licensors and may not be copied or reused without permission."],
+        ["Limitation Of Liability", "To the extent permitted by law, Virdasia is not liable for indirect, incidental, special, or consequential damages arising from use of the website or products. Final legal language should be reviewed by counsel."],
       ];
 
   return pageShell(`
@@ -455,13 +791,84 @@ function contactPage() {
           </article>
           <article>
             <h2>Studio</h2>
-            <p>Nebula Studio</p>
+            <p>Virdasia Studio</p>
             <p>City, Country placeholder</p>
           </article>
         </div>
       </section>
     </main>
   `);
+}
+
+function shopControlsMarkup(isSakuraScene) {
+  const barClass = isSakuraScene ? "shop-bar sakura-shop-bar" : "shop-bar";
+  const navClass = isSakuraScene ? "sakura-categories" : "shop-categories";
+  const controlsClass = isSakuraScene ? "sakura-controls" : "shop-controls";
+  const activeCat = state.filters.category;
+  const catLinks = CATEGORY_OPTIONS.map(([id, label]) =>
+    `<a class="${activeCat === id ? "active" : ""}" href="#" data-filter-category="${id}">${label}</a>`
+  ).join("");
+  const activeCount = activeFilterCount();
+  return `
+    <section class="${barClass}" aria-label="Product controls">
+      <nav class="${navClass}" aria-label="Product categories">${catLinks}</nav>
+      <div class="${controlsClass}">
+        <div class="filter-anchor">
+          <button type="button" class="filter-toggle" data-toggle-filter aria-expanded="${state.filterOpen ? "true" : "false"}">
+            Filter ${activeCount ? `<span class="filter-badge">${activeCount}</span>` : "+"}
+          </button>
+          ${state.filterOpen ? filterPopoverMarkup() : ""}
+        </div>
+        <div class="sort-anchor">
+          <button type="button" class="sort-toggle" data-toggle-sort aria-expanded="${state.sortOpen ? "true" : "false"}">
+            Sort By ${sortArrow()}
+          </button>
+          ${state.sortOpen ? sortPopoverMarkup() : ""}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function sortArrow() {
+  return `<span class="sort-arrow" aria-hidden="true">${state.sortOpen ? "▴" : "▾"}</span>`;
+}
+
+function sortPopoverMarkup() {
+  return `
+    <div class="sort-popover" role="menu">
+      ${SORT_OPTIONS.map(([id, label]) =>
+        `<button type="button" class="sort-option ${state.sort === id ? "is-active" : ""}" data-sort="${id}" role="menuitemradio" aria-checked="${state.sort === id}">${label}</button>`
+      ).join("")}
+    </div>
+  `;
+}
+
+function filterPopoverMarkup() {
+  const { colors, priceMin, priceMax } = state.filters;
+  const colorChips = COLOR_OPTIONS.map(([name, hex]) => {
+    const selected = colors.includes(name);
+    return `<button type="button" class="color-chip ${selected ? "is-selected" : ""}" data-filter-color="${name}" aria-pressed="${selected}" title="${name}"><span style="background:${hex}"></span>${name}</button>`;
+  }).join("");
+  return `
+    <div class="filter-popover" role="dialog" aria-label="Filter products">
+      <div class="filter-section">
+        <h4>Price</h4>
+        <div class="filter-price-inputs">
+          <label>Min $<input type="number" min="0" data-filter-price-min value="${priceMin ?? ""}" placeholder="0" /></label>
+          <label>Max $<input type="number" min="0" data-filter-price-max value="${priceMax ?? ""}" placeholder="Any" /></label>
+        </div>
+      </div>
+      <div class="filter-section">
+        <h4>Color</h4>
+        <div class="color-chip-grid">${colorChips}</div>
+      </div>
+      <div class="filter-actions-row">
+        <button type="button" class="filter-reset" data-filter-reset>Reset</button>
+        <button type="button" class="filter-close" data-filter-close>Done</button>
+      </div>
+    </div>
+  `;
 }
 
 function shopPage() {
@@ -472,56 +879,10 @@ function shopPage() {
   const isSakuraScene = isSakura || isSakura3d;
   const showListingActions = state.settings.launchMode !== "pre";
   const sakura3dVariant = state.settings.sakura3dVariant || "polaroid";
-  const shopControls = isSakuraScene
-    ? `
-      <section class="shop-bar sakura-shop-bar" aria-label="Product controls">
-        <nav class="sakura-categories" aria-label="Product categories">
-          <a class="active" href="#/shop">All Products</a>
-          <a href="#/shop">Tops</a>
-          <a href="#/shop">Bottoms</a>
-          <a href="#/shop">Outerwear</a>
-          <a href="#/shop">Accessories</a>
-        </nav>
-        <div class="sakura-controls">
-          <button type="button">Filter +</button>
-          <label>
-            <span class="sr-only">Sort by</span>
-            <select class="select-like" aria-label="Sort by">
-              <option>Sort By</option>
-              <option>Newest</option>
-              <option>Price</option>
-              <option>Name</option>
-            </select>
-          </label>
-        </div>
-      </section>
-    `
-    : isVapourwave
-      ? ""
-    : `
-      <section class="shop-bar" aria-label="Product controls">
-        <div class="shop-sort">
-          <span>Filter</span>
-          <label>
-            <span class="sr-only">Sort by</span>
-            <select class="select-like" aria-label="Sort by">
-              <option>Sort By: Newest</option>
-              <option>Sort By: Price</option>
-              <option>Sort By: Name</option>
-            </select>
-          </label>
-        </div>
-        <div class="pager">
-          <span>Page 1 Of 3</span>
-          <button type="button" aria-label="Previous page">‹</button>
-          <button type="button" aria-label="Next page">›</button>
-        </div>
-      </section>
-    `;
+  const shopControls = isVapourwave ? "" : shopControlsMarkup(isSakuraScene);
 
   return pageShell(`
     <main class="page shop-page ${isSakuraScene ? "shop-page-sakura" : ""} ${isSakura3d ? `shop-page-sakura-3d sakura-3d-${sakura3dVariant}` : ""} ${isVapourwave ? "shop-page-vapourwave" : ""}">
-      ${isVapourwave ? vapourwaveHeader() : ""}
       ${isSakuraScene || isVapourwave ? "" : `<div class="shop-background" aria-hidden="true">
         ${backgroundArts.map(([id, label, src]) => `<img class="shop-art shop-art-${id}" src="${src}" alt="${label}" />`).join("")}
       </div>`}
@@ -532,7 +893,6 @@ function shopPage() {
               <div class="sakura-hero-copy">
                 <p class="sakura-kicker">Wear The Future ✦</p>
                 <h1>Shop</h1>
-                <p class="sakura-japanese">美学を纏う。個性を解き放つ。</p>
                 <p class="sakura-subcopy">Statement pieces for those<br />who refuse to blend in.</p>
               </div>
             `
@@ -540,7 +900,6 @@ function shopPage() {
               ? `
                 <div class="vapourwave-hero-copy">
                   <h1>Shop</h1>
-                  <p class="vapourwave-japanese">未来はあなたのものだ。</p>
                   <p class="vapourwave-subcopy">The future is yours. ▸</p>
                 </div>
               `
@@ -550,11 +909,14 @@ function shopPage() {
       ${shopControls}
       ${isVapourwave ? vapourwaveLayout(actionLabel) : `
         <section class="product-grid ${isSakura ? "sakura-product-panel" : ""} ${isSakura3d ? `sakura-3d-grid sakura-3d-grid-${sakura3dVariant}` : ""}" aria-label="Products">
-          ${products.map((product) => productCard(product, actionLabel, isSakura3d ? sakura3dVariant : "", showListingActions)).join("")}
+          ${filteredProducts().length
+            ? filteredProducts().map((product) => productCard(product, actionLabel, isSakura3d ? sakura3dVariant : "", showListingActions)).join("")
+            : `<p class="empty-filter">No products match your filters. <button type="button" data-filter-reset class="filter-reset-inline">Reset filters</button></p>`
+          }
         </section>
       `}
     </main>
-  `, { hideHeader: isVapourwave, shellClass: `${isSakuraScene ? "sakura-shell" : ""} ${isVapourwave ? "vapourwave-shell" : ""}` });
+  `, { shellClass: `${isSakuraScene ? "sakura-shell" : ""} ${isVapourwave ? "vapourwave-shell" : ""}` });
 }
 
 function vapourwaveHeader() {
@@ -579,32 +941,41 @@ function vapourwaveHeader() {
 
 function vapourwaveLayout(actionLabel) {
   const showListingActions = state.settings.launchMode !== "pre";
-  const vapourwaveProducts = [
-    products.find((product) => product.id === "eternal-mangekyo-denim-jacket"),
-    ...products.filter((product) => product.id !== "eternal-mangekyo-denim-jacket"),
-  ].filter(Boolean);
+  const list = filteredProducts();
+  const activeCat = state.filters.category;
+  const catLinks = CATEGORY_OPTIONS.map(([id, label]) =>
+    `<a class="${activeCat === id ? "active" : ""}" href="#" data-filter-category="${id}">${label}${activeCat === id ? "" : ` <span>+</span>`}</a>`
+  ).join("");
+  const colorChips = COLOR_OPTIONS.map(([name, hex]) => {
+    const selected = state.filters.colors.includes(name);
+    return `<button type="button" class="vapour-color-chip ${selected ? "is-selected" : ""}" data-filter-color="${name}" title="${name}"><span style="background:${hex}"></span>${name}</button>`;
+  }).join("");
+  const { priceMin, priceMax } = state.filters;
+  const sortLabel = (SORT_OPTIONS.find(([id]) => id === state.sort) || SORT_OPTIONS[0])[1];
 
   return `
     <section class="vapourwave-shop-surface" aria-label="Vapourwave products">
       <aside class="vapourwave-sidebar">
         <div class="vapour-panel category-panel">
           <h2>Categories_</h2>
-          <a class="active" href="#/shop">All Products</a>
-          <a href="#/shop">Tops <span>+</span></a>
-          <a href="#/shop">Bottoms <span>+</span></a>
-          <a href="#/shop">Outerwear <span>+</span></a>
-          <a href="#/shop">Accessories <span>+</span></a>
-          <a href="#/shop">Bags <span>+</span></a>
-          <a href="#/shop">Headwear <span>+</span></a>
+          ${catLinks}
         </div>
         <div class="vapour-panel filter-panel">
           <h2>Filter_</h2>
-          <div class="filter-row"><span>Size</span><span>All ▾</span></div>
-          <div class="filter-row"><span>Color</span><span>All ▾</span></div>
-          <div class="filter-price"><span>Price</span><span>+</span></div>
-          <div class="range-line"><i></i><i></i></div>
-          <div class="price-row"><span>$0</span><span>$300+</span></div>
-          <div class="filter-actions"><button>Reset</button><button>Apply</button></div>
+          <div class="vapour-filter-label">Price</div>
+          <div class="vapour-price-inputs">
+            <label>Min $<input type="number" min="0" data-filter-price-min value="${priceMin ?? ""}" placeholder="0" /></label>
+            <label>Max $<input type="number" min="0" data-filter-price-max value="${priceMax ?? ""}" placeholder="Any" /></label>
+          </div>
+          <div class="vapour-filter-label">Color</div>
+          <div class="vapour-color-grid">${colorChips}</div>
+          <div class="filter-actions"><button type="button" data-filter-reset>Reset</button></div>
+        </div>
+        <div class="vapour-panel sort-panel">
+          <h2>Sort_</h2>
+          ${SORT_OPTIONS.map(([id, label]) =>
+            `<button type="button" class="vapour-sort-option ${state.sort === id ? "is-active" : ""}" data-sort="${id}">${label}</button>`
+          ).join("")}
         </div>
         <div class="vapour-panel os-panel">
           <h2>Aesthetic_OS</h2>
@@ -612,33 +983,51 @@ function vapourwaveLayout(actionLabel) {
         </div>
       </aside>
       <section class="vapourwave-grid" aria-label="Products">
-        ${vapourwaveProducts.map((product) => productCard(product, actionLabel, "vapourwave", showListingActions)).join("")}
+        ${list.length
+          ? list.map((product) => productCard(product, actionLabel, "vapourwave", showListingActions)).join("")
+          : `<p class="empty-filter">No products match. <button type="button" data-filter-reset class="filter-reset-inline">Reset</button></p>`
+        }
       </section>
     </section>
   `;
 }
 
 function productCard(product, actionLabel, frameStyle = "", showAction = true) {
+  const isSoon = !!product.comingSoon;
+  const imgInner = product.image
+    ? `<img src="${product.image}" alt="${escapeHtml(product.name)}" />`
+    : `<div class="product-coming-soon">Coming Soon</div>`;
+  const imgEl = isSoon && product.image
+    ? `${imgInner}<div class="product-soon-overlay"><span>Coming Soon</span></div>`
+    : imgInner;
+  const canAct = showAction && !isSoon;
+
+  // Coming-soon items are not shoppable and have no preview page — render the
+  // media + name as non-clickable elements instead of links.
+  const mediaOpen = isSoon
+    ? `<div class="product-image-wrap product-soon-wrap">`
+    : `<a class="product-image-wrap product-card-link" href="${productUrl(product)}" aria-label="View ${escapeHtml(product.name)}">`;
+  const mediaClose = isSoon ? `</div>` : `</a>`;
+  const nameEl = isSoon
+    ? `<span class="product-name product-name-soon">${product.name}</span>`
+    : `<a class="product-name product-card-link" href="${productUrl(product)}">${product.name}</a>`;
+
   if (frameStyle === "vapourwave") {
     return `
-      <article class="product-card vapourwave-card">
+      <article class="product-card vapourwave-card${isSoon ? " is-coming-soon" : ""}">
         <div class="vapour-window-bar">
-          <span class="vapour-window-tools">⚙ +</span>
+          <span class="vapour-window-title">"${product.osName}"</span>
           <span class="vapour-window-controls"><i>−</i><i>□</i><i>×</i></span>
         </div>
         <div class="vapour-window-body">
-          <a class="product-card-link" href="${productUrl(product)}" aria-label="View ${escapeHtml(product.name)}">
-            <h3>"${product.osName}"</h3>
-          </a>
-          <a class="product-image-wrap product-card-link" href="${productUrl(product)}" aria-label="View ${escapeHtml(product.name)}">
-            <img src="${product.image}" alt="${escapeHtml(product.name)}" />
-          </a>
-          <div class="vapour-card-footer">
-            <strong>${priceLabel(product)}</strong>
-            ${showAction ? `<button type="button" data-add-product="${product.id}" aria-label="${actionLabel} ${escapeHtml(product.name)}">${icons.bag}</button>` : ""}
-          </div>
+          ${mediaOpen}
+            ${imgEl}
+          ${mediaClose}
         </div>
-        <div class="vapour-status-bar"><span></span><i></i></div>
+        <div class="vapour-status-bar">
+          <strong class="vapour-status-price">${priceLabel(product)}</strong>
+          ${canAct ? `<a class="vapour-card-cta" href="${productUrl(product)}" aria-label="View ${escapeHtml(product.name)}">${icons.bag}</a>` : `<i></i>`}
+        </div>
       </article>
     `;
   }
@@ -657,32 +1046,32 @@ function productCard(product, actionLabel, frameStyle = "", showAction = true) {
         : "";
 
     return `
-      <article class="product-card sakura-3d-card sakura-3d-card-${frameStyle}">
+      <article class="product-card sakura-3d-card sakura-3d-card-${frameStyle}${isSoon ? " is-coming-soon" : ""}">
         ${frameHeader}
         <div class="sakura-3d-frame">
-          <a class="product-image-wrap product-card-link" href="${productUrl(product)}" aria-label="View ${escapeHtml(product.name)}">
-            <img src="${product.image}" alt="${escapeHtml(product.name)}" />
-          </a>
+          ${mediaOpen}
+            ${imgEl}
+          ${mediaClose}
           ${frameFooter}
         </div>
         <div class="product-meta">
-          <a class="product-name product-card-link" href="${productUrl(product)}">${product.name}</a>
+          ${nameEl}
           <div class="product-price">${priceLabel(product)}</div>
-          ${showAction ? `<button class="product-action" type="button" data-add-product="${product.id}">${actionLabel}</button>` : ""}
+          ${canAct ? `<a class="product-action" href="${productUrl(product)}">${state.settings.launchMode === "pre" ? "Waitlist" : "Select Options"}</a>` : ""}
         </div>
       </article>
     `;
   }
 
   return `
-    <article class="product-card">
-      <a class="product-image-wrap product-card-link" href="${productUrl(product)}" aria-label="View ${escapeHtml(product.name)}">
-        <img src="${product.image}" alt="${escapeHtml(product.name)}" />
-      </a>
+    <article class="product-card${isSoon ? " is-coming-soon" : ""}">
+      ${mediaOpen}
+        ${imgEl}
+      ${mediaClose}
       <div class="product-meta">
-        <a class="product-name product-card-link" href="${productUrl(product)}">${product.name}</a>
+        ${nameEl}
         <div class="product-price">${priceLabel(product)}</div>
-        ${showAction ? `<button class="product-action" type="button" data-add-product="${product.id}">${actionLabel}</button>` : ""}
+        ${canAct ? `<a class="product-action" href="${productUrl(product)}">${state.settings.launchMode === "pre" ? "Waitlist" : "Select Options"}</a>` : ""}
       </div>
     </article>
   `;
@@ -690,13 +1079,16 @@ function productCard(product, actionLabel, frameStyle = "", showAction = true) {
 
 function productDetailPage() {
   const product = productById(productRouteId());
-  if (!product) {
+  // Coming-soon pieces have no preview page — treat a direct link like a
+  // not-yet-available notice and send the visitor back to the shop.
+  if (!product || product.comingSoon) {
+    const soon = product && product.comingSoon;
     return pageShell(`
       <main class="page product-detail-page">
         <section class="narrow">
-          ${breadcrumb("Product Not Found", "Shop")}
-          <h1 class="display-title">Product Not Found</h1>
-          <p class="empty-cart">That piece is not in the current catalog.</p>
+          ${breadcrumb(soon ? "Coming Soon" : "Product Not Found", `<a href="#/shop">Shop</a>`)}
+          <h1 class="display-title">${soon ? escapeHtml(product.name) : "Product Not Found"}</h1>
+          <p class="empty-cart">${soon ? "This piece hasn't dropped yet. Check back soon." : "That piece is not in the current catalog."}</p>
           <a class="primary-button inline-button" href="#/shop">Back To Shop</a>
         </section>
       </main>
@@ -725,35 +1117,45 @@ function productDetailPage() {
 
   return pageShell(`
     <main class="page product-detail-page ${pageClass}">
-      ${isVapourwave ? vapourwaveHeader() : ""}
       <div class="product-detail-breadcrumb">
         ${breadcrumb(product.name, `<a href="#/shop">Shop</a>`)}
       </div>
+      <div class="detail-panel detail-panel-main">
       <section class="product-detail-shell">
         <div class="product-detail-media">
-          <img src="${product.image}" alt="${escapeHtml(product.name)}" />
+          ${product.comingSoon
+            ? `<div class="product-coming-soon product-coming-soon-large">Coming Soon</div>`
+            : `
+              <img class="product-detail-hero" src="${(product.gallery && product.gallery[0]) || product.image}" alt="${escapeHtml(product.name)}" />
+              ${product.gallery && product.gallery.length > 1 ? `
+                <div class="product-detail-gallery">
+                  ${product.gallery.map((src, i) => `
+                    <button class="product-gallery-thumb${i === 0 ? " is-active" : ""}" type="button" data-gallery-src="${src}" aria-label="View image ${i + 1}">
+                      <img src="${src}" alt="${escapeHtml(product.name)} ${i + 1}" />
+                    </button>
+                  `).join("")}
+                </div>
+              ` : ""}
+            `}
           <p class="section-label product-badge">${product.badge}</p>
         </div>
         <article class="product-detail-info">
           <h1>${product.name}</h1>
           <p class="product-subtitle">${product.subtitle}</p>
           <p class="product-detail-price">${priceLabel(product)}</p>
+          ${product.comingSoon ? "" : `
           <div class="product-size-row">
             <span>Size</span>
             <button class="size-guide-link" type="button" data-scroll-target="size-guide">Size Guide</button>
           </div>
-          <div class="size-pills">${product.sizeGuide.map((row) => `<button type="button">${row.size}</button>`).join("")}</div>
-          <button class="primary-button product-detail-action" type="button" data-add-product="${product.id}">${detailActionLabel}</button>
-          <div class="product-quick-specs">
-            <p><strong>Category:</strong> ${product.category}</p>
-            <p><strong>Fit:</strong> ${product.fit}</p>
-            <p><strong>Colorway:</strong> ${product.colorway}</p>
+          <div class="size-pills" data-size-pills>${productSizes(product).map((size) => `<button type="button" class="size-pill" data-size="${size}">${size}</button>`).join("")}</div>
+          <div class="product-qty-row">
+            <span>Quantity</span>
+            ${qtyStepperMarkup(1, "pdp")}
           </div>
+          <button class="primary-button product-detail-action" type="button" data-add-product="${product.id}">${detailActionLabel}</button>
+          `}
           <section class="product-accordions" aria-label="Product information">
-            <details open>
-              <summary>Description <span aria-hidden="true">⌃</span></summary>
-              ${secondaryDescription.map((paragraph) => `<p>${paragraph}</p>`).join("")}
-            </details>
             <details>
               <summary>Details <span aria-hidden="true">⌄</span></summary>
               <ul>${product.details.map((detail) => `<li>${detail}</li>`).join("")}</ul>
@@ -777,6 +1179,8 @@ function productDetailPage() {
           </section>
         </article>
       </section>
+      </div>
+      <div class="detail-panel detail-panel-size">
       <section id="size-guide" class="product-size-guide">
         <h2>Size Guide</h2>
         <p>Measurements in ${product.sizeGuideUnit === "in" ? "inches" : "centimeters"}. Approximate; may vary slightly with production.</p>
@@ -787,6 +1191,8 @@ function productDetailPage() {
           </table>
         </div>
       </section>
+      </div>
+      <div class="detail-panel detail-panel-related">
       <section class="related-products" aria-label="You may also like">
         <h2>You may also like</h2>
         <div class="related-product-grid">
@@ -801,8 +1207,9 @@ function productDetailPage() {
           `).join("")}
         </div>
       </section>
+      </div>
     </main>
-  `, { hideHeader: isVapourwave, shellClass });
+  `, { shellClass });
 }
 
 function authAccountSection() {
@@ -890,6 +1297,124 @@ function authAccountSection() {
   `;
 }
 
+function formatDate(iso) {
+  try {
+    return new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+  } catch {
+    return "";
+  }
+}
+
+function profileSection() {
+  const profile = state.settings.profile || {};
+  const addr = state.settings.address || {};
+  return `
+    <section>
+      <h2 class="section-label">Profile & Shipping</h2>
+      <p class="option-copy">Saved here on this device for now. Once accounts are connected, this will sync to your Virdasia account and prefill checkout.</p>
+      <div class="form-grid">
+        <div class="field">
+          <label for="pf-fullname">Full Name</label>
+          <input id="pf-fullname" value="${escapeHtml(profile.fullName || "")}" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="pf-phone">Phone</label>
+          <input id="pf-phone" value="${escapeHtml(profile.phone || "")}" autocomplete="tel" />
+        </div>
+        <div class="field field-wide">
+          <label for="pf-line1">Address</label>
+          <input id="pf-line1" value="${escapeHtml(addr.line1 || "")}" autocomplete="address-line1" placeholder="Street address" />
+        </div>
+        <div class="field field-wide">
+          <label for="pf-line2">Apartment, suite, etc. (optional)</label>
+          <input id="pf-line2" value="${escapeHtml(addr.line2 || "")}" autocomplete="address-line2" />
+        </div>
+        <div class="field">
+          <label for="pf-city">City</label>
+          <input id="pf-city" value="${escapeHtml(addr.city || "")}" autocomplete="address-level2" />
+        </div>
+        <div class="field">
+          <label for="pf-region">State / Province</label>
+          <input id="pf-region" value="${escapeHtml(addr.region || "")}" autocomplete="address-level1" />
+        </div>
+        <div class="field">
+          <label for="pf-postal">ZIP / Postal Code</label>
+          <input id="pf-postal" value="${escapeHtml(addr.postal || "")}" autocomplete="postal-code" />
+        </div>
+        <div class="field">
+          <label for="pf-country">Country</label>
+          ${countrySelectMarkup("pf-country", addr.country || "")}
+        </div>
+      </div>
+      <div class="auth-actions">
+        <button class="primary-button" type="button" data-save-profile>Save Details</button>
+      </div>
+    </section>
+  `;
+}
+
+function orderHistorySection() {
+  const orders = state.orders || [];
+  const body = orders.length
+    ? orders.slice().reverse().map((order) => `
+        <article class="order-card">
+          <div class="order-card-head">
+            <strong>Order ${escapeHtml(order.id || "")}</strong>
+            <span>${formatDate(order.createdAt)}</span>
+          </div>
+          <div class="order-card-items">
+            ${(order.items || []).map((item) => {
+              const product = productById(item.id);
+              const name = product ? product.name : item.id;
+              return `<p>${name} — Size ${escapeHtml(item.size || "One size")} · Qty ${item.qty}</p>`;
+            }).join("")}
+          </div>
+          <div class="order-card-foot">
+            <span class="order-status">${escapeHtml(order.status || "Processing")}</span>
+            <strong>${money(order.total ?? 0)}</strong>
+          </div>
+        </article>
+      `).join("")
+    : `<p class="settings-empty">No orders yet. Your purchases will show up here once checkout goes live.</p>`;
+  return `
+    <section>
+      <h2 class="section-label">Order History</h2>
+      <div class="order-list">${body}</div>
+    </section>
+  `;
+}
+
+function waitlistSection() {
+  const entries = state.waitlist || [];
+  let body;
+  if (!state.auth.user) {
+    body = `<p class="settings-empty">Sign in to your Virdasia account to see and manage your waitlist.</p>`;
+  } else if (!entries.length) {
+    body = `<p class="settings-empty">You are not on any waitlists yet. Join one from a product page in Pre-Launch mode.</p>`;
+  } else {
+    body = entries.map((entry) => {
+      const product = productById(entry.productId);
+      const name = product ? product.name : (entry.productName || entry.productId);
+      const meta = [`Size ${escapeHtml(entry.size || "Any")}`, `Qty ${entry.qty || 1}`];
+      return `
+        <div class="waitlist-entry">
+          <div>
+            <strong>${name}</strong>
+            <span>${meta.join(" · ")}</span>
+          </div>
+          <button type="button" class="secondary-button waitlist-leave" data-leave-waitlist="${escapeHtml(entry.id || "")}">Leave</button>
+        </div>
+      `;
+    }).join("");
+  }
+  return `
+    <section>
+      <h2 class="section-label">Waitlisted Items</h2>
+      <div class="waitlist-list">${body}</div>
+    </section>
+  `;
+}
+
 function settingsPage() {
   return pageShell(`
     <main class="page settings-page">
@@ -898,6 +1423,12 @@ function settingsPage() {
         <h1 class="display-title">Settings</h1>
         <div class="rule"></div>
         ${authAccountSection()}
+        <div class="rule"></div>
+        ${profileSection()}
+        <div class="rule"></div>
+        ${orderHistorySection()}
+        <div class="rule"></div>
+        ${waitlistSection()}
         <div class="rule"></div>
         <section>
           <h2 class="section-label">Launch Mode</h2>
@@ -928,23 +1459,29 @@ function optionCard(type, [id, title, copy], selected) {
 }
 
 function cartPage() {
-  const total = state.cart.reduce((sum, item) => {
-    const product = products.find((entry) => entry.id === item.id);
-    return product && Number.isFinite(product.price) ? sum + product.price * item.qty : sum;
-  }, 0);
+  const total = cartTotal();
 
   const rows = state.cart
     .map((item) => {
-      const product = products.find((entry) => entry.id === item.id);
+      const product = productById(item.id);
       if (!product) return "";
+      const lineTotal = Number.isFinite(product.price) ? money(product.price * item.qty) : "TBD";
       return `
         <div class="cart-row">
-          <img src="${product.image}" alt="${escapeHtml(product.name)}" />
-          <div>
+          <a href="${productUrl(product)}" aria-label="View ${escapeHtml(product.name)}"><img src="${product.image}" alt="${escapeHtml(product.name)}" /></a>
+          <div class="cart-row-info">
             <h3>${product.name}</h3>
-            <p>Quantity ${item.qty}</p>
+            <p class="cart-row-size">Size ${escapeHtml(item.size || "One size")}</p>
+            <div class="cart-row-controls">
+              <div class="qty-stepper cart-qty" data-cart-id="${product.id}" data-cart-size="${escapeHtml(item.size || "")}">
+                <button type="button" class="qty-btn" data-cart-dec aria-label="Decrease quantity">−</button>
+                <span class="qty-value">${item.qty}</span>
+                <button type="button" class="qty-btn" data-cart-inc aria-label="Increase quantity">+</button>
+              </div>
+              <button type="button" class="cart-remove" data-cart-remove data-cart-id="${product.id}" data-cart-size="${escapeHtml(item.size || "")}">Remove</button>
+            </div>
           </div>
-          <p>${Number.isFinite(product.price) ? `$${product.price * item.qty}` : "TBD"}</p>
+          <p class="cart-row-price">${lineTotal}</p>
         </div>
       `;
     })
@@ -957,9 +1494,124 @@ function cartPage() {
         <h1 class="display-title">Shopping Cart</h1>
         ${
           rows
-            ? `<div class="cart-list">${rows}</div><div class="cart-total"><span>Total</span><span>$${total}</span></div><button class="primary-button checkout-button" type="button">Checkout Placeholder</button>`
-            : `<p class="empty-cart">Your cart is empty for now. The full checkout flow will connect here once the launch mode and product assets are final.</p>`
+            ? `<div class="cart-list">${rows}</div>
+               <div class="cart-total"><span>Subtotal</span><span>${money(total)}</span></div>
+               <p class="cart-note">Shipping and taxes are calculated at checkout.</p>
+               <a class="primary-button checkout-button" href="#/checkout">Proceed To Checkout</a>`
+            : `<p class="empty-cart">Your cart is empty. <a href="#/shop">Browse the shop</a> to add pieces — pick a size and quantity on any product page.</p>`
         }
+      </section>
+    </main>
+  `);
+}
+
+function checkoutPage() {
+  if (!state.cart.length) {
+    return pageShell(`
+      <main class="page checkout-page">
+        <section class="narrow">
+          ${breadcrumb("Checkout", `<a href="#/cart">Cart</a>`)}
+          <h1 class="display-title">Checkout</h1>
+          <p class="empty-cart">Your cart is empty. <a href="#/shop">Browse the shop</a> to add pieces first.</p>
+        </section>
+      </main>
+    `);
+  }
+
+  const total = cartTotal();
+  const addr = state.settings.address || {};
+  const profile = state.settings.profile || {};
+  const contactEmail = state.auth.user?.email || state.settings.email || "";
+  const contactName = profile.fullName || state.settings.name || "";
+
+  const summaryRows = state.cart.map((item) => {
+    const product = productById(item.id);
+    if (!product) return "";
+    const line = Number.isFinite(product.price) ? money(product.price * item.qty) : "TBD";
+    return `
+      <div class="summary-row">
+        <img src="${product.image}" alt="${escapeHtml(product.name)}" />
+        <div>
+          <strong>${product.name}</strong>
+          <span>Size ${escapeHtml(item.size || "One size")} · Qty ${item.qty}</span>
+        </div>
+        <span class="summary-line-price">${line}</span>
+      </div>
+    `;
+  }).join("");
+
+  return pageShell(`
+    <main class="page checkout-page">
+      <section class="checkout-wrap">
+        <div class="checkout-main">
+          ${breadcrumb("Checkout", `<a href="#/cart">Cart</a>`)}
+          <h1 class="display-title">Checkout</h1>
+
+          <section class="checkout-section">
+            <h2 class="section-label">Contact</h2>
+            <div class="form-grid">
+              <div class="field">
+                <label for="co-name">Full Name</label>
+                <input id="co-name" name="co-name" value="${escapeHtml(contactName)}" autocomplete="name" />
+              </div>
+              <div class="field">
+                <label for="co-email">Email</label>
+                <input id="co-email" name="co-email" type="email" value="${escapeHtml(contactEmail)}" autocomplete="email" />
+              </div>
+            </div>
+          </section>
+
+          <section class="checkout-section">
+            <h2 class="section-label">Shipping Address</h2>
+            <div class="form-grid">
+              <div class="field field-wide">
+                <label for="co-line1">Address</label>
+                <input id="co-line1" value="${escapeHtml(addr.line1 || "")}" autocomplete="address-line1" placeholder="Street address" />
+              </div>
+              <div class="field field-wide">
+                <label for="co-line2">Apartment, suite, etc. (optional)</label>
+                <input id="co-line2" value="${escapeHtml(addr.line2 || "")}" autocomplete="address-line2" />
+              </div>
+              <div class="field">
+                <label for="co-city">City</label>
+                <input id="co-city" value="${escapeHtml(addr.city || "")}" autocomplete="address-level2" />
+              </div>
+              <div class="field">
+                <label for="co-region">State / Province</label>
+                <input id="co-region" value="${escapeHtml(addr.region || "")}" autocomplete="address-level1" />
+              </div>
+              <div class="field">
+                <label for="co-postal">ZIP / Postal Code</label>
+                <input id="co-postal" value="${escapeHtml(addr.postal || "")}" autocomplete="postal-code" />
+              </div>
+              <div class="field">
+                <label for="co-country">Country</label>
+                ${countrySelectMarkup("co-country", addr.country || "")}
+              </div>
+            </div>
+          </section>
+
+          <section class="checkout-section">
+            <h2 class="section-label">Payment</h2>
+            <div class="payment-placeholder">
+              <p>Card payments are not connected yet. Stripe checkout will be enabled before launch.</p>
+            </div>
+          </section>
+
+          <button class="primary-button place-order-button" type="button" disabled aria-disabled="true">Place Order</button>
+          <p class="checkout-disabled-note">Ordering is disabled until Stripe payments and accounts are connected.</p>
+        </div>
+
+        <aside class="checkout-summary">
+          <h2 class="section-label">Order Summary</h2>
+          <div class="summary-rows">${summaryRows}</div>
+          <div class="summary-totals">
+            <div class="summary-total-row"><span>Subtotal</span><span>${money(total)}</span></div>
+            <div class="summary-total-row muted"><span>Shipping</span><span>Calculated next</span></div>
+            <div class="summary-total-row summary-grand"><span>Total</span><span>${money(total)}</span></div>
+          </div>
+          ${activeCurrency().currency !== "USD" ? `<p class="summary-fx-note">Approximate conversion from USD. You'll be charged in USD at checkout.</p>` : ""}
+        </aside>
       </section>
     </main>
   `);
@@ -1024,6 +1676,7 @@ function initSupabaseAuth() {
     state.auth.ready = true;
     syncAuthProfile();
     render();
+    refreshWaitlist();
   });
 
   state.auth.client.auth.getSession().then(({ data, error }) => {
@@ -1033,6 +1686,7 @@ function initSupabaseAuth() {
     state.auth.ready = true;
     syncAuthProfile();
     render();
+    refreshWaitlist();
   }).catch((error) => {
     state.auth.error = error.message || "Unable to load Supabase session.";
     state.auth.ready = true;
@@ -1124,8 +1778,8 @@ function showToast(message) {
   showToast.timer = window.setTimeout(() => toast.classList.remove("show"), 1800);
 }
 
-function openWaitlistModal(productId) {
-  state.waitlistModal = { productId };
+function openWaitlistModal(productId, size = null, qty = 1) {
+  state.waitlistModal = { productId, size, qty };
   render();
 }
 
@@ -1134,19 +1788,64 @@ function closeWaitlistModal() {
   render();
 }
 
-function saveWaitlistIntent(productId, email) {
-  const normalizedEmail = email.trim();
-  if (normalizedEmail) {
-    state.waitlistEmail = normalizedEmail;
-    writeJson("nebula-waitlist-email", state.waitlistEmail);
+// Load the signed-in user's waitlist rows from Supabase into state.waitlist.
+async function loadWaitlist() {
+  if (!state.auth.client || !state.auth.user) {
+    state.waitlist = [];
+    return;
   }
+  const { data, error } = await state.auth.client
+    .from("waitlist")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) {
+    state.auth.error = error.message;
+    return;
+  }
+  state.waitlist = (data || []).map((row) => ({
+    id: row.id,
+    productId: row.product_id,
+    productName: row.product_name,
+    email: row.email,
+    size: row.size,
+    qty: row.qty,
+    createdAt: row.created_at,
+  }));
+}
 
-  const waitlistEmail = normalizedEmail || knownWaitlistEmail();
-  const exists = state.waitlist.some((entry) => entry.productId === productId && entry.email === waitlistEmail);
-  if (!exists) {
-    state.waitlist.push({ productId, email: waitlistEmail, createdAt: new Date().toISOString() });
-    writeJson("nebula-waitlist", state.waitlist);
+function refreshWaitlist() {
+  loadWaitlist().then(render).catch(() => render());
+}
+
+// Insert a waitlist entry for the signed-in user. Returns { ok, duplicate }.
+async function addWaitlistEntry(productId, size, qty) {
+  if (!state.auth.client || !state.auth.user) return { ok: false };
+  const product = productById(productId);
+  const { error } = await state.auth.client.from("waitlist").insert({
+    user_id: state.auth.user.id,
+    email: state.auth.user.email,
+    product_id: productId,
+    product_name: product ? product.name : productId,
+    size,
+    qty,
+  });
+  if (error) {
+    // 23505 = unique_violation -> already waitlisted for this product+size.
+    if (error.code === "23505") return { ok: false, duplicate: true };
+    return { ok: false, message: error.message };
   }
+  return { ok: true };
+}
+
+async function removeWaitlistEntry(id) {
+  if (!state.auth.client || !state.auth.user) return;
+  const { error } = await state.auth.client.from("waitlist").delete().eq("id", id);
+  if (error) {
+    showToast("Could Not Remove");
+    return;
+  }
+  await loadWaitlist();
+  render();
 }
 
 function startShopTransition() {
@@ -1164,7 +1863,7 @@ function startShopTransition() {
   transitionVideo.preload = "auto";
   transitionVideo.setAttribute("playsinline", "");
   transitionVideo.muted = true;
-  transitionVideo.src = "assets/final-flash.mp4";
+  transitionVideo.src = "assets/home-animation-v2.mov";
   overlay.appendChild(transitionVideo);
 
   const revealShop = () => {
@@ -1251,23 +1950,160 @@ function bindEvents() {
     });
   }
 
+  document.querySelectorAll("[data-filter-category]").forEach((el) => {
+    el.addEventListener("click", (event) => {
+      event.preventDefault();
+      state.filters.category = el.dataset.filterCategory;
+      saveFilters();
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-toggle-filter]").forEach((el) => {
+    el.addEventListener("click", (event) => {
+      event.stopPropagation();
+      state.filterOpen = !state.filterOpen;
+      state.sortOpen = false;
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-toggle-sort]").forEach((el) => {
+    el.addEventListener("click", (event) => {
+      event.stopPropagation();
+      state.sortOpen = !state.sortOpen;
+      state.filterOpen = false;
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-sort]").forEach((el) => {
+    el.addEventListener("click", () => {
+      state.sort = el.dataset.sort;
+      state.sortOpen = false;
+      saveSort();
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-filter-color]").forEach((el) => {
+    el.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const color = el.dataset.filterColor;
+      const set = new Set(state.filters.colors);
+      set.has(color) ? set.delete(color) : set.add(color);
+      state.filters.colors = [...set];
+      saveFilters();
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-filter-price-min]").forEach((el) => {
+    el.addEventListener("change", () => {
+      const v = el.value.trim();
+      state.filters.priceMin = v === "" ? null : Number(v);
+      saveFilters();
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-filter-price-max]").forEach((el) => {
+    el.addEventListener("change", () => {
+      const v = el.value.trim();
+      state.filters.priceMax = v === "" ? null : Number(v);
+      saveFilters();
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-filter-reset]").forEach((el) => {
+    el.addEventListener("click", () => {
+      state.filters = { category: "all", colors: [], priceMin: null, priceMax: null };
+      saveFilters();
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-filter-close]").forEach((el) => {
+    el.addEventListener("click", () => {
+      state.filterOpen = false;
+      render();
+    });
+  });
+
+  if ((state.filterOpen || state.sortOpen) && !window.__nebulaPopoverDismiss) {
+    window.__nebulaPopoverDismiss = true;
+    document.addEventListener("click", (event) => {
+      if (event.target.closest(".filter-anchor") || event.target.closest(".sort-anchor")) return;
+      if (state.filterOpen || state.sortOpen) {
+        state.filterOpen = false;
+        state.sortOpen = false;
+        render();
+      }
+    });
+  }
+
+  // Size pill selection (product detail page) — toggle within its group.
+  document.querySelectorAll("[data-size-pills]").forEach((group) => {
+    group.querySelectorAll(".size-pill").forEach((pill) => {
+      pill.addEventListener("click", () => {
+        group.querySelectorAll(".size-pill").forEach((p) => p.classList.remove("is-selected"));
+        pill.classList.add("is-selected");
+      });
+    });
+  });
+
+  // Quantity steppers used on the product page and waitlist modal (DOM-only).
+  document.querySelectorAll(".qty-stepper[data-qty-scope]").forEach((stepper) => {
+    const valueEl = stepper.querySelector("[data-qty-value]");
+    const clamp = (n) => Math.min(10, Math.max(1, n));
+    stepper.querySelector("[data-qty-dec]")?.addEventListener("click", () => {
+      valueEl.textContent = clamp((Number(valueEl.textContent) || 1) - 1);
+    });
+    stepper.querySelector("[data-qty-inc]")?.addEventListener("click", () => {
+      valueEl.textContent = clamp((Number(valueEl.textContent) || 1) + 1);
+    });
+  });
+
   document.querySelectorAll("[data-add-product]").forEach((button) => {
     button.addEventListener("click", () => {
       const productId = button.dataset.addProduct;
-      if (state.settings.launchMode === "pre") {
-        openWaitlistModal(productId);
+      const scope = button.closest(".product-detail-info") || document;
+      const size = scope.querySelector(".size-pill.is-selected")?.dataset.size || null;
+      const qty = Math.max(1, Number(scope.querySelector("[data-qty-value]")?.textContent) || 1);
+      if (!size) {
+        showToast("Select A Size");
         return;
       }
-
-      const existing = state.cart.find((item) => item.id === productId);
-      if (existing) {
-        existing.qty += 1;
-      } else {
-        state.cart.push({ id: productId, qty: 1 });
+      if (state.settings.launchMode === "pre") {
+        openWaitlistModal(productId, size, qty);
+        return;
       }
-      writeJson("nebula-cart", state.cart);
+      addToCart(productId, size, qty);
       render();
       showToast("Added To Cart");
+    });
+  });
+
+  // Cart line editing.
+  document.querySelectorAll(".cart-qty").forEach((stepper) => {
+    const id = stepper.dataset.cartId;
+    const size = stepper.dataset.cartSize || null;
+    stepper.querySelector("[data-cart-dec]")?.addEventListener("click", () => {
+      updateCartQty(id, size, -1);
+      render();
+    });
+    stepper.querySelector("[data-cart-inc]")?.addEventListener("click", () => {
+      updateCartQty(id, size, 1);
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-cart-remove]").forEach((button) => {
+    button.addEventListener("click", () => {
+      removeCartItem(button.dataset.cartId, button.dataset.cartSize || null);
+      render();
+      showToast("Removed From Cart");
     });
   });
 
@@ -1277,6 +2113,36 @@ function bindEvents() {
     });
   });
 
+  const galleryThumbs = document.querySelectorAll("[data-gallery-src]");
+  const activateThumb = (thumb) => {
+    const hero = document.querySelector(".product-detail-hero");
+    if (hero) hero.src = thumb.dataset.gallerySrc;
+    galleryThumbs.forEach((t) => t.classList.remove("is-active"));
+    thumb.classList.add("is-active");
+    thumb.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  };
+  galleryThumbs.forEach((thumb) => {
+    thumb.addEventListener("click", () => activateThumb(thumb));
+  });
+  if (galleryThumbs.length && !window.__nebulaGalleryKeys) {
+    window.__nebulaGalleryKeys = true;
+    document.addEventListener("keydown", (event) => {
+      const thumbs = document.querySelectorAll(".product-gallery-thumb");
+      if (!thumbs.length) return;
+      if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+      const tag = event.target.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || event.target.isContentEditable) return;
+      event.preventDefault();
+      const list = Array.from(thumbs);
+      const currentIdx = list.findIndex((t) => t.classList.contains("is-active"));
+      const idx = currentIdx < 0 ? 0 : currentIdx;
+      const next = event.key === "ArrowDown"
+        ? list[(idx + 1) % list.length]
+        : list[(idx - 1 + list.length) % list.length];
+      activateThumb(next);
+    });
+  }
+
   document.querySelectorAll("[data-modal-close]").forEach((control) => {
     control.addEventListener("click", (event) => {
       if (event.target === control || control.matches("button")) {
@@ -1285,20 +2151,37 @@ function bindEvents() {
     });
   });
 
+  const waitlistSignin = document.querySelector("[data-waitlist-signin]");
+  if (waitlistSignin) {
+    waitlistSignin.addEventListener("click", () => {
+      closeWaitlistModal();
+      window.location.hash = "#/settings";
+    });
+  }
+
   const waitlistForm = document.querySelector("[data-waitlist-form]");
   if (waitlistForm) {
-    waitlistForm.addEventListener("submit", (event) => {
+    waitlistForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const productId = state.waitlistModal?.productId;
-      if (!productId) return;
-      const email = waitlistForm.email?.value.trim() || knownWaitlistEmail();
-      if (!email) {
-        showToast("Email Required");
+      const modal = state.waitlistModal;
+      if (!modal?.productId) return;
+      if (!state.auth.user) {
+        showToast("Sign In To Waitlist");
         return;
       }
-      saveWaitlistIntent(productId, email);
+      const submitBtn = waitlistForm.querySelector('button[type="submit"]');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Adding…"; }
+      const result = await addWaitlistEntry(modal.productId, modal.size || null, modal.qty || 1);
       closeWaitlistModal();
-      showToast("Waitlist Interest Saved");
+      if (result.ok) {
+        await loadWaitlist();
+        render();
+        showToast("Added To Waitlist");
+      } else if (result.duplicate) {
+        showToast("Already On Your Waitlist");
+      } else {
+        showToast(result.message || "Could Not Add");
+      }
     });
   }
 
@@ -1318,6 +2201,52 @@ function bindEvents() {
       handleAuthAction(button.dataset.authAction);
     });
   });
+
+  document.querySelectorAll("[data-leave-waitlist]").forEach((button) => {
+    button.addEventListener("click", () => {
+      removeWaitlistEntry(button.dataset.leaveWaitlist);
+      showToast("Left Waitlist");
+    });
+  });
+
+  // Checkout: changing country re-prices the summary in that country's currency.
+  const checkoutCountry = document.querySelector("#co-country");
+  if (checkoutCountry) {
+    checkoutCountry.addEventListener("change", () => {
+      const val = (id) => document.querySelector(id)?.value.trim() || "";
+      const name = val("#co-name");
+      const email = val("#co-email");
+      if (name) state.settings.profile = { ...state.settings.profile, fullName: name };
+      if (email) state.settings.email = email;
+      state.settings.address = {
+        line1: val("#co-line1"), line2: val("#co-line2"), city: val("#co-city"),
+        region: val("#co-region"), postal: val("#co-postal"), country: val("#co-country"),
+      };
+      saveSettings();
+      render();
+    });
+  }
+
+  const saveProfileButton = document.querySelector("[data-save-profile]");
+  if (saveProfileButton) {
+    saveProfileButton.addEventListener("click", () => {
+      const val = (id) => document.querySelector(id)?.value.trim() || "";
+      state.settings.profile = {
+        fullName: val("#pf-fullname"),
+        phone: val("#pf-phone"),
+      };
+      state.settings.address = {
+        line1: val("#pf-line1"),
+        line2: val("#pf-line2"),
+        city: val("#pf-city"),
+        region: val("#pf-region"),
+        postal: val("#pf-postal"),
+        country: val("#pf-country"),
+      };
+      saveSettings();
+      showToast("Details Saved");
+    });
+  }
 
   const nameInput = document.querySelector("#name");
   const emailInput = document.querySelector("#email");
@@ -1358,8 +2287,10 @@ function render() {
     about: aboutPage,
     settings: settingsPage,
     cart: cartPage,
+    checkout: checkoutPage,
     terms: () => legalPage("terms"),
     privacy: () => legalPage("privacy"),
+    shipping: () => legalPage("shipping"),
     contact: contactPage,
   };
 

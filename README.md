@@ -1,6 +1,6 @@
-# Nebula Fashion Website
+# Virdasia Fashion Website
 
-Static prototype for the Nebula fashion storefront.
+Static prototype for the Virdasia fashion storefront.
 
 ## Local Development
 
