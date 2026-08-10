@@ -1,6 +1,8 @@
 const products = [
   {
     id: "shadow-grin-fleece",
+    waitlistReserved: 2,
+    waitlistCapacity: 50,
     name: '"Shadow Grin" Fleece',
     shortName: "Shadow Grin",
     osName: "shadow_grin_fleece",
@@ -32,6 +34,8 @@ const products = [
   },
   {
     id: "pirate-king-hybrid-jacket",
+    waitlistReserved: 4,
+    waitlistCapacity: 30,
     name: '"Pirate King" Hybrid Jacket',
     shortName: "Pirate King",
     osName: "pirate_king_hybrid_jacket",
@@ -64,6 +68,8 @@ const products = [
   },
   {
     id: "son-of-nolan-jacket",
+    waitlistReserved: 13,
+    waitlistCapacity: 50,
     name: '"Son of Nolan" Jacket',
     shortName: "Son of Nolan",
     osName: "son_of_nolan_jacket",
@@ -94,6 +100,8 @@ const products = [
   },
   {
     id: "legendary-corduroy-jacket",
+    waitlistReserved: 1,
+    waitlistCapacity: 50,
     name: '"Legendary" Corduroy Jacket',
     shortName: "Legendary",
     osName: "legendary_corduroy_jacket",
@@ -124,6 +132,8 @@ const products = [
   },
   {
     id: "wild-encounter-knit-sweater",
+    waitlistReserved: 2,
+    waitlistCapacity: 40,
     name: '"Wild Encounter" Knit Sweater',
     shortName: "Wild Encounter",
     osName: "wild_encounter_knit_sweater",
@@ -155,6 +165,8 @@ const products = [
   },
   {
     id: "six-paths-sherpa-jacket",
+    waitlistReserved: 6,
+    waitlistCapacity: 40,
     name: '"Six Paths" Sherpa Jacket',
     shortName: "Six Paths",
     osName: "six_paths_sherpa_jacket",
@@ -219,7 +231,7 @@ const styleOptions = [
 ];
 
 const launchModes = [
-  ["pre", "Pre-Launch", "Waitlist only · 0/50 per item"],
+  ["pre", "Pre-Launch", "Waitlist only · limited spots per item"],
   ["full", "Full-Launch", "Full shopping experience"],
 ];
 
@@ -232,7 +244,7 @@ const backgroundArts = [
   ["funk", "Cartoon streetwear character artwork", "assets/bg-funk.png"],
 ];
 
-const legalUpdated = "May 23, 2026";
+const legalUpdated = "August 4, 2026";
 
 // Worldwide country -> currency. Rates are approximate units-per-USD and are for
 // display/preview only; real charges happen in USD via Stripe at launch.
@@ -324,6 +336,7 @@ const state = {
   filterOpen: false,
   sortOpen: false,
   waitlist: [],
+  waitlistCounts: {},
   waitlistEmail: readJson("nebula-waitlist-email", ""),
   waitlistModal: null,
   orders: readJson("nebula-orders", []),
@@ -698,67 +711,80 @@ const legalContent = {
   shipping: {
     title: "Shipping & Returns",
     sections: [
-      ["Overview", "This draft Shipping & Returns policy explains how Virdasia expects to fulfill orders, handle preorders and waitlisted drops, and process returns or exchanges. Details are placeholders and will be finalized before launch."],
-      ["Processing Time", "In-stock pieces are expected to ship within 2-5 business days. Waitlisted and preorder pieces ship after the drop's production window closes; the estimated window will be shown on the product page and in your order confirmation."],
-      ["Shipping Rates & Delivery", "Shipping options, rates, and estimated delivery times are calculated at checkout based on destination. Domestic and international carriers, duties, and taxes will be confirmed before launch."],
-      ["Order Tracking", "Once an order ships, a tracking number will be emailed to the address on the order. Order status will also appear under Order History in your settings."],
-      ["Returns & Exchanges", "We expect to accept returns and exchanges on unworn, unwashed pieces with tags attached within 14 days of delivery. Made-to-order, final-sale, and heavily discounted pieces may be excluded. Final return rules will be posted before launch."],
-      ["How To Start A Return", "To start a return or exchange, contact support with your order number. Approved returns will receive instructions and, where offered, a prepaid label. Refunds are issued to the original payment method after the return is received and inspected."],
-      ["Damaged Or Incorrect Items", "If a piece arrives damaged, defective, or incorrect, contact support within 7 days of delivery with photos so we can arrange a replacement or refund at no additional cost."],
+      ["Overview", "Virdasia is a small independent label operated as a sole proprietorship based in Toronto, Canada. This policy explains how we ship orders and our all-sales-final approach. Virdasia is currently in a pre-launch phase — only waitlist sign-ups are open, and full checkout goes live at launch."],
+      ["Waitlisting Is Not An Order", "Joining a waitlist reserves you a priority ordering window when a piece drops. It is not a purchase, and no payment is taken to join. Spots and quantities are limited. The shipping and delivery timelines below apply only once you place an actual order — not when you waitlist."],
+      ["Order Processing", "Once a piece is officially purchased, we process orders within a few business days. You will receive an order confirmation by email, and tracking details once your order ships."],
+      ["Where We Ship", "We ship worldwide. We are unable to ship to countries subject to trade sanctions or embargoes, or where reliable carrier service is not available (for example, North Korea). We may decline or cancel and refund any order to a destination we cannot reliably serve."],
+      ["Shipping Costs", "Shipping is a flat rate calculated at checkout based on your destination, and the exact amount is shown before you pay. Final rates are being confirmed and will be visible at checkout at launch."],
+      ["Delivery Estimates", "Estimated delivery times begin after an order ships, not when you waitlist: roughly 3 to 7 business days for domestic orders and 7 to 21 business days for international orders. These are estimates, not guarantees, and can vary with customs and carrier delays."],
+      ["Duties & Taxes", "Where possible, applicable import duties and taxes are included in the shipping total shown at checkout. Where they cannot be collected in advance, any duties or taxes charged on delivery are the recipient's responsibility."],
+      ["Currency", "Prices may display in your local currency as an approximate conversion for reference. All orders are processed and charged in US dollars (USD)."],
+      ["All Sales Are Final", "All sales are final. We do not accept returns or exchanges for change of mind, fit, or sizing, so please review the size guide and product details carefully before ordering."],
+      ["Damaged, Defective, Or Incorrect Items", "If your order arrives damaged, defective, or incorrect, email support@virdasia.com with your order number and photos as soon as possible and we will work with you to make it right."],
+      ["Lost Or Delayed Shipments", "If your tracking stalls or a package appears lost, contact support@virdasia.com and we will help trace it with the carrier."],
+    ],
+  },
+  privacy: {
+    title: "Privacy Policy",
+    sections: [
+      ["Who We Are", "Virdasia is a small independent label operated as a sole proprietorship based in Toronto, Ontario, Canada. This policy explains what personal information we collect, how we use it, and the choices you have. Questions? Email support@virdasia.com."],
+      ["Information We Collect", "Account details you provide: your name, email address, and a password (handled by our authentication provider — we never see your raw password). Order and shipping details: your shipping address, and phone number if you provide one. Waitlist details: the pieces, sizes, and quantities you waitlist. Payment information: processed securely by our payment provider — we do not store your card numbers. Communications: messages you send us. Technical data: device and usage information, plus cookies and local storage used to run the site."],
+      ["How We Use Your Information", "To create and manage your account; to run the waitlist and notify you about drops; to process, charge, and ship orders; to send transactional emails such as confirmations and reminders; to send marketing emails where you have opted in; to provide support; to improve and secure the store and prevent fraud; and to meet legal, tax, and accounting obligations."],
+      ["Service Providers We Use", "We share personal information only as needed with the providers that help us run Virdasia: Supabase (accounts and database), Stripe (payment processing), Brevo (transactional and marketing email), and Vercel and Cloudflare (website hosting, content delivery, DNS, and security). These providers process data on our behalf and are not permitted to use it for their own purposes."],
+      ["Marketing Emails", "With your consent, we may send you newsletters and updates about drops and launches. You can opt out at any time using the unsubscribe link in any marketing email, or by emailing support@virdasia.com. Transactional messages such as order and waitlist confirmations are part of our service and are not marketing."],
+      ["Cookies & Local Storage", "We use cookies and browser local storage to keep you signed in, remember your cart, filters, and preferences, and understand how the site is used so we can improve it."],
+      ["Your Choices & Rights", "You can access, update, or delete your account information, request a copy of your data, or ask us to delete it — subject to records we must keep for legal, tax, or fraud-prevention reasons. To make a request, email support@virdasia.com."],
+      ["Your Rights In The EU & UK (GDPR)", "If you are in the European Economic Area or the United Kingdom, you have the right to access, correct, erase, restrict, or port your personal data, and to object to certain processing. We rely on your consent, the performance of our contract with you, our legitimate interests, and legal obligations as our lawful bases. You may lodge a complaint with your local data protection authority. Where data is transferred internationally, we use appropriate safeguards."],
+      ["Your Rights In California (CCPA/CPRA)", "If you are a California resident, you have the right to know what personal information we collect, to request access or deletion, to correct inaccurate information, and to opt out of the sale or sharing of personal information. We do not sell your personal information, and we will not discriminate against you for exercising these rights."],
+      ["Canada (PIPEDA)", "We handle personal information in accordance with Canada's Personal Information Protection and Electronic Documents Act. You may contact us with any privacy concern, and you have the right to complain to the Office of the Privacy Commissioner of Canada."],
+      ["Data Retention", "We keep personal information only for as long as needed to provide the service and for the purposes described here, including meeting legal, tax, and accounting requirements, after which it is deleted or anonymized."],
+      ["Children", "Virdasia is not directed to children under 16, and we do not knowingly collect personal information from them. If you believe a child has provided us information, contact support@virdasia.com and we will delete it."],
+      ["Security", "We use reasonable technical and organizational safeguards, including managed authentication and encryption of data in transit. No online service can be guaranteed completely secure, so please use a strong, unique password."],
+      ["Changes To This Policy", "We may update this policy from time to time. Material changes will be posted here with a new effective date."],
+      ["Contact", "For any privacy question or request, email support@virdasia.com."],
+    ],
+  },
+  terms: {
+    title: "Terms of Service",
+    sections: [
+      ["Agreement", "These Terms of Service govern your use of virdasia.com and any purchases you make. By using the site or placing an order, you agree to these terms. Virdasia is a small independent label operated as a sole proprietorship based in Toronto, Ontario, Canada."],
+      ["Eligibility", "You must be at least 16 years old, or have the consent and supervision of a parent or guardian, and be able to enter into a binding agreement, to use the site or make a purchase. You agree to provide accurate account, contact, and shipping information."],
+      ["Your Account", "You are responsible for keeping your login details secure and for activity that happens through your account. Let us know right away if you suspect unauthorized use. We may suspend or close accounts that misuse the site, break these terms, or create risk for us or other customers."],
+      ["Pre-Launch & Waitlist", "Virdasia is currently in a pre-launch phase in which only waitlist sign-ups are available. Joining a waitlist reserves you a priority ordering window of a full seven days once a piece drops — but it is not a purchase, does not guarantee that a piece will be available to you, and does not lock in a price. Quantities are strictly limited and allocated on a first-come basis up to each piece's capacity."],
+      ["Products, Pricing & Availability", "Product descriptions, images, sizing, inventory, and availability may change at any time. Prices may display in your local currency as an approximate conversion, but all orders are processed and charged in US dollars (USD). We may correct errors, limit quantities, or decline or cancel an order and issue a refund where necessary, including in cases of pricing errors or suspected fraud."],
+      ["Orders & Payment", "Payments are processed securely by Stripe. Placing an order is an offer to purchase that we may accept or decline. All sales are final, as described in our Shipping & Returns policy."],
+      ["Shipping & Returns", "Shipping, delivery, duties, and our all-sales-final policy are described in our Shipping & Returns policy, which forms part of these terms."],
+      ["Intellectual Property", "The Virdasia name, logo, garment designs, artwork, photography, copy, and all other site content are owned by Virdasia and protected by law. You may not copy, reproduce, resell, or use them without our written permission."],
+      ["Acceptable Use", "You agree not to misuse the site, infringe anyone's rights, interfere with its operation or security, or attempt to access it in unauthorized ways."],
+      ["Disclaimers", "The site and products are provided on an as-is and as-available basis to the fullest extent permitted by law. We do not guarantee that the site will always be available or error-free."],
+      ["Limitation Of Liability", "To the fullest extent permitted by law, Virdasia is not liable for indirect, incidental, special, or consequential damages arising from your use of the site or products. Nothing in these terms limits any rights you have under applicable consumer-protection law that cannot be waived."],
+      ["Governing Law", "These terms are governed by the laws of the Province of Ontario and the applicable federal laws of Canada, and any disputes will be handled by the courts located in Ontario, Canada."],
+      ["Changes To These Terms", "We may update these terms from time to time. Continued use of the site after changes are posted means you accept the updated terms."],
+      ["Contact", "Questions about these terms? Email support@virdasia.com."],
     ],
   },
 };
 
 function legalPage(type) {
-  if (legalContent[type]) {
-    const { title, sections } = legalContent[type];
+  const content = legalContent[type];
+  if (!content) {
     return pageShell(`
       <main class="page legal-page">
         <section class="narrow">
-          ${breadcrumb(title)}
-          <h1 class="display-title">${title}</h1>
-          <p class="legal-updated">Draft updated ${legalUpdated}</p>
-          <div class="legal-copy">
-            ${sections.map(([heading, copy]) => `
-              <section>
-                <h2>${heading}</h2>
-                <p>${copy}</p>
-              </section>
-            `).join("")}
-          </div>
+          ${breadcrumb("Not Found")}
+          <h1 class="display-title">Page Not Found</h1>
+          <a class="primary-button inline-button" href="#/home">Back Home</a>
         </section>
       </main>
     `);
   }
-
-  const isPrivacy = type === "privacy";
-  const title = isPrivacy ? "Privacy Policy" : "Terms Of Service";
-  const sections = isPrivacy
-    ? [
-        ["Overview", "This draft Privacy Policy explains how Virdasia may collect, use, and protect customer information when visitors use this website, create an account, join a waitlist, place an order, or contact us."],
-        ["Information We Collect", "We may collect account details such as name, email address, authentication identifiers, order details, shipping information, support messages, device data, and website usage data."],
-        ["How We Use Information", "We use information to provide account access, process orders, manage waitlists, respond to support requests, improve the store experience, prevent fraud, and send transactional or marketing communications where permitted."],
-        ["Service Providers", "We may share information with vendors that help run the store, including authentication, payment, shipping, analytics, hosting, email, and customer support providers. They should only use information to provide services to Virdasia."],
-        ["Cookies And Local Storage", "The website may use cookies, browser storage, and similar technologies to keep users signed in, remember preferences, maintain carts, measure site performance, and improve product discovery."],
-        ["Your Choices", "Customers may request account updates, unsubscribe from marketing emails, or ask for deletion of personal information where applicable law allows. Some order records may need to be retained for legal, tax, or fraud-prevention reasons."],
-        ["Security", "We use reasonable technical and organizational safeguards, including Supabase Auth for account access. No online service is completely secure, so this section should be reviewed by counsel before launch."],
-      ]
-    : [
-        ["Overview", "These draft Terms of Service govern access to and use of the Virdasia website, product pages, accounts, waitlists, carts, and related services. They are placeholder terms and should be reviewed before launch."],
-        ["Eligibility", "By using this website, customers confirm they can enter into a binding agreement and will provide accurate account, contact, billing, and shipping information."],
-        ["Accounts", "Customers are responsible for keeping login credentials secure and for activity that occurs through their account. Virdasia may suspend or close accounts that violate these terms, misuse the site, or create operational risk."],
-        ["Products And Availability", "Product descriptions, prices, images, sizing, inventory, launch modes, preorder status, and availability may change. Prototype pages may contain placeholder details until final production information is confirmed."],
-        ["Orders, Payments, And Shipping", "Final checkout, payment processing, shipping timelines, taxes, duties, cancellations, and return rules will be shown during checkout or in a dedicated shipping and returns policy before launch."],
-        ["Intellectual Property", "The Virdasia name, website design, product photography, product artwork, copy, and other content are owned by Virdasia or its licensors and may not be copied or reused without permission."],
-        ["Limitation Of Liability", "To the extent permitted by law, Virdasia is not liable for indirect, incidental, special, or consequential damages arising from use of the website or products. Final legal language should be reviewed by counsel."],
-      ];
-
+  const { title, sections } = content;
   return pageShell(`
     <main class="page legal-page">
       <section class="narrow">
         ${breadcrumb(title)}
         <h1 class="display-title">${title}</h1>
-        <p class="legal-updated">Draft updated ${legalUpdated}</p>
+        <p class="legal-updated">Last updated ${legalUpdated}</p>
         <div class="legal-copy">
           ${sections.map(([heading, copy]) => `
             <section>
@@ -778,21 +804,17 @@ function contactPage() {
       <section class="narrow">
         ${breadcrumb("Contact")}
         <h1 class="display-title">Contact</h1>
+        <p class="contact-intro">Questions about a piece, your account, the waitlist, or an order? We're a small team and we'd love to hear from you.</p>
         <div class="contact-grid">
           <article>
             <h2>Customer Support</h2>
-            <p>support@example.com</p>
-            <p>Replies within 1-2 business days.</p>
+            <p><a href="mailto:support@virdasia.com">support@virdasia.com</a></p>
+            <p>We reply within 1–2 business days. For order-related questions, please include your order number.</p>
           </article>
           <article>
-            <h2>Press</h2>
-            <p>press@example.com</p>
-            <p>Placeholder press and collaboration inbox.</p>
-          </article>
-          <article>
-            <h2>Studio</h2>
-            <p>Virdasia Studio</p>
-            <p>City, Country placeholder</p>
+            <h2>Social</h2>
+            <p>Coming soon.</p>
+            <p>Follow along here once our channels are live — this is where drops and restocks get announced first.</p>
           </article>
         </div>
       </section>
@@ -992,6 +1014,18 @@ function vapourwaveLayout(actionLabel) {
   `;
 }
 
+// Small scarcity indicator for shop cards (Pre-Launch only, live count out of capacity).
+function waitlistCardBadge(product) {
+  if (state.settings.launchMode !== "pre" || product.comingSoon) return "";
+  const w = productWaitlist(product);
+  const pct = Math.min(100, Math.round((w.current / w.capacity) * 100));
+  return `
+    <div class="product-waitlist${w.full ? " is-full" : ""}">
+      <div class="product-waitlist-track"><span style="width:${pct}%"></span></div>
+      <span class="product-waitlist-label">${w.full ? "Waitlist full" : `${w.current}/${w.capacity} waitlisted`}</span>
+    </div>`;
+}
+
 function productCard(product, actionLabel, frameStyle = "", showAction = true) {
   const isSoon = !!product.comingSoon;
   const imgInner = product.image
@@ -1028,6 +1062,7 @@ function productCard(product, actionLabel, frameStyle = "", showAction = true) {
           <strong class="vapour-status-price">${priceLabel(product)}</strong>
           ${canAct ? `<a class="vapour-card-cta" href="${productUrl(product)}" aria-label="View ${escapeHtml(product.name)}">${icons.bag}</a>` : `<i></i>`}
         </div>
+        ${waitlistCardBadge(product)}
       </article>
     `;
   }
@@ -1057,6 +1092,7 @@ function productCard(product, actionLabel, frameStyle = "", showAction = true) {
         <div class="product-meta">
           ${nameEl}
           <div class="product-price">${priceLabel(product)}</div>
+          ${waitlistCardBadge(product)}
           ${canAct ? `<a class="product-action" href="${productUrl(product)}">${state.settings.launchMode === "pre" ? "Waitlist" : "Select Options"}</a>` : ""}
         </div>
       </article>
@@ -1071,6 +1107,7 @@ function productCard(product, actionLabel, frameStyle = "", showAction = true) {
       <div class="product-meta">
         ${nameEl}
         <div class="product-price">${priceLabel(product)}</div>
+        ${waitlistCardBadge(product)}
         ${canAct ? `<a class="product-action" href="${productUrl(product)}">${state.settings.launchMode === "pre" ? "Waitlist" : "Select Options"}</a>` : ""}
       </div>
     </article>
@@ -1110,7 +1147,12 @@ function productDetailPage() {
     </tr>
   `).join("");
   const relatedProducts = products.filter((item) => item.id !== product.id).slice(0, 4);
-  const detailActionLabel = state.settings.launchMode === "pre" ? "Waitlist · 0/50" : "Add To Cart";
+  const isPreLaunch = state.settings.launchMode === "pre";
+  const wl = productWaitlist(product);
+  const detailActionLabel = isPreLaunch
+    ? (wl.full ? "Waitlist Full" : `Waitlist · ${wl.current}/${wl.capacity}`)
+    : "Add To Cart";
+  const waitlistFull = isPreLaunch && wl.full;
   const secondaryDescription = product.id === "pirate-king-hybrid-jacket"
     ? [...product.description, "The purple buttons and lining add a hidden pop of color, making the jacket feel more designed without overcrowding the front of the garment."]
     : product.description;
@@ -1153,7 +1195,7 @@ function productDetailPage() {
             <span>Quantity</span>
             ${qtyStepperMarkup(1, "pdp")}
           </div>
-          <button class="primary-button product-detail-action" type="button" data-add-product="${product.id}">${detailActionLabel}</button>
+          <button class="primary-button product-detail-action${waitlistFull ? " is-waitlist-full" : ""}" type="button" data-add-product="${product.id}"${waitlistFull ? " disabled aria-disabled=\"true\"" : ""}>${detailActionLabel}</button>
           `}
           <section class="product-accordions" aria-label="Product information">
             <details>
@@ -1670,6 +1712,8 @@ function initSupabaseAuth() {
     },
   });
 
+  loadWaitlistCounts().then(render).catch(() => {});
+
   state.auth.client.auth.onAuthStateChange((_event, session) => {
     state.auth.session = session;
     state.auth.user = session?.user || null;
@@ -1786,6 +1830,23 @@ function openWaitlistModal(productId, size = null, qty = 1) {
 function closeWaitlistModal() {
   state.waitlistModal = null;
   render();
+}
+
+// Per-product waitlist status: reserved (promised) + live joins, out of capacity.
+function productWaitlist(product) {
+  const capacity = product.waitlistCapacity || 50;
+  const current = (product.waitlistReserved || 0) + (state.waitlistCounts[product.id] || 0);
+  return { current, capacity, full: current >= capacity };
+}
+
+// Public aggregate counts (no individual data) so the site shows live X/Y scarcity.
+async function loadWaitlistCounts() {
+  if (!state.auth.client) return;
+  const { data, error } = await state.auth.client.rpc("waitlist_counts");
+  if (error || !data) return;
+  const counts = {};
+  for (const row of data) counts[row.product_id] = Number(row.waitlisted) || 0;
+  state.waitlistCounts = counts;
 }
 
 // Load the signed-in user's waitlist rows from Supabase into state.waitlist.
@@ -2076,6 +2137,11 @@ function bindEvents() {
         return;
       }
       if (state.settings.launchMode === "pre") {
+        const product = productById(productId);
+        if (product && productWaitlist(product).full) {
+          showToast("Waitlist Full");
+          return;
+        }
         openWaitlistModal(productId, size, qty);
         return;
       }
@@ -2174,7 +2240,7 @@ function bindEvents() {
       const result = await addWaitlistEntry(modal.productId, modal.size || null, modal.qty || 1);
       closeWaitlistModal();
       if (result.ok) {
-        await loadWaitlist();
+        await Promise.all([loadWaitlist(), loadWaitlistCounts()]);
         render();
         showToast("Added To Waitlist");
       } else if (result.duplicate) {

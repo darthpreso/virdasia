@@ -2152,6 +2152,13 @@ button {
   letter-spacing: 0.38em;
 }
 
+.product-detail-action.is-waitlist-full {
+  border-color: var(--line);
+  color: #b7c0d2;
+  background: #eef1f7;
+  cursor: not-allowed;
+}
+
 .inline-button {
   display: inline-grid;
   align-items: center;
@@ -2665,11 +2672,26 @@ button {
 }
 
 .contact-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .contact-grid p + p {
   margin-top: 12px;
+}
+
+.contact-grid a {
+  color: #111;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.contact-intro {
+  max-width: 640px;
+  margin: 0 0 40px;
+  color: var(--muted);
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.55;
 }
 
 .site-footer {
@@ -3593,4 +3615,47 @@ a.checkout-button {
     position: static;
     order: -1;
   }
+}
+
+/* Shop-card waitlist scarcity indicator (Pre-Launch) */
+.product-waitlist {
+  margin-top: 12px;
+}
+.product-waitlist-track {
+  height: 4px;
+  width: 100%;
+  background: #e6e9ef;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.product-waitlist-track span {
+  display: block;
+  height: 100%;
+  min-width: 4px;
+  background: #2f5e5a;
+  border-radius: 999px;
+}
+.product-waitlist-label {
+  display: block;
+  margin-top: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.product-waitlist.is-full .product-waitlist-track span {
+  background: #e0242f;
+}
+.product-waitlist.is-full .product-waitlist-label {
+  color: #e0242f;
+}
+.vapourwave-card .product-waitlist {
+  padding: 0 14px 14px;
+}
+.vapourwave-card .product-waitlist-track {
+  background: rgba(120, 90, 200, 0.22);
+}
+.vapourwave-card .product-waitlist-track span {
+  background: #7a4bbf;
 }
