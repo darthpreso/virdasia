@@ -340,6 +340,7 @@ const state = {
   waitlistEmail: readJson("nebula-waitlist-email", ""),
   waitlistModal: null,
   authModal: null,
+  profileEditing: false,
   orders: [],
   auth: {
     client: null,
@@ -580,12 +581,12 @@ function money(usd) {
   return currency === "USD" ? `${symbol}${formatted}` : `${symbol}${formatted} ${currency}`;
 }
 
-function countrySelectMarkup(id, selectedCode) {
+function countrySelectMarkup(id, selectedCode, disabled = false) {
   const options = [`<option value="">Select country</option>`]
     .concat(COUNTRIES.map(([code, name]) =>
       `<option value="${code}"${code === selectedCode ? " selected" : ""}>${name}</option>`
     ));
-  return `<select id="${id}" data-country-select autocomplete="country">${options.join("")}</select>`;
+  return `<select id="${id}" data-country-select autocomplete="country"${disabled ? " disabled" : ""}>${options.join("")}</select>`;
 }
 
 function priceLabel(product) {
@@ -1317,6 +1318,9 @@ function formatDate(iso) {
 function profileSection() {
   const profile = state.settings.profile || {};
   const addr = state.settings.address || {};
+  const hasData = !!(profile.fullName || profile.phone || addr.line1 || addr.line2 || addr.city || addr.region || addr.postal || addr.country);
+  const editing = state.profileEditing || !hasData;
+  const d = editing ? "" : " disabled";
   return `
     <section>
       <h2 class="section-label">Profile & Shipping</h2>
@@ -1324,39 +1328,41 @@ function profileSection() {
       <div class="form-grid">
         <div class="field">
           <label for="pf-fullname">Full Name</label>
-          <input id="pf-fullname" value="${escapeHtml(profile.fullName || "")}" autocomplete="name" />
+          <input id="pf-fullname" value="${escapeHtml(profile.fullName || "")}" autocomplete="name"${d} />
         </div>
         <div class="field">
           <label for="pf-phone">Phone</label>
-          <input id="pf-phone" value="${escapeHtml(profile.phone || "")}" autocomplete="tel" />
+          <input id="pf-phone" value="${escapeHtml(profile.phone || "")}" autocomplete="tel"${d} />
         </div>
         <div class="field field-wide">
           <label for="pf-line1">Address</label>
-          <input id="pf-line1" value="${escapeHtml(addr.line1 || "")}" autocomplete="address-line1" placeholder="Street address" />
+          <input id="pf-line1" value="${escapeHtml(addr.line1 || "")}" autocomplete="address-line1" placeholder="Street address"${d} />
         </div>
         <div class="field field-wide">
           <label for="pf-line2">Apartment, suite, etc. (optional)</label>
-          <input id="pf-line2" value="${escapeHtml(addr.line2 || "")}" autocomplete="address-line2" />
+          <input id="pf-line2" value="${escapeHtml(addr.line2 || "")}" autocomplete="address-line2"${d} />
         </div>
         <div class="field">
           <label for="pf-city">City</label>
-          <input id="pf-city" value="${escapeHtml(addr.city || "")}" autocomplete="address-level2" />
+          <input id="pf-city" value="${escapeHtml(addr.city || "")}" autocomplete="address-level2"${d} />
         </div>
         <div class="field">
           <label for="pf-region">State / Province</label>
-          <input id="pf-region" value="${escapeHtml(addr.region || "")}" autocomplete="address-level1" />
+          <input id="pf-region" value="${escapeHtml(addr.region || "")}" autocomplete="address-level1"${d} />
         </div>
         <div class="field">
           <label for="pf-postal">ZIP / Postal Code</label>
-          <input id="pf-postal" value="${escapeHtml(addr.postal || "")}" autocomplete="postal-code" />
+          <input id="pf-postal" value="${escapeHtml(addr.postal || "")}" autocomplete="postal-code"${d} />
         </div>
         <div class="field">
           <label for="pf-country">Country</label>
-          ${countrySelectMarkup("pf-country", addr.country || "")}
+          ${countrySelectMarkup("pf-country", addr.country || "", !editing)}
         </div>
       </div>
       <div class="auth-actions">
-        <button class="primary-button" type="button" data-save-profile>Save Details</button>
+        ${editing
+          ? `<button class="primary-button" type="button" data-save-profile>Save Details</button>`
+          : `<button class="secondary-button" type="button" data-edit-profile>Edit Details</button>`}
       </div>
     </section>
   `;
@@ -2329,7 +2335,17 @@ function bindEvents() {
         country: val("#pf-country"),
       };
       saveSettings();
+      state.profileEditing = false;
+      render();
       showToast("Details Saved");
+    });
+  }
+
+  const editProfileButton = document.querySelector("[data-edit-profile]");
+  if (editProfileButton) {
+    editProfileButton.addEventListener("click", () => {
+      state.profileEditing = true;
+      render();
     });
   }
 

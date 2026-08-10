@@ -2391,7 +2391,17 @@ button {
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 28px;
+  gap: 40px 28px;
+}
+
+/* Locked (saved) profile fields — stay legible, not the faded browser default */
+.field input:disabled,
+.field select:disabled {
+  background: #f6f7f9;
+  color: #333;
+  -webkit-text-fill-color: #333;
+  opacity: 1;
+  cursor: default;
 }
 
 .field label {
@@ -3681,8 +3691,13 @@ a.checkout-button {
 .auth-modal .modal-copy {
   margin-bottom: 4px;
 }
+/* Fields are <label> elements (inline by default) — force block so vertical
+   spacing applies and labels don't crowd the input above. */
+.auth-form .field {
+  display: block;
+}
 .auth-form .field + .field {
-  margin-top: 16px;
+  margin-top: 24px;
 }
 .auth-modal .modal-actions {
   grid-template-columns: 1fr;
