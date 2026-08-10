@@ -339,7 +339,8 @@ const state = {
   waitlistCounts: {},
   waitlistEmail: readJson("nebula-waitlist-email", ""),
   waitlistModal: null,
-  orders: readJson("nebula-orders", []),
+  authModal: null,
+  orders: [],
   auth: {
     client: null,
     configured: false,
@@ -484,7 +485,8 @@ function pageShell(content, options = {}) {
       if (!shellClass.includes("vapourwave-shell")) shellClass += " vapourwave-shell";
     }
   }
-  return `<div class="site-shell ${shellClass.trim()}">${headerMarkup}${content}${footerMarkup}${waitlistModalMarkup()}<div id="toast" class="toast"></div></div>`;
+  const modalMarkup = state.authModal ? authModalMarkup() : waitlistModalMarkup();
+  return `<div class="site-shell ${shellClass.trim()}">${headerMarkup}${content}${footerMarkup}${modalMarkup}<div id="toast" class="toast"></div></div>`;
 }
 
 function footer() {
@@ -1277,37 +1279,17 @@ function authAccountSection() {
   }
 
   if (state.auth.user) {
-    const metadataName = state.auth.user.user_metadata?.display_name || state.auth.user.user_metadata?.full_name || state.settings.name || "";
-    const email = state.auth.user.email || state.settings.email || "";
+    const email = state.auth.user.email || "";
     return `
       <section>
         <h2 class="section-label">Account</h2>
         <div class="auth-panel signed-in-panel">
           <div>
-            <h3>Signed In</h3>
+            <h3>Signed in as</h3>
             <p>${escapeHtml(email)}</p>
           </div>
           <button class="secondary-button" type="button" data-auth-action="sign-out">Sign Out</button>
         </div>
-        <div class="form-grid">
-          <div class="field">
-            <label for="name">Name</label>
-            <input id="name" name="name" value="${escapeHtml(metadataName)}" autocomplete="name" />
-          </div>
-          <div class="field">
-            <label for="email">Email</label>
-            <input id="email" name="email" value="${escapeHtml(email)}" autocomplete="email" />
-          </div>
-        </div>
-        <div class="field password-field">
-          <label for="password">New Password</label>
-          <input id="password" name="password" type="password" autocomplete="new-password" placeholder="Leave blank to keep current password" />
-        </div>
-        <div class="auth-actions">
-          <button class="primary-button" type="button" data-auth-action="update-profile">Save Account</button>
-          <button class="secondary-button" type="button" data-auth-action="reset-password">Send Password Reset</button>
-        </div>
-        <p class="helper-copy">Profile updates are saved to Supabase Auth. Email and password changes may require confirmation depending on your Supabase project settings.</p>
       </section>
     `;
   }
@@ -1315,26 +1297,11 @@ function authAccountSection() {
   return `
     <section>
       <h2 class="section-label">Account</h2>
-      <div class="form-grid">
-        <div class="field">
-          <label for="name">Name</label>
-          <input id="name" name="name" value="${escapeHtml(state.settings.name)}" autocomplete="name" />
-        </div>
-        <div class="field">
-          <label for="email">Email</label>
-          <input id="email" name="email" value="${escapeHtml(state.settings.email)}" autocomplete="email" />
-        </div>
-      </div>
-      <div class="field password-field">
-        <label for="password">Password</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" />
-      </div>
+      <p class="option-copy">Sign in to join waitlists, place orders, and track your order history.</p>
       <div class="auth-actions">
-        <button class="primary-button" type="button" data-auth-action="sign-up">Create Account</button>
-        <button class="secondary-button" type="button" data-auth-action="sign-in">Sign In</button>
-        <button class="secondary-button" type="button" data-auth-action="reset-password">Reset Password</button>
+        <button class="primary-button" type="button" data-open-auth="signin">Sign In</button>
+        <button class="secondary-button" type="button" data-open-auth="signup">Create Account</button>
       </div>
-      <p class="helper-copy">Accounts are powered by Supabase Auth. If email confirmation is enabled, check your inbox after creating an account.</p>
     </section>
   `;
 }
@@ -1395,29 +1362,40 @@ function profileSection() {
   `;
 }
 
+function orderTotalLabel(order) {
+  const amount = Number(order.amount_total || 0) / 100;
+  const cur = (order.currency || "usd").toUpperCase();
+  return `$${amount.toFixed(2)} ${cur}`;
+}
+
 function orderHistorySection() {
   const orders = state.orders || [];
-  const body = orders.length
-    ? orders.slice().reverse().map((order) => `
-        <article class="order-card">
-          <div class="order-card-head">
-            <strong>Order ${escapeHtml(order.id || "")}</strong>
-            <span>${formatDate(order.createdAt)}</span>
-          </div>
-          <div class="order-card-items">
-            ${(order.items || []).map((item) => {
-              const product = productById(item.id);
-              const name = product ? product.name : item.id;
-              return `<p>${name} — Size ${escapeHtml(item.size || "One size")} · Qty ${item.qty}</p>`;
-            }).join("")}
-          </div>
-          <div class="order-card-foot">
-            <span class="order-status">${escapeHtml(order.status || "Processing")}</span>
-            <strong>${money(order.total ?? 0)}</strong>
-          </div>
-        </article>
-      `).join("")
-    : `<p class="settings-empty">No orders yet. Your purchases will show up here once checkout goes live.</p>`;
+  let body;
+  if (!state.auth.user) {
+    body = `<p class="settings-empty">Sign in to your Virdasia account to see your orders.</p>`;
+  } else if (!orders.length) {
+    body = `<p class="settings-empty">No orders yet. Your purchases will show up here.</p>`;
+  } else {
+    body = orders.map((order) => `
+      <article class="order-card">
+        <div class="order-card-head">
+          <strong>Order #${escapeHtml(String(order.id || "").slice(0, 8).toUpperCase())}</strong>
+          <span>${formatDate(order.created_at)}</span>
+        </div>
+        <div class="order-card-items">
+          ${(order.items || []).map((item) => {
+            const product = productById(item.id);
+            const name = product ? product.name : item.id;
+            return `<p>${name} — Size ${escapeHtml(item.size || "One size")} · Qty ${item.qty}</p>`;
+          }).join("")}
+        </div>
+        <div class="order-card-foot">
+          <span class="order-status">${escapeHtml(order.status || "Paid")}</span>
+          <strong>${orderTotalLabel(order)}</strong>
+        </div>
+      </article>
+    `).join("");
+  }
   return `
     <section>
       <h2 class="section-label">Order History</h2>
@@ -1547,6 +1525,27 @@ function cartPage() {
   `);
 }
 
+async function startCheckout(button) {
+  if (!state.cart.length) return;
+  if (!state.auth.client) { showToast("Payments Unavailable"); return; }
+  const original = button.textContent;
+  button.disabled = true;
+  button.textContent = "Redirecting…";
+  try {
+    const items = state.cart.map((i) => ({ id: i.id, size: i.size, qty: i.qty }));
+    const email = state.auth.user?.email || state.settings.email || undefined;
+    const { data, error } = await state.auth.client.functions.invoke("create-checkout", {
+      body: { items, origin: window.location.origin, email },
+    });
+    if (error || !data?.url) throw new Error(data?.error || error?.message || "Could not start checkout");
+    window.location.href = data.url;
+  } catch (e) {
+    button.disabled = false;
+    button.textContent = original;
+    showToast(e.message || "Checkout Error");
+  }
+}
+
 function checkoutPage() {
   if (!state.cart.length) {
     return pageShell(`
@@ -1589,59 +1588,9 @@ function checkoutPage() {
           ${breadcrumb("Checkout", `<a href="#/cart">Cart</a>`)}
           <h1 class="display-title">Checkout</h1>
 
-          <section class="checkout-section">
-            <h2 class="section-label">Contact</h2>
-            <div class="form-grid">
-              <div class="field">
-                <label for="co-name">Full Name</label>
-                <input id="co-name" name="co-name" value="${escapeHtml(contactName)}" autocomplete="name" />
-              </div>
-              <div class="field">
-                <label for="co-email">Email</label>
-                <input id="co-email" name="co-email" type="email" value="${escapeHtml(contactEmail)}" autocomplete="email" />
-              </div>
-            </div>
-          </section>
-
-          <section class="checkout-section">
-            <h2 class="section-label">Shipping Address</h2>
-            <div class="form-grid">
-              <div class="field field-wide">
-                <label for="co-line1">Address</label>
-                <input id="co-line1" value="${escapeHtml(addr.line1 || "")}" autocomplete="address-line1" placeholder="Street address" />
-              </div>
-              <div class="field field-wide">
-                <label for="co-line2">Apartment, suite, etc. (optional)</label>
-                <input id="co-line2" value="${escapeHtml(addr.line2 || "")}" autocomplete="address-line2" />
-              </div>
-              <div class="field">
-                <label for="co-city">City</label>
-                <input id="co-city" value="${escapeHtml(addr.city || "")}" autocomplete="address-level2" />
-              </div>
-              <div class="field">
-                <label for="co-region">State / Province</label>
-                <input id="co-region" value="${escapeHtml(addr.region || "")}" autocomplete="address-level1" />
-              </div>
-              <div class="field">
-                <label for="co-postal">ZIP / Postal Code</label>
-                <input id="co-postal" value="${escapeHtml(addr.postal || "")}" autocomplete="postal-code" />
-              </div>
-              <div class="field">
-                <label for="co-country">Country</label>
-                ${countrySelectMarkup("co-country", addr.country || "")}
-              </div>
-            </div>
-          </section>
-
-          <section class="checkout-section">
-            <h2 class="section-label">Payment</h2>
-            <div class="payment-placeholder">
-              <p>Card payments are not connected yet. Stripe checkout will be enabled before launch.</p>
-            </div>
-          </section>
-
-          <button class="primary-button place-order-button" type="button" disabled aria-disabled="true">Place Order</button>
-          <p class="checkout-disabled-note">Ordering is disabled until Stripe payments and accounts are connected.</p>
+          <p class="checkout-lead">Review your order, then continue to secure payment. Your shipping address and card details are collected safely by Stripe on the next step — we never see or store your card.</p>
+          <button class="primary-button place-order-button" type="button" data-checkout>Proceed To Payment</button>
+          <p class="checkout-secure-note">Payments are processed securely by Stripe. You'll be charged in USD.</p>
         </div>
 
         <aside class="checkout-summary">
@@ -1718,6 +1667,7 @@ function initSupabaseAuth() {
     state.auth.session = session;
     state.auth.user = session?.user || null;
     state.auth.ready = true;
+    if (state.auth.user) state.authModal = null; // close auth modal once signed in
     syncAuthProfile();
     render();
     refreshWaitlist();
@@ -1751,7 +1701,7 @@ async function handleAuthAction(action) {
   const name = formValue("#name");
   const email = formValue("#email");
   const password = document.querySelector("#password")?.value || "";
-  const redirectTo = `${window.location.origin}${window.location.pathname}#/settings`;
+  const redirectTo = `${window.location.origin}${window.location.pathname}#/shop`;
 
   try {
     if (action === "sign-up") {
@@ -1768,7 +1718,10 @@ async function handleAuthAction(action) {
         },
       });
       if (error) throw error;
-      showToast("Check Email To Confirm");
+      state.authModal = null;
+      state.waitlistModal = null;
+      render();
+      showToast("Check Your Email To Confirm");
     }
 
     if (action === "sign-in") {
@@ -1832,6 +1785,55 @@ function closeWaitlistModal() {
   render();
 }
 
+function openAuthModal(mode = "signin") {
+  state.authModal = { mode: mode === "signup" ? "signup" : "signin" };
+  render();
+}
+
+function closeAuthModal() {
+  state.authModal = null;
+  render();
+}
+
+function authModalMarkup() {
+  if (!state.authModal) return "";
+  const isSignup = state.authModal.mode === "signup";
+  return `
+    <div class="modal-backdrop" role="presentation" data-auth-close>
+      <section class="waitlist-modal auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <button class="modal-close" type="button" aria-label="Close" data-auth-close>×</button>
+        <p class="modal-eyebrow">Virdasia Account</p>
+        <h2 id="auth-title">${isSignup ? "Create your account" : "Welcome back"}</h2>
+        <p class="modal-copy">${isSignup ? "Join to waitlist pieces, place orders, and track your history." : "Sign in to your Virdasia account."}</p>
+        <form class="waitlist-form auth-form" data-auth-form data-auth-mode="${isSignup ? "signup" : "signin"}">
+          ${isSignup ? `
+            <label class="field">
+              <span>Name</span>
+              <input id="name" name="name" type="text" autocomplete="name" placeholder="Your name" />
+            </label>` : ""}
+          <label class="field">
+            <span>Email</span>
+            <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+          </label>
+          <label class="field">
+            <span>Password</span>
+            <input id="password" name="password" type="password" autocomplete="${isSignup ? "new-password" : "current-password"}" required placeholder="••••••••" />
+          </label>
+          <div class="modal-actions">
+            <button class="primary-button" type="submit">${isSignup ? "Create Account" : "Sign In"}</button>
+          </div>
+        </form>
+        <p class="auth-switch">
+          ${isSignup
+            ? `Already have an account? <button type="button" class="auth-link" data-auth-toggle="signin">Sign in</button>`
+            : `New to Virdasia? <button type="button" class="auth-link" data-auth-toggle="signup">Create an account</button> &middot; <button type="button" class="auth-link" data-auth-forgot>Forgot password?</button>`
+          }
+        </p>
+      </section>
+    </div>
+  `;
+}
+
 // Per-product waitlist status: reserved (promised) + live joins, out of capacity.
 function productWaitlist(product) {
   const capacity = product.waitlistCapacity || 50;
@@ -1875,7 +1877,7 @@ async function loadWaitlist() {
 }
 
 function refreshWaitlist() {
-  loadWaitlist().then(render).catch(() => render());
+  Promise.all([loadWaitlist(), loadOrders()]).then(render).catch(() => render());
 }
 
 // Insert a waitlist entry for the signed-in user. Returns { ok, duplicate }.
@@ -1907,6 +1909,19 @@ async function removeWaitlistEntry(id) {
   }
   await loadWaitlist();
   render();
+}
+
+// Load the signed-in user's paid orders from Supabase.
+async function loadOrders() {
+  if (!state.auth.client || !state.auth.user) {
+    state.orders = [];
+    return;
+  }
+  const { data, error } = await state.auth.client
+    .from("orders")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (!error && data) state.orders = data;
 }
 
 function startShopTransition() {
@@ -2173,6 +2188,11 @@ function bindEvents() {
     });
   });
 
+  const checkoutButton = document.querySelector("[data-checkout]");
+  if (checkoutButton) {
+    checkoutButton.addEventListener("click", () => startCheckout(checkoutButton));
+  }
+
   document.querySelectorAll("[data-scroll-target]").forEach((button) => {
     button.addEventListener("click", () => {
       document.getElementById(button.dataset.scrollTarget)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -2217,12 +2237,11 @@ function bindEvents() {
     });
   });
 
+  // From the waitlist "Members Only" prompt — open auth modal but keep the
+  // waitlist context so it reappears (ready to confirm) after signing in.
   const waitlistSignin = document.querySelector("[data-waitlist-signin]");
   if (waitlistSignin) {
-    waitlistSignin.addEventListener("click", () => {
-      closeWaitlistModal();
-      window.location.hash = "#/settings";
-    });
+    waitlistSignin.addEventListener("click", () => openAuthModal("signup"));
   }
 
   const waitlistForm = document.querySelector("[data-waitlist-form]");
@@ -2314,29 +2333,33 @@ function bindEvents() {
     });
   }
 
-  const nameInput = document.querySelector("#name");
-  const emailInput = document.querySelector("#email");
-  if (nameInput) {
-    nameInput.addEventListener("input", (event) => {
-      state.settings.name = event.target.value;
-      saveSettings();
-    });
-  }
-  if (emailInput) {
-    emailInput.addEventListener("input", (event) => {
-      state.settings.email = event.target.value;
-      saveSettings();
+  // Auth modal: open from settings buttons, submit, switch mode, close, reset.
+  document.querySelectorAll("[data-open-auth]").forEach((button) => {
+    button.addEventListener("click", () => openAuthModal(button.dataset.openAuth));
+  });
+
+  const authForm = document.querySelector("[data-auth-form]");
+  if (authForm) {
+    authForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      handleAuthAction(authForm.dataset.authMode === "signup" ? "sign-up" : "sign-in");
     });
   }
 
-  const passwordInput = document.querySelector("#password");
-  if (passwordInput) {
-    passwordInput.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" && !state.auth.user) {
-        handleAuthAction("sign-in");
-      }
-    });
+  document.querySelectorAll("[data-auth-toggle]").forEach((button) => {
+    button.addEventListener("click", () => openAuthModal(button.dataset.authToggle));
+  });
+
+  const authForgot = document.querySelector("[data-auth-forgot]");
+  if (authForgot) {
+    authForgot.addEventListener("click", () => handleAuthAction("reset-password"));
   }
+
+  document.querySelectorAll("[data-auth-close]").forEach((control) => {
+    control.addEventListener("click", (event) => {
+      if (event.target === control || control.matches("button")) closeAuthModal();
+    });
+  });
 }
 
 function render() {
@@ -2364,6 +2387,18 @@ function render() {
   bindEvents();
 }
 
+// After a successful Stripe checkout, Stripe redirects back with ?checkout=success.
+function handleCheckoutReturn() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("checkout") === "success") {
+    state.cart = [];
+    writeJson("nebula-cart", state.cart);
+    window.history.replaceState({}, "", window.location.pathname + window.location.hash);
+    setTimeout(() => showToast("Payment received — thank you!"), 500);
+  }
+}
+
 window.addEventListener("hashchange", setRoute);
+handleCheckoutReturn();
 setRoute();
 initSupabaseAuth();

@@ -3659,3 +3659,50 @@ a.checkout-button {
 .vapourwave-card .product-waitlist-track span {
   background: #7a4bbf;
 }
+
+/* Checkout — Stripe redirect */
+.checkout-lead {
+  margin: 8px 0 28px;
+  max-width: 460px;
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+.checkout-secure-note {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+/* Auth modal (sign in / create account) */
+.auth-modal .modal-copy {
+  margin-bottom: 4px;
+}
+.auth-form .field + .field {
+  margin-top: 16px;
+}
+.auth-modal .modal-actions {
+  grid-template-columns: 1fr;
+}
+.auth-switch {
+  margin: 20px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+}
+.auth-link {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #111;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
