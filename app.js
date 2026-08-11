@@ -1677,6 +1677,7 @@ function initSupabaseAuth() {
     syncAuthProfile();
     render();
     refreshWaitlist();
+    maybeRouteAfterAuth();
   });
 
   state.auth.client.auth.getSession().then(({ data, error }) => {
@@ -1687,18 +1688,17 @@ function initSupabaseAuth() {
     syncAuthProfile();
     render();
     refreshWaitlist();
-    // After email confirmation Supabase redirects back with ?next=shop — send the
-    // visitor to the shop once the session has been processed.
-    if (pendingAuthNext === "shop") {
-      pendingAuthNext = null;
-      window.history.replaceState({}, "", window.location.pathname);
-      window.location.hash = "#/shop";
-    }
+    maybeRouteAfterAuth();
   }).catch((error) => {
     state.auth.error = error.message || "Unable to load Supabase session.";
     state.auth.ready = true;
     render();
+    maybeRouteAfterAuth();
   });
+
+  // Safety net: if an auth return never resolves through the callbacks above
+  // (e.g. some implicit-flow edge cases), still send the visitor to the shop.
+  if (pendingAuthNext === "shop") window.setTimeout(maybeRouteAfterAuth, 3500);
 }
 
 function formValue(selector) {
@@ -2416,6 +2416,14 @@ function render() {
 // Captured from the URL at load, before Supabase consumes its auth params.
 let pendingAuthNext = null;
 
+// Once the session has settled after an auth return, send the visitor to shop.
+function maybeRouteAfterAuth() {
+  if (pendingAuthNext !== "shop") return;
+  pendingAuthNext = null;
+  try { window.history.replaceState({}, "", window.location.pathname); } catch (e) { /* ignore */ }
+  window.location.hash = "#/shop";
+}
+
 function handleCheckoutReturn() {
   const params = new URLSearchParams(window.location.search);
   if (params.get("checkout") === "success") {
@@ -2423,8 +2431,23 @@ function handleCheckoutReturn() {
     writeJson("nebula-cart", state.cart);
     window.history.replaceState({}, "", window.location.pathname + window.location.hash);
     setTimeout(() => showToast("Payment received — thank you!"), 500);
+    return;
   }
-  if (params.get("next") === "shop") pendingAuthNext = "shop";
+  // Email-confirmation return. Supabase may honor our ?next=shop flag, but if the
+  // redirect fell back to the Site URL it still carries auth params (?code=... for
+  // PKCE, or #access_token=... in the hash for implicit). Any of these means the
+  // visitor just confirmed their email, so route them to the shop, not home.
+  const href = window.location.href;
+  if (
+    params.get("next") === "shop" ||
+    params.get("code") ||
+    params.get("type") === "signup" ||
+    href.includes("access_token=") ||
+    href.includes("type=signup") ||
+    href.includes("type=recovery")
+  ) {
+    pendingAuthNext = "shop";
+  }
 }
 
 window.addEventListener("hashchange", setRoute);
