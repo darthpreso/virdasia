@@ -1687,6 +1687,13 @@ function initSupabaseAuth() {
     syncAuthProfile();
     render();
     refreshWaitlist();
+    // After email confirmation Supabase redirects back with ?next=shop — send the
+    // visitor to the shop once the session has been processed.
+    if (pendingAuthNext === "shop") {
+      pendingAuthNext = null;
+      window.history.replaceState({}, "", window.location.pathname);
+      window.location.hash = "#/shop";
+    }
   }).catch((error) => {
     state.auth.error = error.message || "Unable to load Supabase session.";
     state.auth.ready = true;
@@ -1707,7 +1714,9 @@ async function handleAuthAction(action) {
   const name = formValue("#name");
   const email = formValue("#email");
   const password = document.querySelector("#password")?.value || "";
-  const redirectTo = `${window.location.origin}${window.location.pathname}#/shop`;
+  // Use a query flag (not a hash route) so Supabase's appended auth tokens don't
+  // clobber the destination. The app reads ?next=shop after the session lands.
+  const redirectTo = `${window.location.origin}${window.location.pathname}?next=shop`;
 
   try {
     if (action === "sign-up") {
@@ -2404,6 +2413,9 @@ function render() {
 }
 
 // After a successful Stripe checkout, Stripe redirects back with ?checkout=success.
+// Captured from the URL at load, before Supabase consumes its auth params.
+let pendingAuthNext = null;
+
 function handleCheckoutReturn() {
   const params = new URLSearchParams(window.location.search);
   if (params.get("checkout") === "success") {
@@ -2412,6 +2424,7 @@ function handleCheckoutReturn() {
     window.history.replaceState({}, "", window.location.pathname + window.location.hash);
     setTimeout(() => showToast("Payment received — thank you!"), 500);
   }
+  if (params.get("next") === "shop") pendingAuthNext = "shop";
 }
 
 window.addEventListener("hashchange", setRoute);
