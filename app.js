@@ -2389,6 +2389,13 @@ function bindEvents() {
 
 function render() {
   const app = document.querySelector("#app");
+  // Mid email-confirmation return: we're about to route to shop once the session
+  // settles, so render shop right away instead of flashing the home page.
+  if (pendingAuthNext === "shop") {
+    app.innerHTML = shopPage();
+    bindEvents();
+    return;
+  }
   if (state.route.startsWith("product/")) {
     app.innerHTML = productDetailPage();
     bindEvents();
