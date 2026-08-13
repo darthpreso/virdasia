@@ -341,6 +341,9 @@ const state = {
   waitlistModal: null,
   authModal: null,
   profileEditing: false,
+  passwordEditing: false,
+  deleteConfirming: false,
+  routeError: null,
   orders: [],
   auth: {
     client: null,
@@ -437,14 +440,21 @@ function writeJson(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
 
+const KNOWN_ROUTES = ["home", "shop", "about", "settings", "cart", "checkout", "terms", "privacy", "shipping", "contact", "error"];
+
 function routeFromHash() {
   const route = window.location.hash.replace(/^#\/?/, "") || "home";
   if (route.startsWith("product/")) return route;
-  return ["home", "shop", "about", "settings", "cart", "checkout", "terms", "privacy", "shipping", "contact"].includes(route) ? route : "home";
+  // Unknown routes get a real error page rather than a silent bounce home, so a
+  // mistyped or stale link explains itself instead of looking like a redirect.
+  return KNOWN_ROUTES.includes(route) ? route : "error";
 }
 
 function setRoute() {
   state.route = routeFromHash();
+  // A fresh navigation clears any previous crash, so the error page doesn't
+  // stick around describing a problem the visitor has already navigated past.
+  if (state.route !== "error") state.routeError = null;
   render();
   window.scrollTo({ top: 0 });
 }
@@ -1291,6 +1301,48 @@ function authAccountSection() {
           </div>
           <button class="secondary-button" type="button" data-auth-action="sign-out">Sign Out</button>
         </div>
+
+        <div class="account-tools">
+          ${state.passwordEditing ? `
+            <form class="account-form" data-password-form>
+              <h3>Change password</h3>
+              <label class="field">
+                <span>New password</span>
+                <input id="new-password" type="password" autocomplete="new-password" required minlength="6" placeholder="••••••••" />
+              </label>
+              <label class="field">
+                <span>Confirm new password</span>
+                <input id="new-password-confirm" type="password" autocomplete="new-password" required minlength="6" placeholder="••••••••" />
+              </label>
+              <p class="auth-hint">At least 6 characters.</p>
+              <div class="account-form-actions">
+                <button class="primary-button" type="submit">Save Password</button>
+                <button class="secondary-button" type="button" data-cancel-password>Cancel</button>
+              </div>
+            </form>
+          ` : `
+            <button class="secondary-button" type="button" data-edit-password>Change Password</button>
+          `}
+        </div>
+
+        <div class="danger-zone">
+          ${state.deleteConfirming ? `
+            <form class="account-form" data-delete-form>
+              <h3>Delete your account</h3>
+              <p class="danger-copy">This permanently deletes your account and removes you from every waitlist. Your order records are kept for tax purposes but are no longer linked to you. <strong>This cannot be undone.</strong></p>
+              <label class="field">
+                <span>Enter your password to confirm</span>
+                <input id="delete-password" type="password" autocomplete="current-password" required placeholder="••••••••" />
+              </label>
+              <div class="account-form-actions">
+                <button class="danger-button" type="submit">Permanently Delete Account</button>
+                <button class="secondary-button" type="button" data-cancel-delete>Cancel</button>
+              </div>
+            </form>
+          ` : `
+            <button class="danger-link" type="button" data-start-delete>Delete my account</button>
+          `}
+        </div>
       </section>
     `;
   }
@@ -1303,6 +1355,7 @@ function authAccountSection() {
         <button class="primary-button" type="button" data-open-auth="signin">Sign In</button>
         <button class="secondary-button" type="button" data-open-auth="signup">Create Account</button>
       </div>
+      <p class="option-copy auth-resend-copy">Didn't get your confirmation email? <button type="button" class="auth-link" data-open-auth="resend">Resend it</button></p>
     </section>
   `;
 }
@@ -1406,6 +1459,7 @@ function orderHistorySection() {
     <section>
       <h2 class="section-label">Order History</h2>
       <div class="order-list">${body}</div>
+      <p class="order-support">Questions about an order? Email <a href="mailto:support@virdasia.com">support@virdasia.com</a> and include your order number — we reply within 1–2 business days.</p>
     </section>
   `;
 }
@@ -1439,6 +1493,32 @@ function waitlistSection() {
       <div class="waitlist-list">${body}</div>
     </section>
   `;
+}
+
+// Shown for unknown routes and for anything that throws while rendering, so a
+// failure is always explained and always has a way out.
+function errorPage() {
+  const detail = state.routeError;
+  return pageShell(`
+    <main class="page error-page">
+      <section class="narrow">
+        ${breadcrumb("Something Went Wrong")}
+        <p class="error-code">${detail ? "Error" : "404"}</p>
+        <h1 class="display-title">${detail ? "Something went wrong" : "Page not found"}</h1>
+        <p class="error-copy">
+          ${detail
+            ? "Something broke on our end while loading this page. It isn't you. Try again, or head back home."
+            : "We couldn't find the page you're looking for. It may have moved, or the link may be out of date."}
+        </p>
+        ${detail ? `<p class="error-detail">${escapeHtml(String(detail).slice(0, 160))}</p>` : ""}
+        <div class="error-actions">
+          <a class="primary-button inline-button" href="#/home">Back Home</a>
+          <a class="secondary-button inline-button" href="#/shop">Browse The Shop</a>
+        </div>
+        <p class="error-support">Still stuck? Email <a href="mailto:support@virdasia.com">support@virdasia.com</a>.</p>
+      </section>
+    </main>
+  `);
 }
 
 function settingsPage() {
@@ -1534,6 +1614,7 @@ function cartPage() {
 async function startCheckout(button) {
   if (!state.cart.length) return;
   if (!state.auth.client) { showToast("Payments Unavailable"); return; }
+  if (!state.auth.user) { openAuthModal("signin"); showToast("Sign In To Place An Order"); return; }
   const original = button.textContent;
   button.disabled = true;
   button.textContent = "Redirecting…";
@@ -1560,6 +1641,25 @@ function checkoutPage() {
           ${breadcrumb("Checkout", `<a href="#/cart">Cart</a>`)}
           <h1 class="display-title">Checkout</h1>
           <p class="empty-cart">Your cart is empty. <a href="#/shop">Browse the shop</a> to add pieces first.</p>
+        </section>
+      </main>
+    `);
+  }
+
+  // Guest checkout is off for now: an order placed without an account can never
+  // appear in Order History, so we require sign-in before payment.
+  if (state.auth.ready && !state.auth.user) {
+    return pageShell(`
+      <main class="page checkout-page">
+        <section class="narrow">
+          ${breadcrumb("Checkout", `<a href="#/cart">Cart</a>`)}
+          <h1 class="display-title">Checkout</h1>
+          <p class="checkout-lead">You'll need a Virdasia account to place an order — it's how you track your order history and manage your waitlist.</p>
+          <div class="auth-actions">
+            <button class="primary-button" type="button" data-open-auth="signin">Sign In</button>
+            <button class="secondary-button" type="button" data-open-auth="signup">Create Account</button>
+          </div>
+          <p class="checkout-secure-note">Your cart is saved — you'll come straight back here.</p>
         </section>
       </main>
     `);
@@ -1778,6 +1878,22 @@ async function handleAuthAction(action) {
       showToast("Check Your Email For The Reset Link");
     }
 
+    if (action === "resend-confirmation") {
+      if (!email) {
+        showToast("Email Required");
+        return;
+      }
+      const { error } = await state.auth.client.auth.resend({
+        type: "signup",
+        email,
+        options: { emailRedirectTo: redirectTo },
+      });
+      if (error) throw error;
+      state.authModal = null;
+      render();
+      showToast("Confirmation Email Sent");
+    }
+
     if (action === "set-password") {
       const confirmPassword = document.querySelector("#password-confirm")?.value || "";
       if (password.length < 6) {
@@ -1811,6 +1927,80 @@ async function handleAuthAction(action) {
   }
 }
 
+// Settings → Change Password. Separate from the recovery modal because the
+// visitor is already signed in; Supabase accepts the update on the live session.
+async function handlePasswordChange() {
+  if (!state.auth.client) {
+    showToast("Supabase Not Configured");
+    return;
+  }
+  const next = document.querySelector("#new-password")?.value || "";
+  const confirmNext = document.querySelector("#new-password-confirm")?.value || "";
+  if (next.length < 6) {
+    showToast("Password Must Be 6+ Characters");
+    return;
+  }
+  if (next !== confirmNext) {
+    showToast("Passwords Do Not Match");
+    return;
+  }
+  try {
+    const { error } = await state.auth.client.auth.updateUser({ password: next });
+    if (error) throw error;
+    state.passwordEditing = false;
+    render();
+    showToast("Password Updated");
+  } catch (error) {
+    showToast(error.message || "Could Not Update Password");
+  }
+}
+
+// Settings → Delete my account. The password re-check happens server-side in the
+// delete-account edge function, so a left-open session alone can't wipe an account.
+async function handleAccountDelete() {
+  const password = document.querySelector("#delete-password")?.value || "";
+  if (!password) {
+    showToast("Password Required");
+    return;
+  }
+  const token = state.auth.session?.access_token;
+  if (!token) {
+    showToast("Please Sign In Again");
+    return;
+  }
+
+  const button = document.querySelector("[data-delete-form] .danger-button");
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Deleting…";
+  }
+
+  try {
+    const response = await fetch(`${window.NEBULA_SUPABASE_CONFIG.url}/functions/v1/delete-account`, {
+      method: "POST",
+      headers: { "content-type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ password }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || "Could not delete your account.");
+
+    // Clear local traces too — the server no longer knows this person.
+    await state.auth.client.auth.signOut().catch(() => {});
+    state.deleteConfirming = false;
+    state.waitlist = [];
+    state.orders = [];
+    state.authModal = null;
+    render();
+    showToast("Your Account Has Been Deleted");
+  } catch (error) {
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Permanently Delete Account";
+    }
+    showToast(error.message || "Could Not Delete Account");
+  }
+}
+
 function showToast(message) {
   const toast = document.querySelector("#toast");
   if (!toast) return;
@@ -1830,7 +2020,7 @@ function closeWaitlistModal() {
   render();
 }
 
-const AUTH_MODES = ["signin", "signup", "forgot", "recovery"];
+const AUTH_MODES = ["signin", "signup", "forgot", "recovery", "resend"];
 
 function openAuthModal(mode = "signin") {
   state.authModal = { mode: AUTH_MODES.includes(mode) ? mode : "signin" };
@@ -1863,6 +2053,11 @@ const AUTH_COPY = {
     copy: "Almost done — pick a new password for your Virdasia account.",
     submit: "Update Password",
   },
+  resend: {
+    title: "Resend confirmation",
+    copy: "Didn't get your confirmation email, or did the link expire? Enter your email and we'll send a fresh one.",
+    submit: "Resend Email",
+  },
 };
 
 function authModalMarkup() {
@@ -1870,8 +2065,9 @@ function authModalMarkup() {
   const mode = state.authModal.mode;
   const { title, copy, submit } = AUTH_COPY[mode] || AUTH_COPY.signin;
   const isSignup = mode === "signup";
-  const isForgot = mode === "forgot";
   const isRecovery = mode === "recovery";
+  // Modes that only ever need an address — no password field at all.
+  const emailOnly = mode === "forgot" || mode === "resend";
 
   return `
     <div class="modal-backdrop" role="presentation" data-auth-close>
@@ -1891,7 +2087,7 @@ function authModalMarkup() {
               <span>Email</span>
               <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
             </label>`}
-          ${isForgot ? "" : `
+          ${emailOnly ? "" : `
             <label class="field">
               <span>${isRecovery ? "New password" : "Password"}</span>
               <input id="password" name="password" type="password" autocomplete="${isSignup || isRecovery ? "new-password" : "current-password"}" required minlength="6" placeholder="••••••••" />
@@ -1921,10 +2117,13 @@ function authSwitchMarkup(mode) {
   if (mode === "forgot") {
     return `Remembered it? <button type="button" class="auth-link" data-auth-toggle="signin">Back to sign in</button>`;
   }
+  if (mode === "resend") {
+    return `Already confirmed? <button type="button" class="auth-link" data-auth-toggle="signin">Back to sign in</button>`;
+  }
   if (mode === "recovery") {
     return `Didn't mean to reset? <button type="button" class="auth-link" data-auth-action="sign-out">Sign out</button>`;
   }
-  return `New to Virdasia? <button type="button" class="auth-link" data-auth-toggle="signup">Create an account</button> &middot; <button type="button" class="auth-link" data-auth-toggle="forgot">Forgot password?</button>`;
+  return `New to Virdasia? <button type="button" class="auth-link" data-auth-toggle="signup">Create an account</button> &middot; <button type="button" class="auth-link" data-auth-toggle="forgot">Forgot password?</button><br /><span class="auth-switch-secondary">Confirmation email never arrived? <button type="button" class="auth-link" data-auth-toggle="resend">Resend it</button></span>`;
 }
 
 // Per-product waitlist status: reserved (promised) + live joins, out of capacity.
@@ -2448,6 +2647,7 @@ function bindEvents() {
       signin: "sign-in",
       forgot: "reset-password",
       recovery: "set-password",
+      resend: "resend-confirmation",
     };
     authForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -2458,6 +2658,52 @@ function bindEvents() {
   document.querySelectorAll("[data-auth-toggle]").forEach((button) => {
     button.addEventListener("click", () => openAuthModal(button.dataset.authToggle));
   });
+
+  // Settings → change password.
+  const editPassword = document.querySelector("[data-edit-password]");
+  if (editPassword) {
+    editPassword.addEventListener("click", () => {
+      state.passwordEditing = true;
+      render();
+    });
+  }
+  const cancelPassword = document.querySelector("[data-cancel-password]");
+  if (cancelPassword) {
+    cancelPassword.addEventListener("click", () => {
+      state.passwordEditing = false;
+      render();
+    });
+  }
+  const passwordForm = document.querySelector("[data-password-form]");
+  if (passwordForm) {
+    passwordForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      handlePasswordChange();
+    });
+  }
+
+  // Settings → delete account.
+  const startDelete = document.querySelector("[data-start-delete]");
+  if (startDelete) {
+    startDelete.addEventListener("click", () => {
+      state.deleteConfirming = true;
+      render();
+    });
+  }
+  const cancelDelete = document.querySelector("[data-cancel-delete]");
+  if (cancelDelete) {
+    cancelDelete.addEventListener("click", () => {
+      state.deleteConfirming = false;
+      render();
+    });
+  }
+  const deleteForm = document.querySelector("[data-delete-form]");
+  if (deleteForm) {
+    deleteForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      handleAccountDelete();
+    });
+  }
 
   document.querySelectorAll("[data-auth-close]").forEach((control) => {
     control.addEventListener("click", (event) => {
@@ -2492,9 +2738,26 @@ function render() {
     privacy: () => legalPage("privacy"),
     shipping: () => legalPage("shipping"),
     contact: contactPage,
+    error: errorPage,
   };
 
-  app.innerHTML = pages[state.route]();
+  // A throw while building a page used to blank the screen entirely. Catching it
+  // here means the visitor gets the error page with a way out instead.
+  try {
+    app.innerHTML = (pages[state.route] || errorPage)();
+  } catch (error) {
+    console.error("Render failed:", error);
+    state.routeError = error?.message || "Unexpected error";
+    try {
+      app.innerHTML = errorPage();
+    } catch (fallbackError) {
+      console.error("Error page failed too:", fallbackError);
+      app.innerHTML = `<main style="padding:80px 24px;text-align:center;font-family:Arial,sans-serif;">
+        <h1>Something went wrong</h1>
+        <p>Please <a href="#/home" onclick="location.reload()">reload the page</a> or email support@virdasia.com.</p>
+      </main>`;
+    }
+  }
   bindEvents();
 }
 
@@ -2537,6 +2800,24 @@ function handleCheckoutReturn() {
   // PKCE, or #access_token=... in the hash for implicit). Any of these means the
   // visitor just confirmed their email, so route them to the shop, not home.
   const href = window.location.href;
+
+  // Failed auth return. Supabase reports expired/consumed links as error params
+  // (in the hash for implicit flow). Without this the visitor would land on the
+  // shop with no session and no explanation, waiting on a modal that never opens.
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#\/?/, ""));
+  const authError = hashParams.get("error_code") || hashParams.get("error") || params.get("error_code") || params.get("error");
+  if (authError) {
+    const expired = String(authError).includes("expired") || String(authError) === "access_denied";
+    try { window.history.replaceState({}, "", window.location.pathname); } catch (e) { /* ignore */ }
+    window.location.hash = "#/shop";
+    // Re-open the reset form so they can request a fresh link in one step.
+    setTimeout(() => {
+      if (expired) openAuthModal("forgot");
+      showToast(expired ? "That Link Expired — Request A New One" : "Link Invalid Or Already Used");
+    }, 400);
+    return;
+  }
+
   // Password-recovery return. Must be checked BEFORE the generic auth return
   // below: the link does sign the visitor in, but sending them straight to the
   // shop would leave their old password in place. Flag it instead so
