@@ -3722,6 +3722,139 @@ a.checkout-button {
   cursor: pointer;
 }
 
+/* --- Settings accordions --- */
+
+/* .contained sizes itself from the viewport, which overflows the narrower white
+   card in the sakura/vapourwave shells. Harmless when everything was left
+   aligned, but the accordion pins summaries and chevrons to the right edge, so
+   constrain to the parent here and keep the viewport cap as the max. */
+.settings-page .contained {
+  width: 100%;
+  max-width: min(1188px, calc(100vw - 108px));
+}
+
+.settings-panels {
+  margin-top: 34px;
+  border-top: 1px solid var(--line);
+}
+
+.settings-panel {
+  border-bottom: 1px solid var(--line);
+}
+
+.settings-panel-heading {
+  margin: 0;
+}
+
+.settings-panel-toggle {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  border: 0;
+  padding: 26px 4px;
+  background: transparent;
+  color: var(--ink);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.settings-panel-title {
+  flex: 1 1 auto;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.settings-panel-meta {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: opacity 0.25s ease;
+}
+
+/* The summary is redundant once the section is open and repeats its content;
+   fade rather than hide so the header doesn't reflow. */
+.settings-panel.is-open .settings-panel-meta {
+  opacity: 0;
+}
+
+/* Chevron drawn in CSS so it inherits colour and needs no asset. */
+.settings-panel-icon {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  margin-right: 6px;
+  border-right: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform 0.25s ease;
+}
+
+.settings-panel.is-open .settings-panel-icon {
+  transform: rotate(-135deg) translate(-2px, -2px);
+}
+
+.settings-panel-toggle:hover .settings-panel-title {
+  color: #000;
+}
+
+/* The 0fr → 1fr grid trick animates height without measuring it in JS. */
+.settings-panel-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  visibility: hidden;
+  transition: grid-template-rows 0.28s ease, visibility 0.28s;
+}
+
+.settings-panel.is-open .settings-panel-body {
+  grid-template-rows: 1fr;
+  visibility: visible;
+}
+
+.settings-panel-inner {
+  overflow: hidden;
+}
+
+/* Padding sits on a nested wrapper so it's clipped along with the content when
+   the row collapses, instead of leaving a gap on every closed panel. */
+.settings-panel-content {
+  padding-bottom: 36px;
+}
+
+.panel-copy {
+  margin: 0 0 24px;
+  max-width: 62ch;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.65;
+}
+
+/* --- Account section spacing --- */
+.account-block .panel-copy {
+  margin-bottom: 22px;
+}
+
+.account-block .auth-actions {
+  margin-top: 0;
+}
+
+.account-footnote {
+  margin: 20px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .auth-switch-secondary {
   display: inline-block;
   margin-top: 8px;
@@ -3734,6 +3867,10 @@ a.checkout-button {
 
 /* --- Settings: change password + delete account --- */
 .account-tools {
+  margin-top: 24px;
+}
+
+.signed-in-panel + .account-tools {
   margin-top: 22px;
 }
 
@@ -3791,8 +3928,8 @@ a.checkout-button {
 }
 
 .danger-zone {
-  margin-top: 30px;
-  padding-top: 22px;
+  margin-top: 26px;
+  padding-top: 24px;
   border-top: 1px solid var(--line);
 }
 

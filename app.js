@@ -1270,30 +1270,21 @@ function productDetailPage() {
 function authAccountSection() {
   if (!state.auth.configured) {
     return `
-      <section>
-        <h2 class="section-label">Account</h2>
-        <div class="auth-panel">
-          <h3>Supabase Auth Not Configured</h3>
-          <p>Add your Supabase project URL and publishable key in <code>supabase-config.js</code>. This site only needs the public browser key, never the service role key.</p>
-        </div>
-      </section>
+      <div class="auth-panel">
+        <h3>Supabase Auth Not Configured</h3>
+        <p>Add your Supabase project URL and publishable key in <code>supabase-config.js</code>. This site only needs the public browser key, never the service role key.</p>
+      </div>
     `;
   }
 
   if (!state.auth.ready) {
-    return `
-      <section>
-        <h2 class="section-label">Account</h2>
-        <div class="auth-panel"><p>Checking account session...</p></div>
-      </section>
-    `;
+    return `<div class="auth-panel"><p>Checking account session...</p></div>`;
   }
 
   if (state.auth.user) {
     const email = state.auth.user.email || "";
     return `
-      <section>
-        <h2 class="section-label">Account</h2>
+      <div class="account-block">
         <div class="auth-panel signed-in-panel">
           <div>
             <h3>Signed in as</h3>
@@ -1343,20 +1334,19 @@ function authAccountSection() {
             <button class="danger-link" type="button" data-start-delete>Delete my account</button>
           `}
         </div>
-      </section>
+      </div>
     `;
   }
 
   return `
-    <section>
-      <h2 class="section-label">Account</h2>
-      <p class="option-copy">Sign in to join waitlists, place orders, and track your order history.</p>
+    <div class="account-block">
+      <p class="panel-copy">Sign in to join waitlists, place orders, and track your order history.</p>
       <div class="auth-actions">
         <button class="primary-button" type="button" data-open-auth="signin">Sign In</button>
         <button class="secondary-button" type="button" data-open-auth="signup">Create Account</button>
       </div>
-      <p class="option-copy auth-resend-copy">Didn't get your confirmation email? <button type="button" class="auth-link" data-open-auth="resend">Resend it</button></p>
-    </section>
+      <p class="account-footnote">Didn't get your confirmation email? <button type="button" class="auth-link" data-open-auth="resend">Resend it</button></p>
+    </div>
   `;
 }
 
@@ -1375,9 +1365,8 @@ function profileSection() {
   const editing = state.profileEditing || !hasData;
   const d = editing ? "" : " disabled";
   return `
-    <section>
-      <h2 class="section-label">Profile & Shipping</h2>
-      <p class="option-copy">Saved here on this device for now. Once accounts are connected, this will sync to your Virdasia account and prefill checkout.</p>
+    <div>
+      <p class="panel-copy">Saved here on this device for now. Once accounts are connected, this will sync to your Virdasia account and prefill checkout.</p>
       <div class="form-grid">
         <div class="field">
           <label for="pf-fullname">Full Name</label>
@@ -1417,7 +1406,7 @@ function profileSection() {
           ? `<button class="primary-button" type="button" data-save-profile>Save Details</button>`
           : `<button class="secondary-button" type="button" data-edit-profile>Edit Details</button>`}
       </div>
-    </section>
+    </div>
   `;
 }
 
@@ -1456,11 +1445,10 @@ function orderHistorySection() {
     `).join("");
   }
   return `
-    <section>
-      <h2 class="section-label">Order History</h2>
+    <div>
       <div class="order-list">${body}</div>
       <p class="order-support">Questions about an order? Email <a href="mailto:support@virdasia.com">support@virdasia.com</a> and include your order number — we reply within 1–2 business days.</p>
-    </section>
+    </div>
   `;
 }
 
@@ -1487,12 +1475,7 @@ function waitlistSection() {
       `;
     }).join("");
   }
-  return `
-    <section>
-      <h2 class="section-label">Waitlisted Items</h2>
-      <div class="waitlist-list">${body}</div>
-    </section>
-  `;
+  return `<div class="waitlist-list">${body}</div>`;
 }
 
 // Shown for unknown routes and for anything that throws while rendering, so a
@@ -1521,35 +1504,93 @@ function errorPage() {
   `);
 }
 
+// Settings is long enough that showing everything at once is overwhelming, so
+// each section collapses. The open/closed state persists per device.
+const SETTINGS_PANEL_DEFAULTS = {
+  account: true,
+  profile: false,
+  orders: false,
+  waitlist: false,
+  launch: false,
+  style: false,
+};
+
+function settingsOpenState() {
+  const stored = readJson("nebula-settings-panels", null);
+  return { ...SETTINGS_PANEL_DEFAULTS, ...(stored && typeof stored === "object" ? stored : {}) };
+}
+
+function isSettingsOpen(key) {
+  return !!settingsOpenState()[key];
+}
+
+function setSettingsOpen(key, open) {
+  const next = settingsOpenState();
+  next[key] = open;
+  writeJson("nebula-settings-panels", next);
+}
+
+// `meta` is a short summary shown on the collapsed header so the section can be
+// understood without opening it.
+function settingsPanel(key, title, meta, body) {
+  const open = isSettingsOpen(key);
+  return `
+    <section class="settings-panel${open ? " is-open" : ""}">
+      <h2 class="settings-panel-heading">
+        <button class="settings-panel-toggle" type="button" data-settings-toggle="${key}"
+                aria-expanded="${open}" aria-controls="settings-panel-${key}">
+          <span class="settings-panel-title">${title}</span>
+          ${meta ? `<span class="settings-panel-meta">${meta}</span>` : ""}
+          <span class="settings-panel-icon" aria-hidden="true"></span>
+        </button>
+      </h2>
+      <div class="settings-panel-body" id="settings-panel-${key}">
+        <div class="settings-panel-inner">
+          <div class="settings-panel-content">${body}</div>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
 function settingsPage() {
+  const orderCount = (state.orders || []).length;
+  const waitlistCount = (state.waitlist || []).length;
+  const profile = state.settings.profile || {};
+  const addr = state.settings.address || {};
+  const profileSet = !!(profile.fullName || addr.line1 || addr.city);
+  const launchLabel = (launchModes.find((m) => m[0] === state.settings.launchMode) || launchModes[0])[1];
+  const styleLabel = (styleOptions.find((s) => s[0] === state.settings.style) || styleOptions[0])[1];
+
+  const accountMeta = !state.auth.ready
+    ? ""
+    : state.auth.user
+      ? escapeHtml(state.auth.user.email || "Signed in")
+      : "Not signed in";
+
   return pageShell(`
     <main class="page settings-page">
       <section class="contained">
         ${breadcrumb("Settings")}
         <h1 class="display-title">Settings</h1>
-        <div class="rule"></div>
-        ${authAccountSection()}
-        <div class="rule"></div>
-        ${profileSection()}
-        <div class="rule"></div>
-        ${orderHistorySection()}
-        <div class="rule"></div>
-        ${waitlistSection()}
-        <div class="rule"></div>
-        <section>
-          <h2 class="section-label">Launch Mode</h2>
-          <p class="option-copy">Pre-Launch shows waitlist buttons (limited to 50 per piece). Full-Launch enables full shopping.</p>
-          <div class="option-grid">
-            ${launchModes.map((option) => optionCard("launch", option, state.settings.launchMode)).join("")}
-          </div>
-        </section>
-        <div class="rule"></div>
-        <section>
-          <h2 class="section-label">Style</h2>
-          <div class="option-grid">
-            ${styleOptions.map((option) => optionCard("style", option, state.settings.style)).join("")}
-          </div>
-        </section>
+        <div class="settings-panels">
+          ${settingsPanel("account", "Account", accountMeta, authAccountSection())}
+          ${settingsPanel("profile", "Profile &amp; Shipping", profileSet ? "Saved" : "Not set", profileSection())}
+          ${settingsPanel("orders", "Order History", orderCount ? `${orderCount} order${orderCount === 1 ? "" : "s"}` : "No orders yet", orderHistorySection())}
+          ${settingsPanel("waitlist", "Waitlisted Items", waitlistCount ? `${waitlistCount} item${waitlistCount === 1 ? "" : "s"}` : "None", waitlistSection())}
+          ${settingsPanel("launch", "Launch Mode", escapeHtml(launchLabel), `
+            <p class="panel-copy">Pre-Launch shows waitlist buttons (limited to 50 per piece). Full-Launch enables full shopping.</p>
+            <div class="option-grid">
+              ${launchModes.map((option) => optionCard("launch", option, state.settings.launchMode)).join("")}
+            </div>
+          `)}
+          ${settingsPanel("style", "Style", escapeHtml(styleLabel), `
+            <p class="panel-copy">Changes how the whole site looks.</p>
+            <div class="option-grid">
+              ${styleOptions.map((option) => optionCard("style", option, state.settings.style)).join("")}
+            </div>
+          `)}
+        </div>
       </section>
     </main>
   `);
@@ -2657,6 +2698,18 @@ function bindEvents() {
 
   document.querySelectorAll("[data-auth-toggle]").forEach((button) => {
     button.addEventListener("click", () => openAuthModal(button.dataset.authToggle));
+  });
+
+  // Settings accordions. Toggled by mutating the DOM rather than re-rendering,
+  // so the open/close transition actually plays.
+  document.querySelectorAll("[data-settings-toggle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const key = button.dataset.settingsToggle;
+      const open = !isSettingsOpen(key);
+      setSettingsOpen(key, open);
+      button.setAttribute("aria-expanded", String(open));
+      button.closest(".settings-panel")?.classList.toggle("is-open", open);
+    });
   });
 
   // Settings → change password.
