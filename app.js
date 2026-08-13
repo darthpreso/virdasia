@@ -1669,11 +1669,16 @@ function initSupabaseAuth() {
 
   loadWaitlistCounts().then(render).catch(() => {});
 
-  state.auth.client.auth.onAuthStateChange((_event, session) => {
+  state.auth.client.auth.onAuthStateChange((event, session) => {
+    // Supabase fires this when a recovery link is consumed; belt-and-suspenders
+    // alongside the URL sniffing in handleCheckoutReturn().
+    if (event === "PASSWORD_RECOVERY") pendingRecovery = true;
     state.auth.session = session;
     state.auth.user = session?.user || null;
     state.auth.ready = true;
-    if (state.auth.user) state.authModal = null; // close auth modal once signed in
+    // Close the auth modal once signed in — except during recovery, where the
+    // session landing is exactly when we need the new-password form on screen.
+    if (state.auth.user && state.authModal?.mode !== "recovery") state.authModal = null;
     syncAuthProfile();
     render();
     refreshWaitlist();
@@ -1698,7 +1703,7 @@ function initSupabaseAuth() {
 
   // Safety net: if an auth return never resolves through the callbacks above
   // (e.g. some implicit-flow edge cases), still send the visitor to the shop.
-  if (pendingAuthNext === "shop") window.setTimeout(maybeRouteAfterAuth, 3500);
+  if (pendingAuthNext === "shop" || pendingRecovery) window.setTimeout(maybeRouteAfterAuth, 3500);
 }
 
 function formValue(selector) {
@@ -1752,6 +1757,8 @@ async function handleAuthAction(action) {
     if (action === "sign-out") {
       const { error } = await state.auth.client.auth.signOut();
       if (error) throw error;
+      state.authModal = null; // also dismisses the recovery modal's "sign out" escape
+      render();
       showToast("Signed Out");
     }
 
@@ -1760,9 +1767,32 @@ async function handleAuthAction(action) {
         showToast("Email Required");
         return;
       }
-      const { error } = await state.auth.client.auth.resetPasswordForEmail(email, { redirectTo });
+      // Supabase appends its own recovery params; ?next=recovery survives them and
+      // is what handleCheckoutReturn() looks for on the way back in.
+      const { error } = await state.auth.client.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}${window.location.pathname}?next=recovery`,
+      });
       if (error) throw error;
-      showToast("Password Email Sent");
+      state.authModal = null;
+      render();
+      showToast("Check Your Email For The Reset Link");
+    }
+
+    if (action === "set-password") {
+      const confirmPassword = document.querySelector("#password-confirm")?.value || "";
+      if (password.length < 6) {
+        showToast("Password Must Be 6+ Characters");
+        return;
+      }
+      if (password !== confirmPassword) {
+        showToast("Passwords Do Not Match");
+        return;
+      }
+      const { error } = await state.auth.client.auth.updateUser({ password });
+      if (error) throw error;
+      state.authModal = null;
+      render();
+      showToast("Password Updated");
     }
 
     if (action === "update-profile") {
@@ -1800,8 +1830,10 @@ function closeWaitlistModal() {
   render();
 }
 
+const AUTH_MODES = ["signin", "signup", "forgot", "recovery"];
+
 function openAuthModal(mode = "signin") {
-  state.authModal = { mode: mode === "signup" ? "signup" : "signin" };
+  state.authModal = { mode: AUTH_MODES.includes(mode) ? mode : "signin" };
   render();
 }
 
@@ -1810,43 +1842,89 @@ function closeAuthModal() {
   render();
 }
 
+const AUTH_COPY = {
+  signin: {
+    title: "Welcome back",
+    copy: "Sign in to your Virdasia account.",
+    submit: "Sign In",
+  },
+  signup: {
+    title: "Create your account",
+    copy: "Join to waitlist pieces, place orders, and track your history.",
+    submit: "Create Account",
+  },
+  forgot: {
+    title: "Reset your password",
+    copy: "Enter your email and we'll send you a link to choose a new password.",
+    submit: "Send Reset Link",
+  },
+  recovery: {
+    title: "Choose a new password",
+    copy: "Almost done — pick a new password for your Virdasia account.",
+    submit: "Update Password",
+  },
+};
+
 function authModalMarkup() {
   if (!state.authModal) return "";
-  const isSignup = state.authModal.mode === "signup";
+  const mode = state.authModal.mode;
+  const { title, copy, submit } = AUTH_COPY[mode] || AUTH_COPY.signin;
+  const isSignup = mode === "signup";
+  const isForgot = mode === "forgot";
+  const isRecovery = mode === "recovery";
+
   return `
     <div class="modal-backdrop" role="presentation" data-auth-close>
-      <section class="waitlist-modal auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
-        <button class="modal-close" type="button" aria-label="Close" data-auth-close>×</button>
+      <section class="waitlist-modal auth-modal auth-modal--${mode}" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        ${isRecovery ? "" : `<button class="modal-close" type="button" aria-label="Close" data-auth-close>×</button>`}
         <p class="modal-eyebrow">Virdasia Account</p>
-        <h2 id="auth-title">${isSignup ? "Create your account" : "Welcome back"}</h2>
-        <p class="modal-copy">${isSignup ? "Join to waitlist pieces, place orders, and track your history." : "Sign in to your Virdasia account."}</p>
-        <form class="waitlist-form auth-form" data-auth-form data-auth-mode="${isSignup ? "signup" : "signin"}">
+        <h2 id="auth-title">${title}</h2>
+        <p class="modal-copy">${copy}</p>
+        <form class="waitlist-form auth-form" data-auth-form data-auth-mode="${mode}">
           ${isSignup ? `
             <label class="field">
               <span>Name</span>
               <input id="name" name="name" type="text" autocomplete="name" placeholder="Your name" />
             </label>` : ""}
-          <label class="field">
-            <span>Email</span>
-            <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
-          </label>
-          <label class="field">
-            <span>Password</span>
-            <input id="password" name="password" type="password" autocomplete="${isSignup ? "new-password" : "current-password"}" required placeholder="••••••••" />
-          </label>
+          ${isRecovery ? "" : `
+            <label class="field">
+              <span>Email</span>
+              <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+            </label>`}
+          ${isForgot ? "" : `
+            <label class="field">
+              <span>${isRecovery ? "New password" : "Password"}</span>
+              <input id="password" name="password" type="password" autocomplete="${isSignup || isRecovery ? "new-password" : "current-password"}" required minlength="6" placeholder="••••••••" />
+            </label>`}
+          ${isRecovery ? `
+            <label class="field">
+              <span>Confirm new password</span>
+              <input id="password-confirm" name="password-confirm" type="password" autocomplete="new-password" required minlength="6" placeholder="••••••••" />
+            </label>
+            <p class="auth-hint">At least 6 characters.</p>` : ""}
           <div class="modal-actions">
-            <button class="primary-button" type="submit">${isSignup ? "Create Account" : "Sign In"}</button>
+            <button class="primary-button" type="submit">${submit}</button>
           </div>
         </form>
         <p class="auth-switch">
-          ${isSignup
-            ? `Already have an account? <button type="button" class="auth-link" data-auth-toggle="signin">Sign in</button>`
-            : `New to Virdasia? <button type="button" class="auth-link" data-auth-toggle="signup">Create an account</button> &middot; <button type="button" class="auth-link" data-auth-forgot>Forgot password?</button>`
-          }
+          ${authSwitchMarkup(mode)}
         </p>
       </section>
     </div>
   `;
+}
+
+function authSwitchMarkup(mode) {
+  if (mode === "signup") {
+    return `Already have an account? <button type="button" class="auth-link" data-auth-toggle="signin">Sign in</button>`;
+  }
+  if (mode === "forgot") {
+    return `Remembered it? <button type="button" class="auth-link" data-auth-toggle="signin">Back to sign in</button>`;
+  }
+  if (mode === "recovery") {
+    return `Didn't mean to reset? <button type="button" class="auth-link" data-auth-action="sign-out">Sign out</button>`;
+  }
+  return `New to Virdasia? <button type="button" class="auth-link" data-auth-toggle="signup">Create an account</button> &middot; <button type="button" class="auth-link" data-auth-toggle="forgot">Forgot password?</button>`;
 }
 
 // Per-product waitlist status: reserved (promised) + live joins, out of capacity.
@@ -2365,20 +2443,21 @@ function bindEvents() {
 
   const authForm = document.querySelector("[data-auth-form]");
   if (authForm) {
+    const AUTH_SUBMIT_ACTION = {
+      signup: "sign-up",
+      signin: "sign-in",
+      forgot: "reset-password",
+      recovery: "set-password",
+    };
     authForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      handleAuthAction(authForm.dataset.authMode === "signup" ? "sign-up" : "sign-in");
+      handleAuthAction(AUTH_SUBMIT_ACTION[authForm.dataset.authMode] || "sign-in");
     });
   }
 
   document.querySelectorAll("[data-auth-toggle]").forEach((button) => {
     button.addEventListener("click", () => openAuthModal(button.dataset.authToggle));
   });
-
-  const authForgot = document.querySelector("[data-auth-forgot]");
-  if (authForgot) {
-    authForgot.addEventListener("click", () => handleAuthAction("reset-password"));
-  }
 
   document.querySelectorAll("[data-auth-close]").forEach((control) => {
     control.addEventListener("click", (event) => {
@@ -2391,7 +2470,7 @@ function render() {
   const app = document.querySelector("#app");
   // Mid email-confirmation return: we're about to route to shop once the session
   // settles, so render shop right away instead of flashing the home page.
-  if (pendingAuthNext === "shop") {
+  if (pendingAuthNext === "shop" || pendingRecovery) {
     app.innerHTML = shopPage();
     bindEvents();
     return;
@@ -2422,9 +2501,22 @@ function render() {
 // After a successful Stripe checkout, Stripe redirects back with ?checkout=success.
 // Captured from the URL at load, before Supabase consumes its auth params.
 let pendingAuthNext = null;
+// Set when the visitor arrives from a password-reset email. The recovery link
+// signs them in, but the point is to choose a NEW password — so we hold this
+// flag until the session lands, then open the "set a new password" modal.
+let pendingRecovery = false;
 
 // Once the session has settled after an auth return, send the visitor to shop.
 function maybeRouteAfterAuth() {
+  if (pendingRecovery) {
+    if (!state.auth.user) return; // wait for the recovery session to land
+    pendingRecovery = false;
+    try { window.history.replaceState({}, "", window.location.pathname); } catch (e) { /* ignore */ }
+    state.authModal = { mode: "recovery" };
+    window.location.hash = "#/shop";
+    render();
+    return;
+  }
   if (pendingAuthNext !== "shop") return;
   pendingAuthNext = null;
   try { window.history.replaceState({}, "", window.location.pathname); } catch (e) { /* ignore */ }
@@ -2445,13 +2537,24 @@ function handleCheckoutReturn() {
   // PKCE, or #access_token=... in the hash for implicit). Any of these means the
   // visitor just confirmed their email, so route them to the shop, not home.
   const href = window.location.href;
+  // Password-recovery return. Must be checked BEFORE the generic auth return
+  // below: the link does sign the visitor in, but sending them straight to the
+  // shop would leave their old password in place. Flag it instead so
+  // maybeRouteAfterAuth() opens the "set a new password" modal.
+  if (
+    params.get("next") === "recovery" ||
+    params.get("type") === "recovery" ||
+    href.includes("type=recovery")
+  ) {
+    pendingRecovery = true;
+    return;
+  }
   if (
     params.get("next") === "shop" ||
     params.get("code") ||
     params.get("type") === "signup" ||
     href.includes("access_token=") ||
-    href.includes("type=signup") ||
-    href.includes("type=recovery")
+    href.includes("type=signup")
   ) {
     pendingAuthNext = "shop";
   }

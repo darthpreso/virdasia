@@ -3721,3 +3721,13 @@ a.checkout-button {
   text-underline-offset: 3px;
   cursor: pointer;
 }
+
+/* Password-rule hint under the recovery fields. */
+.auth-hint {
+  margin: -4px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
