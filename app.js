@@ -1296,20 +1296,24 @@ function authAccountSection() {
         <div class="account-tools">
           ${state.passwordEditing ? `
             <form class="account-form" data-password-form>
-              <h3>Change password</h3>
+              <h3 class="account-form-title">Change password</h3>
               <label class="field">
-                <span>New password</span>
+                <span>Current password</span>
+                <input id="current-password" type="password" autocomplete="current-password" required placeholder="••••••••" />
+              </label>
+              <label class="field">
+                <span>New password <em>6+ characters</em></span>
                 <input id="new-password" type="password" autocomplete="new-password" required minlength="6" placeholder="••••••••" />
               </label>
               <label class="field">
                 <span>Confirm new password</span>
                 <input id="new-password-confirm" type="password" autocomplete="new-password" required minlength="6" placeholder="••••••••" />
               </label>
-              <p class="auth-hint">At least 6 characters.</p>
               <div class="account-form-actions">
                 <button class="primary-button" type="submit">Save Password</button>
                 <button class="secondary-button" type="button" data-cancel-password>Cancel</button>
               </div>
+              <p class="account-form-note">Forgotten it? <button type="button" class="auth-link" data-auth-action="sign-out-reset">Sign out and reset by email</button></p>
             </form>
           ` : `
             <button class="secondary-button" type="button" data-edit-password>Change Password</button>
@@ -1844,7 +1848,7 @@ function initSupabaseAuth() {
 
   // Safety net: if an auth return never resolves through the callbacks above
   // (e.g. some implicit-flow edge cases), still send the visitor to the shop.
-  if (pendingAuthNext === "shop" || pendingRecovery) window.setTimeout(maybeRouteAfterAuth, 3500);
+  if (pendingAuthNext === "shop" || pendingRecovery || pendingAuthError) window.setTimeout(maybeRouteAfterAuth, 3500);
 }
 
 function formValue(selector) {
@@ -1883,7 +1887,7 @@ async function handleAuthAction(action) {
       // toast vanishes in under two seconds, which is easy to miss right after
       // submitting, leaving people unsure whether the account was created.
       state.waitlistModal = null;
-      state.authModal = { mode: "sent", kind: "signup", email };
+      state.authModal = { mode: "sent", kind: "signup", email, cooldownUntil: Date.now() + AUTH_RESEND_COOLDOWN_SECONDS * 1000 };
       render();
     }
 
@@ -1916,8 +1920,19 @@ async function handleAuthAction(action) {
         redirectTo: `${window.location.origin}${window.location.pathname}?next=recovery`,
       });
       if (error) throw error;
-      state.authModal = { mode: "sent", kind: "reset", email };
+      state.authModal = { mode: "sent", kind: "reset", email, cooldownUntil: Date.now() + AUTH_RESEND_COOLDOWN_SECONDS * 1000 };
       render();
+    }
+
+    // Escape hatch for someone who can't complete the change because they don't
+    // remember the current password: drop the session and use the email flow.
+    if (action === "sign-out-reset") {
+      const known = state.auth.user?.email || "";
+      await state.auth.client.auth.signOut().catch(() => {});
+      state.passwordEditing = false;
+      state.authModal = { mode: "forgot", email: known };
+      render();
+      return;
     }
 
     if (action === "resend-confirmation") {
@@ -1931,7 +1946,7 @@ async function handleAuthAction(action) {
         options: { emailRedirectTo: redirectTo },
       });
       if (error) throw error;
-      state.authModal = { mode: "sent", kind: "resend", email };
+      state.authModal = { mode: "sent", kind: "resend", email, cooldownUntil: Date.now() + AUTH_RESEND_COOLDOWN_SECONDS * 1000 };
       render();
     }
 
@@ -1964,7 +1979,20 @@ async function handleAuthAction(action) {
       showToast("Account Saved");
     }
   } catch (error) {
-    showToast(error.message || "Auth Error");
+    const message = error.message || "Auth Error";
+    // Supabase rejects emails sent inside its minimum interval with the exact
+    // number of seconds left. Trust that over our local guess and restart the
+    // countdown from it, so the UI can't drift out of sync with the setting.
+    const wait = /after (\d+) seconds?/i.exec(message);
+    if (wait && state.authModal) {
+      const seconds = Number(wait[1]) + 1;
+      state.authModal.cooldownUntil = Date.now() + seconds * 1000;
+      if (state.authModal.mode !== "sent") state.authModal.mode = "sent";
+      render();
+      showToast(`Please Wait ${seconds}s Before Trying Again`);
+      return;
+    }
+    showToast(message);
   }
 }
 
@@ -1975,17 +2003,48 @@ async function handlePasswordChange() {
     showToast("Supabase Not Configured");
     return;
   }
+  const current = document.querySelector("#current-password")?.value || "";
   const next = document.querySelector("#new-password")?.value || "";
   const confirmNext = document.querySelector("#new-password-confirm")?.value || "";
+  const email = state.auth.user?.email || "";
+
+  if (!current) {
+    showToast("Current Password Required");
+    return;
+  }
   if (next.length < 6) {
-    showToast("Password Must Be 6+ Characters");
+    showToast("New Password Must Be 6+ Characters");
     return;
   }
   if (next !== confirmNext) {
-    showToast("Passwords Do Not Match");
+    showToast("New Passwords Do Not Match");
     return;
   }
+  if (next === current) {
+    showToast("New Password Must Be Different");
+    return;
+  }
+  if (!email) {
+    showToast("Please Sign In Again");
+    return;
+  }
+
+  const button = document.querySelector("[data-password-form] .primary-button");
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Saving…";
+  }
+
   try {
+    // Supabase lets a live session change its own password without proof, so
+    // verify the old one first by re-authenticating. Otherwise anyone who finds
+    // an unlocked device could lock the owner out of their account.
+    const { error: reauthError } = await state.auth.client.auth.signInWithPassword({ email, password: current });
+    if (reauthError) {
+      showToast("Current Password Is Incorrect");
+      return;
+    }
+
     const { error } = await state.auth.client.auth.updateUser({ password: next });
     if (error) throw error;
     state.passwordEditing = false;
@@ -1993,6 +2052,12 @@ async function handlePasswordChange() {
     showToast("Password Updated");
   } catch (error) {
     showToast(error.message || "Could Not Update Password");
+  } finally {
+    const liveButton = document.querySelector("[data-password-form] .primary-button");
+    if (liveButton) {
+      liveButton.disabled = false;
+      liveButton.textContent = "Save Password";
+    }
   }
 }
 
@@ -2101,6 +2166,17 @@ const AUTH_COPY = {
   },
 };
 
+// Supabase enforces a minimum interval between auth emails (Dashboard →
+// Authentication → Rate Limits). Mirror it here so the retry link shows a
+// countdown instead of letting people hit a raw 429. If the server disagrees,
+// the real value is parsed out of its error and used instead.
+const AUTH_RESEND_COOLDOWN_SECONDS = 15;
+
+function authCooldownRemaining() {
+  const until = state.authModal?.cooldownUntil || 0;
+  return Math.max(0, Math.ceil((until - Date.now()) / 1000));
+}
+
 // Copy for the shared "sent" screen, keyed by what was actually sent. `body`
 // takes the pre-escaped " to <strong>address</strong>" fragment (empty if the
 // address is unknown) so the sentence reads correctly either way.
@@ -2138,6 +2214,7 @@ function authModalMarkup() {
     const email = state.authModal.email || "";
     const to = email ? ` to <strong>${escapeHtml(email)}</strong>` : "";
     const sent = AUTH_SENT_COPY[state.authModal.kind] || AUTH_SENT_COPY.signup;
+    const remaining = authCooldownRemaining();
     return `
       <div class="modal-backdrop" role="presentation" data-auth-close>
         <section class="waitlist-modal auth-modal auth-modal--sent" role="dialog" aria-modal="true" aria-labelledby="auth-title">
@@ -2151,7 +2228,10 @@ function authModalMarkup() {
             <button class="primary-button" type="button" data-auth-close>Done</button>
           </div>
           <p class="auth-switch">
-            Nothing arrived? <button type="button" class="auth-link" data-auth-toggle="${sent.retryMode}" data-auth-email="${escapeHtml(email)}">${sent.retryLabel}</button>
+            Nothing arrived?
+            <button type="button" class="auth-link" data-auth-toggle="${sent.retryMode}"
+                    data-auth-email="${escapeHtml(email)}" data-resend-countdown
+                    data-retry-label="${escapeHtml(sent.retryLabel)}"${remaining ? " disabled" : ""}>${sent.retryLabel}${remaining ? ` in ${remaining}s` : ""}</button>
           </p>
         </section>
       </div>
@@ -2750,6 +2830,28 @@ function bindEvents() {
     });
   }
 
+  // Live countdown on the resend link. Ticks the label directly rather than
+  // re-rendering once a second.
+  window.clearInterval(bindEvents.resendTimer);
+  const countdownButton = document.querySelector("[data-resend-countdown]");
+  if (countdownButton && authCooldownRemaining() > 0) {
+    const label = countdownButton.dataset.retryLabel || "Send it again";
+    bindEvents.resendTimer = window.setInterval(() => {
+      const left = authCooldownRemaining();
+      if (!document.body.contains(countdownButton)) {
+        window.clearInterval(bindEvents.resendTimer);
+        return;
+      }
+      if (left > 0) {
+        countdownButton.textContent = `${label} in ${left}s`;
+        return;
+      }
+      countdownButton.textContent = label;
+      countdownButton.disabled = false;
+      window.clearInterval(bindEvents.resendTimer);
+    }, 1000);
+  }
+
   document.querySelectorAll("[data-auth-toggle]").forEach((button) => {
     // data-auth-email carries the address forward so "Resend it" doesn't make
     // someone retype what they just entered.
@@ -2825,7 +2927,7 @@ function render() {
   const app = document.querySelector("#app");
   // Mid email-confirmation return: we're about to route to shop once the session
   // settles, so render shop right away instead of flashing the home page.
-  if (pendingAuthNext === "shop" || pendingRecovery) {
+  if (pendingAuthNext === "shop" || pendingRecovery || pendingAuthError) {
     app.innerHTML = shopPage();
     bindEvents();
     return;
@@ -2877,9 +2979,38 @@ let pendingAuthNext = null;
 // signs them in, but the point is to choose a NEW password — so we hold this
 // flag until the session lands, then open the "set a new password" modal.
 let pendingRecovery = false;
+// Set when an auth link came back with an error (expired, or already used).
+// Held until the session resolves, because someone who already confirmed on an
+// earlier link is signed in and needs reassurance, not a form.
+let pendingAuthError = null;
 
 // Once the session has settled after an auth return, send the visitor to shop.
 function maybeRouteAfterAuth() {
+  if (pendingAuthError) {
+    if (!state.auth.ready) return; // wait until we know whether they're signed in
+    const { recoveryFlow } = pendingAuthError;
+    pendingAuthError = null;
+    try { window.history.replaceState({}, "", window.location.pathname); } catch (e) { /* ignore */ }
+    window.location.hash = "#/shop";
+
+    // Clicking an older link after a newer one already worked is the common
+    // case: they're signed in and nothing is wrong.
+    // Setting the hash above queues a re-render that rebuilds the toast node,
+    // so defer the message past it or it's wiped before anyone sees it.
+    const notify = (message) => window.setTimeout(() => showToast(message), 450);
+
+    if (state.auth.user) {
+      render();
+      notify("Already Confirmed — You're Signed In");
+      return;
+    }
+
+    state.authModal = { mode: recoveryFlow ? "forgot" : "resend", email: "" };
+    render();
+    notify(recoveryFlow ? "That Reset Link Expired" : "That Link Expired Or Was Already Used");
+    return;
+  }
+
   if (pendingRecovery) {
     if (!state.auth.user) return; // wait for the recovery session to land
     pendingRecovery = false;
@@ -2916,14 +3047,14 @@ function handleCheckoutReturn() {
   const hashParams = new URLSearchParams(window.location.hash.replace(/^#\/?/, ""));
   const authError = hashParams.get("error_code") || hashParams.get("error") || params.get("error_code") || params.get("error");
   if (authError) {
-    const expired = String(authError).includes("expired") || String(authError) === "access_denied";
-    try { window.history.replaceState({}, "", window.location.pathname); } catch (e) { /* ignore */ }
-    window.location.hash = "#/shop";
-    // Re-open the reset form so they can request a fresh link in one step.
-    setTimeout(() => {
-      if (expired) openAuthModal("forgot");
-      showToast(expired ? "That Link Expired — Request A New One" : "Link Invalid Or Already Used");
-    }, 400);
+    // The error itself doesn't say which flow it came from, but our own
+    // ?next= flag survives on the redirect — so use that to decide whether to
+    // offer a fresh reset link or a fresh confirmation email. Getting this
+    // wrong shows a password-reset form to someone who clicked a stale signup
+    // link, which is alarming and nonsensical.
+    pendingAuthError = {
+      recoveryFlow: params.get("next") === "recovery" || href.includes("type=recovery"),
+    };
     return;
   }
 

@@ -3925,33 +3925,61 @@ a.checkout-button {
   margin: 0;
 }
 
-/* The inputs stay comfortable at reading width even though the form is wider
-   to fit the button row. */
+/* Inputs stay at a comfortable reading width even though the form is wider to
+   fit the button row. Password fields don't need to be full-bleed. */
 .account-form .field input {
-  max-width: 420px;
+  max-width: 360px;
+  height: 46px;
+  font-size: 15px;
 }
 
-.account-form h3 {
-  margin: 0 0 6px;
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 22px;
-  font-weight: 500;
+/* Sits a clear step above the field labels, otherwise the form reads as three
+   competing tiers of the same uppercase text. */
+.account-form-title {
+  margin: 0 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  max-width: 360px;
   color: var(--ink);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
-.account-form .field {
-  margin-top: 16px;
+.account-form .field + .field {
+  margin-top: 22px;
 }
 
-/* Match the label treatment used by the modal forms. */
+
+/* Quieter than the modal labels — this form sits inside an already-labelled
+   section, so the wide letterspacing just added noise. */
 .account-form .field span {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Requirement rides on the label instead of adding another line of grey text. */
+.account-form .field span em {
+  margin-left: 8px;
+  opacity: 0.72;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.account-form-note {
+  margin: 16px 0 0;
   color: var(--muted);
   font-size: 13px;
-  font-weight: 800;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
+  font-weight: 700;
 }
 
 .account-form-actions {
