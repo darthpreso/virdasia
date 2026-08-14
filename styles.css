@@ -3855,6 +3855,52 @@ a.checkout-button {
   font-weight: 700;
 }
 
+/* --- Post-signup "confirmation sent" screen --- */
+.auth-modal--sent {
+  text-align: center;
+}
+
+.auth-modal--sent .modal-copy {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 40ch;
+}
+
+/* Checkmark drawn in CSS — no asset, inherits the brand green. */
+.auth-sent-mark {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  margin: 6px auto 20px;
+  border-radius: 50%;
+  background: #2f5e5a;
+}
+
+.auth-sent-mark::after {
+  content: "";
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  width: 13px;
+  height: 24px;
+  border-right: 3px solid #ffd6e6;
+  border-bottom: 3px solid #ffd6e6;
+  transform: rotate(45deg);
+}
+
+.auth-sent-note {
+  margin: 0 auto;
+  max-width: 40ch;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.auth-modal--sent .modal-actions {
+  margin-top: 26px;
+}
+
 .auth-switch-secondary {
   display: inline-block;
   margin-top: 8px;

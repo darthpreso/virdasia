@@ -1879,10 +1879,12 @@ async function handleAuthAction(action) {
         },
       });
       if (error) throw error;
-      state.authModal = null;
+      // Hold the modal open on a confirmation screen rather than closing it — a
+      // toast vanishes in under two seconds, which is easy to miss right after
+      // submitting, leaving people unsure whether the account was created.
       state.waitlistModal = null;
+      state.authModal = { mode: "sent", kind: "signup", email };
       render();
-      showToast("Check Your Email To Confirm");
     }
 
     if (action === "sign-in") {
@@ -1914,9 +1916,8 @@ async function handleAuthAction(action) {
         redirectTo: `${window.location.origin}${window.location.pathname}?next=recovery`,
       });
       if (error) throw error;
-      state.authModal = null;
+      state.authModal = { mode: "sent", kind: "reset", email };
       render();
-      showToast("Check Your Email For The Reset Link");
     }
 
     if (action === "resend-confirmation") {
@@ -1930,9 +1931,8 @@ async function handleAuthAction(action) {
         options: { emailRedirectTo: redirectTo },
       });
       if (error) throw error;
-      state.authModal = null;
+      state.authModal = { mode: "sent", kind: "resend", email };
       render();
-      showToast("Confirmation Email Sent");
     }
 
     if (action === "set-password") {
@@ -2061,10 +2061,10 @@ function closeWaitlistModal() {
   render();
 }
 
-const AUTH_MODES = ["signin", "signup", "forgot", "recovery", "resend"];
+const AUTH_MODES = ["signin", "signup", "forgot", "recovery", "resend", "sent"];
 
-function openAuthModal(mode = "signin") {
-  state.authModal = { mode: AUTH_MODES.includes(mode) ? mode : "signin" };
+function openAuthModal(mode = "signin", email = "") {
+  state.authModal = { mode: AUTH_MODES.includes(mode) ? mode : "signin", email };
   render();
 }
 
@@ -2101,9 +2101,63 @@ const AUTH_COPY = {
   },
 };
 
+// Copy for the shared "sent" screen, keyed by what was actually sent. `body`
+// takes the pre-escaped " to <strong>address</strong>" fragment (empty if the
+// address is unknown) so the sentence reads correctly either way.
+const AUTH_SENT_COPY = {
+  signup: {
+    title: "Confirmation email sent",
+    body: (to) => `We've sent a confirmation link${to}. Open it to activate your account — then you're in.`,
+    note: "It should arrive within a minute. If it doesn't, check your spam folder.",
+    retryMode: "resend",
+    retryLabel: "Resend it",
+  },
+  resend: {
+    title: "Confirmation email sent",
+    body: (to) => `We've sent a fresh confirmation link${to}. Open it to activate your account — then you're in.`,
+    note: "It should arrive within a minute. If it doesn't, check your spam folder.",
+    retryMode: "resend",
+    retryLabel: "Send it again",
+  },
+  reset: {
+    title: "Reset link sent",
+    body: (to) => `We've sent a password reset link${to}. Open it to choose a new password.`,
+    note: "The link expires in 60 minutes. If it doesn't arrive within a minute, check your spam folder.",
+    retryMode: "forgot",
+    retryLabel: "Send it again",
+  },
+};
+
 function authModalMarkup() {
   if (!state.authModal) return "";
   const mode = state.authModal.mode;
+
+  // "We sent it" confirmation: no form, just the outcome and a way out. Shared
+  // by signup, resend and password reset so all three end the same way.
+  if (mode === "sent") {
+    const email = state.authModal.email || "";
+    const to = email ? ` to <strong>${escapeHtml(email)}</strong>` : "";
+    const sent = AUTH_SENT_COPY[state.authModal.kind] || AUTH_SENT_COPY.signup;
+    return `
+      <div class="modal-backdrop" role="presentation" data-auth-close>
+        <section class="waitlist-modal auth-modal auth-modal--sent" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+          <button class="modal-close" type="button" aria-label="Close" data-auth-close>×</button>
+          <p class="modal-eyebrow">Virdasia Account</p>
+          <div class="auth-sent-mark" aria-hidden="true"></div>
+          <h2 id="auth-title">${sent.title}</h2>
+          <p class="modal-copy">${sent.body(to)}</p>
+          <p class="auth-sent-note">${sent.note}</p>
+          <div class="modal-actions">
+            <button class="primary-button" type="button" data-auth-close>Done</button>
+          </div>
+          <p class="auth-switch">
+            Nothing arrived? <button type="button" class="auth-link" data-auth-toggle="${sent.retryMode}" data-auth-email="${escapeHtml(email)}">${sent.retryLabel}</button>
+          </p>
+        </section>
+      </div>
+    `;
+  }
+
   const { title, copy, submit } = AUTH_COPY[mode] || AUTH_COPY.signin;
   const isSignup = mode === "signup";
   const isRecovery = mode === "recovery";
@@ -2126,7 +2180,7 @@ function authModalMarkup() {
           ${isRecovery ? "" : `
             <label class="field">
               <span>Email</span>
-              <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+              <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" value="${escapeHtml(state.authModal.email || "")}" />
             </label>`}
           ${emailOnly ? "" : `
             <label class="field">
@@ -2697,7 +2751,9 @@ function bindEvents() {
   }
 
   document.querySelectorAll("[data-auth-toggle]").forEach((button) => {
-    button.addEventListener("click", () => openAuthModal(button.dataset.authToggle));
+    // data-auth-email carries the address forward so "Resend it" doesn't make
+    // someone retype what they just entered.
+    button.addEventListener("click", () => openAuthModal(button.dataset.authToggle, button.dataset.authEmail || ""));
   });
 
   // Settings accordions. Toggled by mutating the DOM rather than re-rendering,
