@@ -3616,6 +3616,69 @@ a.checkout-button {
   font-size: 12px;
 }
 
+/* --- Per-piece colourways ---------------------------------------------------
+   Each waitlisted item carries its own muted palette so the list reads at a
+   glance. Deliberately desaturated to sit with the rest of the site; the Leave
+   button inherits the row's text colour so it stays legible on every ground. */
+.waitlist-entry[class*="wl-"] {
+  border-color: transparent;
+}
+
+.waitlist-entry[class*="wl-"] span {
+  color: inherit;
+  opacity: 0.72;
+}
+
+.waitlist-entry[class*="wl-"] .waitlist-leave {
+  border-color: currentColor;
+  background: transparent;
+  color: inherit;
+}
+
+.waitlist-entry[class*="wl-"] .waitlist-leave:hover {
+  background: currentColor;
+  color: #fff;
+}
+
+/* Hover inversion needs the label to flip against the filled button, so give
+   each theme an explicit counter-colour. */
+.waitlist-entry.wl-son-of-nolan-jacket {
+  background: #2b2b2e;
+  color: #f5f5f4;
+}
+.waitlist-entry.wl-son-of-nolan-jacket .waitlist-leave:hover { color: #2b2b2e; }
+
+.waitlist-entry.wl-legendary-corduroy-jacket {
+  background: #7a2f3f;
+  color: #fdf3f4;
+}
+.waitlist-entry.wl-legendary-corduroy-jacket .waitlist-leave:hover { color: #7a2f3f; }
+
+.waitlist-entry.wl-six-paths-sherpa-jacket {
+  background: #cfc5e4;
+  color: #1d1a24;
+}
+.waitlist-entry.wl-six-paths-sherpa-jacket .waitlist-leave:hover { color: #cfc5e4; }
+
+.waitlist-entry.wl-pirate-king-hybrid-jacket {
+  background: #f7f7f6;
+  color: #6d6f75;
+  border-color: #e4e4e2;
+}
+.waitlist-entry.wl-pirate-king-hybrid-jacket .waitlist-leave:hover { color: #f7f7f6; }
+
+.waitlist-entry.wl-shadow-grin-fleece {
+  background: #322a44;
+  color: #cfc0e8;
+}
+.waitlist-entry.wl-shadow-grin-fleece .waitlist-leave:hover { color: #322a44; }
+
+.waitlist-entry.wl-wild-encounter-knit-sweater {
+  background: #24382c;
+  color: #efb0a6;
+}
+.waitlist-entry.wl-wild-encounter-knit-sweater .waitlist-leave:hover { color: #24382c; }
+
 @media (max-width: 900px) {
   .checkout-wrap {
     grid-template-columns: 1fr;
@@ -3853,6 +3916,114 @@ a.checkout-button {
   color: var(--muted);
   font-size: 14px;
   font-weight: 700;
+}
+
+/* --- Checkout discount field --- */
+.discount-block {
+  margin: 22px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+
+.discount-label {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.discount-row {
+  display: flex;
+  gap: 8px;
+}
+
+.discount-row input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 46px;
+  border: 1px solid var(--line);
+  padding: 0 14px;
+  background: #fff;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 15px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.discount-row input::placeholder {
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.discount-apply {
+  flex: 0 0 auto;
+  margin-top: 0;
+  padding: 0 20px;
+  height: 46px;
+  font-size: 11px;
+}
+
+.discount-error {
+  margin: 10px 0 0;
+  color: #a3252f;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.discount-applied {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #f1f7f4;
+  border-left: 3px solid #2f5e5a;
+}
+
+.discount-applied-code {
+  display: block;
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.discount-applied-note {
+  display: block;
+  margin-top: 2px;
+  color: #2f5e5a;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.discount-remove {
+  flex: 0 0 auto;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.discount-remove:hover {
+  color: #a3252f;
+}
+
+.summary-total-row.summary-discount span:last-child {
+  color: #2f5e5a;
 }
 
 /* Inline modal error — stays on screen until resolved, unlike a toast. */

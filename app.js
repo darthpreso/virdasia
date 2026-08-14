@@ -343,6 +343,10 @@ const state = {
   profileEditing: false,
   deleteConfirming: false,
   routeError: null,
+  // Validated code currently applied to the cart, plus the in-progress input.
+  discount: null,
+  discountDraft: "",
+  discountError: "",
   orders: [],
   auth: {
     client: null,
@@ -1444,8 +1448,10 @@ function waitlistSection() {
       const product = productById(entry.productId);
       const name = product ? product.name : (entry.productName || entry.productId);
       const meta = [`Size ${escapeHtml(entry.size || "Any")}`, `Qty ${entry.qty || 1}`];
+      // Each piece gets its own muted colourway so the list reads at a glance.
+      const theme = entry.productId ? ` wl-${escapeHtml(entry.productId)}` : "";
       return `
-        <div class="waitlist-entry">
+        <div class="waitlist-entry${theme}">
           <div>
             <strong>${name}</strong>
             <span>${meta.join(" · ")}</span>
@@ -1456,6 +1462,36 @@ function waitlistSection() {
     }).join("");
   }
   return `<div class="waitlist-list">${body}</div>`;
+}
+
+// Discount entry on the checkout summary. Applied codes collapse to a single
+// confirmed row so the field isn't inviting a second attempt.
+function discountFieldMarkup() {
+  const applied = state.discount;
+  if (applied) {
+    return `
+      <div class="discount-block is-applied">
+        <div class="discount-applied">
+          <div>
+            <span class="discount-applied-code">${escapeHtml(applied.code)}</span>
+            <span class="discount-applied-note">${applied.percentOff}% off your order</span>
+          </div>
+          <button type="button" class="discount-remove" data-remove-discount>Remove</button>
+        </div>
+      </div>
+    `;
+  }
+  return `
+    <div class="discount-block">
+      <label class="discount-label" for="discount-code">Discount code</label>
+      <div class="discount-row">
+        <input id="discount-code" type="text" autocomplete="off" spellcheck="false"
+               placeholder="VIRD…" value="${escapeHtml(state.discountDraft || "")}" />
+        <button type="button" class="secondary-button discount-apply" data-apply-discount>Apply</button>
+      </div>
+      ${state.discountError ? `<p class="discount-error" role="alert">${escapeHtml(state.discountError)}</p>` : ""}
+    </div>
+  `;
 }
 
 // Shown for unknown routes and for anything that throws while rendering, so a
@@ -1632,6 +1668,49 @@ function cartPage() {
   `);
 }
 
+// Checks a code against the server before checkout so the visitor sees the real
+// total up front. create-checkout re-validates independently at payment time.
+async function applyDiscount(button) {
+  const input = document.querySelector("#discount-code");
+  const code = (input?.value || "").trim().toUpperCase();
+  state.discountDraft = code;
+  state.discountError = "";
+
+  if (!code) {
+    state.discountError = "Enter a discount code.";
+    render();
+    return;
+  }
+  if (!state.auth.user) {
+    state.discountError = "Sign in to use a discount code.";
+    render();
+    return;
+  }
+
+  const original = button.textContent;
+  button.disabled = true;
+  button.textContent = "Checking…";
+
+  try {
+    const { data, error } = await state.auth.client.functions.invoke("validate-discount", { body: { code } });
+    // A non-2xx reply still carries a usable message in `data`; prefer it over
+    // the generic FunctionsHttpError text.
+    if (data?.valid) {
+      state.discount = { code: data.code, percentOff: data.percentOff };
+      state.discountDraft = "";
+      state.discountError = "";
+    } else {
+      state.discountError = data?.error || error?.message || "That code isn't valid.";
+    }
+  } catch (e) {
+    state.discountError = e.message || "Could not check that code. Try again.";
+  } finally {
+    button.disabled = false;
+    button.textContent = original;
+    render();
+  }
+}
+
 async function startCheckout(button) {
   if (!state.cart.length) return;
   if (!state.auth.client) { showToast("Payments Unavailable"); return; }
@@ -1643,7 +1722,7 @@ async function startCheckout(button) {
     const items = state.cart.map((i) => ({ id: i.id, size: i.size, qty: i.qty }));
     const email = state.auth.user?.email || state.settings.email || undefined;
     const { data, error } = await state.auth.client.functions.invoke("create-checkout", {
-      body: { items, origin: window.location.origin, email },
+      body: { items, origin: window.location.origin, email, discountCode: state.discount?.code },
     });
     if (error || !data?.url) throw new Error(data?.error || error?.message || "Could not start checkout");
     window.location.href = data.url;
@@ -1687,6 +1766,9 @@ function checkoutPage() {
   }
 
   const total = cartTotal();
+  const discount = state.discount;
+  // Rounded to cents so the displayed total matches what Stripe charges.
+  const discountAmount = discount ? Math.round(total * discount.percentOff) / 100 : 0;
   const addr = state.settings.address || {};
   const profile = state.settings.profile || {};
   const contactEmail = state.auth.user?.email || state.settings.email || "";
@@ -1723,10 +1805,14 @@ function checkoutPage() {
         <aside class="checkout-summary">
           <h2 class="section-label">Order Summary</h2>
           <div class="summary-rows">${summaryRows}</div>
+
+          ${discountFieldMarkup()}
+
           <div class="summary-totals">
             <div class="summary-total-row"><span>Subtotal</span><span>${money(total)}</span></div>
+            ${discount ? `<div class="summary-total-row summary-discount"><span>Discount (${discount.percentOff}%)</span><span>−${money(discountAmount)}</span></div>` : ""}
             <div class="summary-total-row muted"><span>Shipping</span><span>Calculated next</span></div>
-            <div class="summary-total-row summary-grand"><span>Total</span><span>${money(total)}</span></div>
+            <div class="summary-total-row summary-grand"><span>Total</span><span>${money(total - discountAmount)}</span></div>
           </div>
           ${activeCurrency().currency !== "USD" ? `<p class="summary-fx-note">Approximate conversion from USD. You'll be charged in USD at checkout.</p>` : ""}
         </aside>
@@ -2697,6 +2783,31 @@ function bindEvents() {
     checkoutButton.addEventListener("click", () => startCheckout(checkoutButton));
   }
 
+  const applyDiscountButton = document.querySelector("[data-apply-discount]");
+  if (applyDiscountButton) {
+    applyDiscountButton.addEventListener("click", () => applyDiscount(applyDiscountButton));
+    const codeInput = document.querySelector("#discount-code");
+    if (codeInput) {
+      // Enter should apply rather than do nothing — there's no form to submit.
+      codeInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          applyDiscount(applyDiscountButton);
+        }
+      });
+    }
+  }
+
+  const removeDiscountButton = document.querySelector("[data-remove-discount]");
+  if (removeDiscountButton) {
+    removeDiscountButton.addEventListener("click", () => {
+      state.discount = null;
+      state.discountDraft = "";
+      state.discountError = "";
+      render();
+    });
+  }
+
   document.querySelectorAll("[data-scroll-target]").forEach((button) => {
     button.addEventListener("click", () => {
       document.getElementById(button.dataset.scrollTarget)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -3059,6 +3170,11 @@ function handleCheckoutReturn() {
   if (params.get("checkout") === "success") {
     state.cart = [];
     writeJson("nebula-cart", state.cart);
+    // The code is spent now; clearing it stops a stale discount showing on the
+    // next order, where it would quote a total Stripe won't honour.
+    state.discount = null;
+    state.discountDraft = "";
+    state.discountError = "";
     window.history.replaceState({}, "", window.location.pathname + window.location.hash);
     setTimeout(() => showToast("Payment received — thank you!"), 500);
     return;
