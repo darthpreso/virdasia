@@ -1797,9 +1797,15 @@ function initSupabaseAuth() {
     state.auth.session = session;
     state.auth.user = session?.user || null;
     state.auth.ready = true;
-    // Close the auth modal once signed in — except during recovery, where the
-    // session landing is exactly when we need the new-password form on screen.
-    if (state.auth.user && state.authModal?.mode !== "recovery") state.authModal = null;
+    // Close the auth modal once signed in — but only the modes whose whole
+    // purpose was getting you signed in. Recovery needs the session to land
+    // before its form is usable, and the "sent"/"password" screens report a
+    // completed action the visitor should dismiss themselves. updateUser and
+    // signInWithPassword both fire this listener, so without the allow-list a
+    // success screen would be wiped the instant it appeared.
+    if (state.auth.user && AUTH_MODES_DISMISS_ON_SIGNIN.includes(state.authModal?.mode)) {
+      state.authModal = null;
+    }
     syncAuthProfile();
     render();
     refreshWaitlist();
@@ -1937,9 +1943,8 @@ async function handleAuthAction(action) {
       }
       const { error } = await state.auth.client.auth.updateUser({ password });
       if (error) throw error;
-      state.authModal = null;
+      state.authModal = { mode: "sent", kind: "passwordChanged", email: "" };
       render();
-      showToast("Password Updated");
     }
 
     if (action === "update-profile") {
@@ -2068,9 +2073,8 @@ async function handleAccountDelete() {
     state.deleteConfirming = false;
     state.waitlist = [];
     state.orders = [];
-    state.authModal = null;
+    state.authModal = { mode: "sent", kind: "accountDeleted", email: "" };
     render();
-    showToast("Your Account Has Been Deleted");
   } catch (error) {
     if (button) {
       button.disabled = false;
@@ -2100,6 +2104,10 @@ function closeWaitlistModal() {
 }
 
 const AUTH_MODES = ["signin", "signup", "forgot", "recovery", "resend", "sent", "password"];
+
+// Modes that exist only to get someone signed in, so they're safe to close the
+// moment a session appears. Everything else must be dismissed by the visitor.
+const AUTH_MODES_DISMISS_ON_SIGNIN = ["signin", "signup", "forgot", "resend"];
 
 function openAuthModal(mode = "signin", email = "") {
   state.authModal = { mode: AUTH_MODES.includes(mode) ? mode : "signin", email };
@@ -2175,12 +2183,23 @@ const AUTH_SENT_COPY = {
     retryMode: "forgot",
     retryLabel: "Send it again",
   },
-  // Nothing was emailed here — it reuses the same confirmation screen because
-  // the shape is identical: a completed action the visitor should acknowledge.
+  // Nothing is emailed for the entries below — they reuse the same confirmation
+  // screen because the shape is identical: a completed action the visitor should
+  // acknowledge and dismiss themselves, rather than a modal vanishing on them.
   passwordChanged: {
     title: "Password changed",
     body: () => "Your password has been updated. You'll use the new one next time you sign in.",
     note: "You're still signed in on this device.",
+  },
+  waitlisted: {
+    title: "You're on the list",
+    body: (_to, modal) => `Your spot is reserved${modal?.detail ? ` for <strong>${escapeHtml(modal.detail)}</strong>` : ""}. We'll email you when it drops, with a priority ordering window before it goes public.`,
+    note: "A confirmation email is on its way. Manage your waitlist any time in Settings.",
+  },
+  accountDeleted: {
+    title: "Account deleted",
+    body: () => "Your account and waitlist entries have been permanently removed, and you've been signed out.",
+    note: "Order records are kept for tax purposes but are no longer linked to you.",
   },
 };
 
@@ -2202,7 +2221,7 @@ function authModalMarkup() {
           <p class="modal-eyebrow">Virdasia Account</p>
           <div class="auth-sent-mark" aria-hidden="true"></div>
           <h2 id="auth-title">${sent.title}</h2>
-          <p class="modal-copy">${sent.body(to)}</p>
+          <p class="modal-copy">${sent.body(to, state.authModal)}</p>
           <p class="auth-sent-note">${sent.note}</p>
           <div class="modal-actions">
             <button class="primary-button" type="button" data-auth-close>Done</button>
@@ -2283,15 +2302,14 @@ function authModalMarkup() {
             </label>`}
           ${emailOnly ? "" : `
             <label class="field">
-              <span>${isRecovery ? "New password" : "Password"}</span>
+              <span>${isRecovery ? "New password <em>6+ characters</em>" : "Password"}</span>
               <input id="password" name="password" type="password" autocomplete="${isSignup || isRecovery ? "new-password" : "current-password"}" required minlength="6" placeholder="••••••••" />
             </label>`}
           ${isRecovery ? `
             <label class="field">
               <span>Confirm new password</span>
               <input id="password-confirm" name="password-confirm" type="password" autocomplete="new-password" required minlength="6" placeholder="••••••••" />
-            </label>
-            <p class="auth-hint">At least 6 characters.</p>` : ""}
+            </label>` : ""}
           <div class="modal-actions">
             <button class="primary-button" type="submit">${submit}</button>
           </div>
@@ -2743,12 +2761,22 @@ function bindEvents() {
       const submitBtn = waitlistForm.querySelector('button[type="submit"]');
       if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Adding…"; }
       const result = await addWaitlistEntry(modal.productId, modal.size || null, modal.qty || 1);
-      closeWaitlistModal();
+
       if (result.ok) {
+        // Confirm rather than vanish: joining a waitlist is a commitment, and a
+        // modal disappearing is a weak signal that anything actually happened.
+        const product = productById(modal.productId);
+        const detail = [product ? product.name : modal.productId, modal.size ? `size ${modal.size}` : ""]
+          .filter(Boolean).join(" — ");
         await Promise.all([loadWaitlist(), loadWaitlistCounts()]);
+        state.waitlistModal = null;
+        state.authModal = { mode: "sent", kind: "waitlisted", email: "", detail };
         render();
-        showToast("Added To Waitlist");
-      } else if (result.duplicate) {
+        return;
+      }
+
+      closeWaitlistModal();
+      if (result.duplicate) {
         showToast("Already On Your Waitlist");
       } else {
         showToast(result.message || "Could Not Add");
