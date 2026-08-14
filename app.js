@@ -341,7 +341,6 @@ const state = {
   waitlistModal: null,
   authModal: null,
   profileEditing: false,
-  passwordEditing: false,
   deleteConfirming: false,
   routeError: null,
   orders: [],
@@ -1294,36 +1293,13 @@ function authAccountSection() {
         </div>
 
         <div class="account-tools">
-          ${state.passwordEditing ? `
-            <form class="account-form" data-password-form>
-              <h3 class="account-form-title">Change password</h3>
-              <label class="field">
-                <span>Current password</span>
-                <input id="current-password" type="password" autocomplete="current-password" required placeholder="••••••••" />
-              </label>
-              <label class="field">
-                <span>New password <em>6+ characters</em></span>
-                <input id="new-password" type="password" autocomplete="new-password" required minlength="6" placeholder="••••••••" />
-              </label>
-              <label class="field">
-                <span>Confirm new password</span>
-                <input id="new-password-confirm" type="password" autocomplete="new-password" required minlength="6" placeholder="••••••••" />
-              </label>
-              <div class="account-form-actions">
-                <button class="primary-button" type="submit">Save Password</button>
-                <button class="secondary-button" type="button" data-cancel-password>Cancel</button>
-              </div>
-              <p class="account-form-note">Forgotten it? <button type="button" class="auth-link" data-auth-action="sign-out-reset">Sign out and reset by email</button></p>
-            </form>
-          ` : `
-            <button class="secondary-button" type="button" data-edit-password>Change Password</button>
-          `}
+          <button class="secondary-button" type="button" data-open-auth="password">Change Password</button>
         </div>
 
         <div class="danger-zone">
           ${state.deleteConfirming ? `
             <form class="account-form" data-delete-form>
-              <h3>Delete your account</h3>
+              <h3 class="account-form-title">Delete your account</h3>
               <p class="danger-copy">This permanently deletes your account and removes you from every waitlist. Your order records are kept for tax purposes but are no longer linked to you. <strong>This cannot be undone.</strong></p>
               <label class="field">
                 <span>Enter your password to confirm</span>
@@ -1929,7 +1905,6 @@ async function handleAuthAction(action) {
     if (action === "sign-out-reset") {
       const known = state.auth.user?.email || "";
       await state.auth.client.auth.signOut().catch(() => {});
-      state.passwordEditing = false;
       state.authModal = { mode: "forgot", email: known };
       render();
       return;
@@ -2008,28 +1983,20 @@ async function handlePasswordChange() {
   const confirmNext = document.querySelector("#new-password-confirm")?.value || "";
   const email = state.auth.user?.email || "";
 
-  if (!current) {
-    showToast("Current Password Required");
-    return;
-  }
-  if (next.length < 6) {
-    showToast("New Password Must Be 6+ Characters");
-    return;
-  }
-  if (next !== confirmNext) {
-    showToast("New Passwords Do Not Match");
-    return;
-  }
-  if (next === current) {
-    showToast("New Password Must Be Different");
-    return;
-  }
-  if (!email) {
-    showToast("Please Sign In Again");
-    return;
-  }
+  // Errors render inside the modal so they sit next to the fields they describe
+  // and stay on screen until resolved.
+  const fail = (message) => {
+    if (state.authModal) state.authModal.error = message;
+    render();
+  };
 
-  const button = document.querySelector("[data-password-form] .primary-button");
+  if (!current) return fail("Enter your current password.");
+  if (next.length < 6) return fail("Your new password must be at least 6 characters.");
+  if (next !== confirmNext) return fail("The new passwords don't match.");
+  if (next === current) return fail("Your new password must be different from your current one.");
+  if (!email) return fail("Your session has expired. Please sign in again.");
+
+  const button = document.querySelector("[data-auth-form] .primary-button");
   if (button) {
     button.disabled = true;
     button.textContent = "Saving…";
@@ -2041,20 +2008,26 @@ async function handlePasswordChange() {
     // an unlocked device could lock the owner out of their account.
     const { error: reauthError } = await state.auth.client.auth.signInWithPassword({ email, password: current });
     if (reauthError) {
-      showToast("Current Password Is Incorrect");
+      fail("That current password is incorrect.");
       return;
     }
 
     const { error } = await state.auth.client.auth.updateUser({ password: next });
-    if (error) throw error;
-    state.passwordEditing = false;
+    if (error) {
+      // Supabase rejects a no-op change server-side too; say so plainly rather
+      // than passing its wording straight through.
+      const same = /should be different|different from the old/i.test(error.message || "");
+      fail(same ? "Your new password must be different from your current one." : (error.message || "Could not update your password."));
+      return;
+    }
+
+    state.authModal = { mode: "sent", kind: "passwordChanged", email: "" };
     render();
-    showToast("Password Updated");
   } catch (error) {
-    showToast(error.message || "Could Not Update Password");
+    fail(error.message || "Could not update your password.");
   } finally {
-    const liveButton = document.querySelector("[data-password-form] .primary-button");
-    if (liveButton) {
+    const liveButton = document.querySelector("[data-auth-form] .primary-button");
+    if (liveButton && liveButton.textContent === "Saving…") {
       liveButton.disabled = false;
       liveButton.textContent = "Save Password";
     }
@@ -2126,7 +2099,7 @@ function closeWaitlistModal() {
   render();
 }
 
-const AUTH_MODES = ["signin", "signup", "forgot", "recovery", "resend", "sent"];
+const AUTH_MODES = ["signin", "signup", "forgot", "recovery", "resend", "sent", "password"];
 
 function openAuthModal(mode = "signin", email = "") {
   state.authModal = { mode: AUTH_MODES.includes(mode) ? mode : "signin", email };
@@ -2202,6 +2175,13 @@ const AUTH_SENT_COPY = {
     retryMode: "forgot",
     retryLabel: "Send it again",
   },
+  // Nothing was emailed here — it reuses the same confirmation screen because
+  // the shape is identical: a completed action the visitor should acknowledge.
+  passwordChanged: {
+    title: "Password changed",
+    body: () => "Your password has been updated. You'll use the new one next time you sign in.",
+    note: "You're still signed in on this device.",
+  },
 };
 
 function authModalMarkup() {
@@ -2227,11 +2207,50 @@ function authModalMarkup() {
           <div class="modal-actions">
             <button class="primary-button" type="button" data-auth-close>Done</button>
           </div>
+          ${sent.retryMode ? `
+            <p class="auth-switch">
+              Nothing arrived?
+              <button type="button" class="auth-link" data-auth-toggle="${sent.retryMode}"
+                      data-auth-email="${escapeHtml(email)}" data-resend-countdown
+                      data-retry-label="${escapeHtml(sent.retryLabel)}"${remaining ? " disabled" : ""}>${sent.retryLabel}${remaining ? ` in ${remaining}s` : ""}</button>
+            </p>` : ""}
+        </section>
+      </div>
+    `;
+  }
+
+  // Change password: three password fields, no email, and errors shown inline
+  // rather than as a toast — a toast behind/over a modal is easy to miss, and
+  // "your current password is wrong" is something you need to read.
+  if (mode === "password") {
+    const error = state.authModal.error || "";
+    return `
+      <div class="modal-backdrop" role="presentation" data-auth-close>
+        <section class="waitlist-modal auth-modal auth-modal--password" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+          <button class="modal-close" type="button" aria-label="Close" data-auth-close>×</button>
+          <p class="modal-eyebrow">Virdasia Account</p>
+          <h2 id="auth-title">Change password</h2>
+          <p class="modal-copy">Enter your current password, then choose a new one.</p>
+          ${error ? `<p class="auth-error" role="alert">${escapeHtml(error)}</p>` : ""}
+          <form class="waitlist-form auth-form" data-auth-form data-auth-mode="password">
+            <label class="field">
+              <span>Current password</span>
+              <input id="current-password" type="password" autocomplete="current-password" required placeholder="••••••••" />
+            </label>
+            <label class="field">
+              <span>New password <em>6+ characters</em></span>
+              <input id="new-password" type="password" autocomplete="new-password" required minlength="6" placeholder="••••••••" />
+            </label>
+            <label class="field">
+              <span>Confirm new password</span>
+              <input id="new-password-confirm" type="password" autocomplete="new-password" required minlength="6" placeholder="••••••••" />
+            </label>
+            <div class="modal-actions">
+              <button class="primary-button" type="submit">Save Password</button>
+            </div>
+          </form>
           <p class="auth-switch">
-            Nothing arrived?
-            <button type="button" class="auth-link" data-auth-toggle="${sent.retryMode}"
-                    data-auth-email="${escapeHtml(email)}" data-resend-countdown
-                    data-retry-label="${escapeHtml(sent.retryLabel)}"${remaining ? " disabled" : ""}>${sent.retryLabel}${remaining ? ` in ${remaining}s` : ""}</button>
+            Forgotten it? <button type="button" class="auth-link" data-auth-action="sign-out-reset">Sign out and reset by email</button>
           </p>
         </section>
       </div>
@@ -2826,6 +2845,10 @@ function bindEvents() {
     };
     authForm.addEventListener("submit", (event) => {
       event.preventDefault();
+      if (authForm.dataset.authMode === "password") {
+        handlePasswordChange();
+        return;
+      }
       handleAuthAction(AUTH_SUBMIT_ACTION[authForm.dataset.authMode] || "sign-in");
     });
   }
@@ -2869,29 +2892,6 @@ function bindEvents() {
       button.closest(".settings-panel")?.classList.toggle("is-open", open);
     });
   });
-
-  // Settings → change password.
-  const editPassword = document.querySelector("[data-edit-password]");
-  if (editPassword) {
-    editPassword.addEventListener("click", () => {
-      state.passwordEditing = true;
-      render();
-    });
-  }
-  const cancelPassword = document.querySelector("[data-cancel-password]");
-  if (cancelPassword) {
-    cancelPassword.addEventListener("click", () => {
-      state.passwordEditing = false;
-      render();
-    });
-  }
-  const passwordForm = document.querySelector("[data-password-form]");
-  if (passwordForm) {
-    passwordForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      handlePasswordChange();
-    });
-  }
 
   // Settings → delete account.
   const startDelete = document.querySelector("[data-start-delete]");

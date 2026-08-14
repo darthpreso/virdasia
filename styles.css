@@ -3855,6 +3855,27 @@ a.checkout-button {
   font-weight: 700;
 }
 
+/* Inline modal error — stays on screen until resolved, unlike a toast. */
+.auth-error {
+  margin: 0 0 20px;
+  padding: 12px 14px;
+  background: #fdf2f3;
+  border-left: 3px solid #a3252f;
+  color: #7d1a22;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.auth-modal--password .field span em {
+  margin-left: 8px;
+  opacity: 0.7;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
 /* --- Post-signup "confirmation sent" screen --- */
 .auth-modal--sent {
   text-align: center;
@@ -3965,22 +3986,6 @@ a.checkout-button {
   text-transform: uppercase;
 }
 
-/* Requirement rides on the label instead of adding another line of grey text. */
-.account-form .field span em {
-  margin-left: 8px;
-  opacity: 0.72;
-  font-style: normal;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: none;
-}
-
-.account-form-note {
-  margin: 16px 0 0;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 700;
-}
 
 .account-form-actions {
   display: flex;
