@@ -663,17 +663,19 @@ function homePage() {
   return pageShell(`
     <main class="home-page">
       <section class="home-stage" aria-label="Enter shop">
+        <!-- The .mov is HEVC-with-alpha, which only Safari decodes; every other
+             browser falls through to the H.264 .mp4. No poster: the stage is
+             already #000, so an empty frame is invisible, whereas a poster that
+             isn't frame 0 visibly jumps when playback starts. -->
         <video
           class="entry-video"
           data-entry-video
           preload="auto"
           playsinline
           muted
-          poster="nebula-home-video-preview.png"
         >
           <source src="assets/home-animation-v2.mov" type="video/quicktime" />
-          <source src="assets/final-flash.mp4" type="video/mp4" />
-          <source src="assets/final-flash.mov" type="video/quicktime" />
+          <source src="assets/home-animation-v2.mp4" type="video/mp4" />
         </video>
         <div class="home-vignette" aria-hidden="true"></div>
         <a class="home-brand" href="#/home" aria-label="Virdasia home">
@@ -2529,7 +2531,12 @@ function startShopTransition() {
   transitionVideo.preload = "auto";
   transitionVideo.setAttribute("playsinline", "");
   transitionVideo.muted = true;
-  transitionVideo.src = "assets/home-animation-v2.mov";
+  // Same codec split as the home video. Set via src (not <source>), so pick the
+  // playable file here — otherwise Chrome silently loads nothing and the
+  // transition falls through to its timeout with a blank overlay.
+  transitionVideo.src = transitionVideo.canPlayType("video/quicktime")
+    ? "assets/home-animation-v2.mov"
+    : "assets/home-animation-v2.mp4";
   overlay.appendChild(transitionVideo);
 
   const revealShop = () => {
