@@ -1968,9 +1968,14 @@ button {
   padding: 190px 10vw 40px;
 }
 
+/* One pure-white rectangle per card: the garment image's white now continues
+   down behind the name, price and waitlist bar, instead of those sitting
+   directly on the page with the background artwork showing through. */
 .product-card {
   position: relative;
   min-height: 560px;
+  padding-bottom: 20px;
+  background: #fff;
   text-align: center;
 }
 
@@ -3894,8 +3899,12 @@ a.checkout-button {
 }
 
 /* Shop-card waitlist scarcity indicator (Pre-Launch) */
+/* Inset so the bar stops short of the white rectangle's edges rather than
+   running the full card width. Applied here, not on .product-meta, so the
+   name's wrapping width is untouched and the two-line reservation still holds. */
 .product-waitlist {
   margin-top: 12px;
+  padding: 0 16px;
 }
 .product-waitlist-track {
   height: 4px;
