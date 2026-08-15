@@ -227,8 +227,13 @@ button {
   margin: 0 auto;
 }
 
+/* Sized from the parent, capped by the viewport — not sized from the viewport.
+   The old viewport-only width overflowed the narrower white card in the
+   sakura/vapourwave shells (content spilled ~240px past the card below ~1200px
+   wide). Same fix already applied to .settings-page .contained. */
 .narrow {
-  width: min(880px, calc(100vw - 108px));
+  width: 100%;
+  max-width: min(880px, calc(100vw - 108px));
   margin: 0 auto;
 }
 
@@ -3136,6 +3141,27 @@ button {
   .contained,
   .narrow {
     width: 100%;
+    /* Must clear the desktop cap: min(880px, 100vw - 108px) would squeeze these
+       to ~267px on a 375px screen. The shell's own padding handles gutters here. */
+    max-width: none;
+  }
+
+  /* The 200px side margin that frames the white card on desktop was never
+     overridden at any breakpoint, so on a phone it collapsed the card to a ~40px
+     sliver with the copy spilling outside it. Phone-sized gutters instead. */
+  .sakura-shell .page:not(.shop-page):not(.product-detail-page),
+  .vapourwave-shell .page:not(.shop-page):not(.product-detail-page) {
+    margin: calc(24px / var(--default-site-scale))
+            calc(16px / var(--default-site-scale))
+            calc(40px / var(--default-site-scale));
+    padding: 0 calc(20px / var(--default-site-scale));
+  }
+
+  /* Sakura puts its header back in flow at this width; vapourwave keeps its
+     header absolute, so that card has to start below it. The header wraps to two
+     rows on a phone and measures ~158px, hence the clearance. */
+  .vapourwave-shell .page:not(.shop-page):not(.product-detail-page) {
+    margin-top: calc(176px / var(--default-site-scale));
   }
 
   .display-title {

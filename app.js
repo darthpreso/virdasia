@@ -1485,7 +1485,7 @@ function waitlistSection() {
       return `
         <div class="waitlist-entry${theme}">
           <div>
-            <strong>${name}</strong>
+            <strong>${escapeHtml(name)}</strong>
             <span>${meta.join(" · ")}</span>
           </div>
           <button type="button" class="secondary-button waitlist-leave" data-leave-waitlist="${escapeHtml(entry.id || "")}">Leave</button>
