@@ -629,11 +629,11 @@ button {
   opacity: 0.72;
 }
 
-/* Near the centre, nudged right of and below true centre. */
+/* Lower right of centre. Width is 60% of what it was (a 40% reduction). */
 .shop-art-dragon {
-  left: 42%;
-  top: 40%;
-  width: min(560px, 37vw);
+  left: 58%;
+  top: 55%;
+  width: min(336px, 22vw);
   opacity: 0.68;
 }
 
@@ -3231,6 +3231,16 @@ button {
     max-width: none;
   }
 
+  /* The entry animation is 2304x1632 (landscape 1.41:1). Against a portrait
+     phone (~0.46:1) object-fit: cover kept only ~33% of the frame width, so you
+     saw a narrow vertical slice of it. Contain shows the whole frame; the
+     letterbox is invisible because the stage behind is already #000.
+     The shop-tear transition deliberately keeps cover — it has to fill the
+     screen for the page to appear torn away. */
+  .entry-video {
+    object-fit: contain;
+  }
+
   /* The 200px side margin that frames the white card on desktop was never
      overridden at any breakpoint, so on a phone it collapsed the card to a ~40px
      sliver with the copy spilling outside it. Phone-sized gutters instead. */
@@ -3410,9 +3420,9 @@ button {
   }
 
   .shop-art-dragon {
-    left: 30%;
-    top: 54%;
-    width: 340px;
+    left: 44%;
+    top: 62%;
+    width: 204px;
     opacity: 0.48;
   }
 
