@@ -38,12 +38,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Playfair+Display:wght@400;500;600;700&display=swap" />
-    <link rel="stylesheet" href="styles.css?v=136" />
+    <link rel="stylesheet" href="styles.css?v=137" />
   </head>
   <body>
     <div id="app"></div>
     <script src="supabase-config.js?v=2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=136"></script>
+    <!-- Pinned to an exact version with an integrity hash. Unpinned "@2" let the
+         CDN serve whatever 2.x was current, and this script handles auth tokens —
+         a bad build (or a compromised CDN) would have run with full page access.
+         The browser now refuses to execute it unless the bytes match this hash.
+         To upgrade: change the version AND regenerate the hash, or the script
+         will be blocked. -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"
+            integrity="sha384-l8ah+VgaWtk1mvOe9VC+OirC6qHFF4yH7l7mKRidV9MSti3E9F463bMp6ZVN4kuC"
+            crossorigin="anonymous"></script>
+    <script src="app.js?v=137"></script>
   </body>
 </html>
