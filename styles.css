@@ -176,6 +176,62 @@ button {
   padding-top: 7px;
 }
 
+/* Style switcher in the header. Inherits colour from the shell so it recolours
+   with each theme the same way the nav links and icons do. */
+.style-anchor {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.style-toggle {
+  border: 0;
+  padding: 4px 0;
+  color: inherit;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.style-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 60;
+  min-width: 178px;
+  padding: 6px 0;
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18);
+}
+
+.style-menu-item {
+  display: block;
+  width: 100%;
+  border: 0;
+  padding: 11px 18px;
+  background: transparent;
+  color: #111;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: left;
+  text-shadow: none;
+  cursor: pointer;
+}
+
+.style-menu-item.is-active,
+.style-menu-item:hover {
+  background: #f6f8fb;
+  color: #b6558a;
+}
+
 .icon-link {
   position: relative;
   display: grid;
@@ -554,45 +610,35 @@ button {
   object-fit: contain;
 }
 
-.shop-art-cople {
-  left: -52px;
-  top: 192px;
-  width: min(392px, 27vw);
-}
-
+/* Celeste stays where it was: mid-upper right. */
 .shop-art-celeste {
   right: -34px;
   top: 152px;
   width: min(318px, 22vw);
 }
 
+/* Clash takes over the top-left slot cople used to hold, sitting a little lower. */
 .shop-art-clash {
-  left: -280px;
-  top: 708px;
-  width: min(520px, 34vw);
+  left: -96px;
+  top: 268px;
+  width: min(430px, 29vw);
   opacity: 0.72;
 }
 
+/* Dragon sits near the middle of the page, nudged right and down of true centre. */
 .shop-art-dragon {
-  right: -350px;
-  top: 890px;
-  width: min(610px, 40vw);
+  left: 42%;
+  top: 1430px;
+  width: min(560px, 37vw);
   opacity: 0.68;
 }
 
+/* Cyberpunk sits low, between the bottom-left corner and the bottom centre. */
 .shop-art-cyberpunk {
-  left: 50%;
-  top: 1320px;
-  width: min(540px, 35vw);
-  transform: translateX(-52%);
+  left: 12%;
+  top: 1960px;
+  width: min(500px, 33vw);
   opacity: 0.68;
-}
-
-.shop-art-funk {
-  left: 2vw;
-  top: 1510px;
-  width: min(210px, 15vw);
-  opacity: 0.72;
 }
 
 .shop-hero {
@@ -632,17 +678,15 @@ button {
     0 0 32px rgba(255, 200, 242, 0.92);
 }
 
+/* Centred now, so it no longer sits over the dark glitch artifact on the right —
+   which is what the white halo existed to counteract. Halo removed with it. */
 .vapourwave-hero .shop-prelaunch {
+  justify-self: center;
+  text-align: center;
   margin-bottom: 16px;
-  color: rgba(62, 52, 111, 0.68);
+  color: rgba(72, 44, 148, 0.8);
   font-size: clamp(28px, 3vw, 52px);
   font-weight: 300;
-  /* The right side of the backdrop carries a dark glitch artifact, so this ink
-     colour alone vanishes there. A light halo separates it without recolouring
-     the text away from the matching "Shop". */
-  text-shadow:
-    0 0 18px rgba(255, 255, 255, 0.9),
-    0 0 44px rgba(255, 255, 255, 0.6);
 }
 
 .sakura-shell {
@@ -686,7 +730,8 @@ button {
 .vapourwave-shell .brand,
 .vapourwave-shell .brand-mark,
 .vapourwave-shell .nav-link,
-.vapourwave-shell .icon-link {
+.vapourwave-shell .icon-link,
+.vapourwave-shell .style-toggle {
   color: #fff;
   text-shadow: 0 0 12px rgba(120, 90, 200, 0.6);
 }
@@ -1227,17 +1272,19 @@ button {
   height: 20px;
 }
 
+/* Three tracks: copy left, marker centred, empty track right. The two 1fr
+   tracks are equal, so the auto track lands on the page's centre line. */
 .vapourwave-hero {
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: end;
   min-height: 0;
   padding: 160px 0 48px;
 }
 
 .vapourwave-hero-copy {
-  color: rgba(62, 52, 111, 0.68);
+  color: rgba(72, 44, 148, 0.8);
 }
 
 .vapourwave-hero h1 {
@@ -1392,6 +1439,9 @@ button {
 
 .vapour-price-inputs label {
   flex: 1;
+  /* Without this a flex item defaults to min-width:auto and refuses to shrink
+     below its content, so the Max $ field overflowed the panel's right edge. */
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 4px;
@@ -1748,6 +1798,7 @@ button {
 
 .filter-price-inputs label {
   flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1919,15 +1970,19 @@ button {
   text-align: center;
 }
 
+/* Fixed height, not min-height. The garments have different aspect ratios, so a
+   min-height box grew to fit the tall ones and pushed their name/price/bar lower
+   than the short ones — that was the row misalignment. A fixed box bottom-aligns
+   every garment on the same line. (The vapourwave card already did this.) */
 .product-image-wrap {
   display: grid;
-  min-height: 410px;
+  height: 500px;
   place-items: end center;
 }
 
 .product-card img {
   width: min(100%, 440px);
-  max-height: 520px;
+  max-height: 100%;
   object-fit: contain;
 }
 
@@ -1997,9 +2052,14 @@ button {
   line-height: 1.6;
 }
 
+/* Longer names wrap to two lines and shorter ones don't, which pushed the price
+   and waitlist bar out of line across the grid. Reserving two lines for every
+   name keeps everything below it aligned, whatever the name's length. */
 .product-name {
   color: #111;
   font-size: 16px;
+  line-height: 1.45;
+  min-height: 2.9em;
   letter-spacing: 0.28em;
   text-transform: uppercase;
 }
@@ -3310,12 +3370,6 @@ button {
     min-height: 300px;
   }
 
-  .shop-art-cople {
-    left: -98px;
-    top: 300px;
-    width: 280px;
-  }
-
   .shop-art-celeste {
     right: -74px;
     top: 274px;
@@ -3323,21 +3377,21 @@ button {
   }
 
   .shop-art-clash {
-    left: -186px;
-    top: 820px;
-    width: 380px;
+    left: -120px;
+    top: 470px;
+    width: 300px;
     opacity: 0.55;
   }
 
   .shop-art-dragon {
-    right: -220px;
+    left: 34%;
     top: 1180px;
-    width: 430px;
+    width: 340px;
     opacity: 0.48;
   }
 
-  .shop-art-cyberpunk,
-  .shop-art-funk {
+  /* Four artworks crowd a phone; cyberpunk is the one that drops. */
+  .shop-art-cyberpunk {
     display: none;
   }
 

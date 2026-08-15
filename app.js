@@ -50,6 +50,7 @@ const products = [
     gallery: [
       "assets/pirate-king-hybrid-jacket-front.png",
       "assets/pirate-king-hybrid-jacket-back.png",
+      "assets/pirate-king-hybrid-jacket-closeup.png",
       "assets/pirate-king-hybrid-jacket-model-1.png",
       "assets/pirate-king-hybrid-jacket-model-2.png",
       "assets/pirate-king-hybrid-jacket-model-3.png",
@@ -148,6 +149,7 @@ const products = [
     gallery: [
       "assets/wild-encounter-knit-sweater-front.png",
       "assets/wild-encounter-knit-sweater-back.png",
+      "assets/wild-encounter-knit-sweater-closeup.png",
       "assets/wild-encounter-knit-sweater-model-1.png",
       "assets/wild-encounter-knit-sweater-model-2.png",
       "assets/wild-encounter-knit-sweater-model-3.png",
@@ -224,10 +226,12 @@ const products = [
   },
 ];
 
+// The two site looks, offered from the Style menu in the header. Sakura was
+// removed; anything still holding it on a device is normalised to "default"
+// at startup, so the id can never reach a render path again.
 const styleOptions = [
-  ["default", "Default", "Floating artworks"],
-  ["sakura", "Sakura", "Sky backdrop, white panel"],
-  ["vapourwave", "Vapourwave", "Aesthetic OS dreamscape"],
+  ["default", "Simple", "Floating artworks"],
+  ["vapourwave", "Vapourdais", "Aesthetic OS dreamscape"],
 ];
 
 // The two modes the storefront can run in. "pre" shows waitlist buttons and
@@ -246,13 +250,13 @@ const launchModes = [
 // TO GO LIVE: change this to "full".
 const LAUNCH_MODE = "pre";
 
+// Floating artworks behind the Simple shop grid. Four on purpose — cople and
+// funk were dropped. Positions live in styles.css under .shop-art-<id>.
 const backgroundArts = [
-  ["cople", "Cherry blossom couple artwork", "assets/bg-cople.png"],
   ["celeste", "Celestial character artwork", "assets/bg-celeste.png"],
   ["clash", "Dueling swordsmen artwork", "assets/bg-clash.png"],
-  ["dragon", "Dragon rider artwork", "assets/bg-dragon.png"],
   ["cyberpunk", "Cyberpunk bench artwork", "assets/bg-cyberpunk.png"],
-  ["funk", "Cartoon streetwear character artwork", "assets/bg-funk.png"],
+  ["dragon", "Dragon rider artwork", "assets/bg-dragon.png"],
 ];
 
 const legalUpdated = "August 4, 2026";
@@ -345,6 +349,7 @@ const state = {
   sort: readJson("nebula-sort", "name"),
   filterOpen: false,
   sortOpen: false,
+  styleMenuOpen: false,
   waitlist: [],
   waitlistCounts: {},
   waitlistEmail: readJson("nebula-waitlist-email", ""),
@@ -368,8 +373,14 @@ const state = {
   },
 };
 
-state.settings.sakura3dVariant ||= "polaroid";
-if (state.settings.style === "sakura-3d") state.settings.style = "sakura";
+// Sakura (and its 3d variant) are retired. Anyone whose device still has one
+// cached lands on the default look instead of a style that no longer exists.
+if (state.settings.style === "sakura" || state.settings.style === "sakura-3d") {
+  state.settings.style = "default";
+}
+if (!styleOptions.some(([id]) => id === state.settings.style)) {
+  state.settings.style = "default";
+}
 // The code constant always wins over anything cached on the device, so the mode
 // can never be stale. Assigned into settings so the existing read sites work.
 state.settings.launchMode = LAUNCH_MODE;
@@ -490,6 +501,18 @@ function header() {
         <a class="nav-link ${active === "about" ? "active" : ""}" href="#/about">About</a>
       </nav>
       <div class="header-actions">
+        <div class="style-anchor">
+          <button type="button" class="style-toggle" data-toggle-style
+                  aria-expanded="${state.styleMenuOpen ? "true" : "false"}" aria-haspopup="true">Style</button>
+          ${state.styleMenuOpen ? `
+            <div class="style-menu" role="menu">
+              ${styleOptions.map(([id, label]) => `
+                <button type="button" role="menuitem" data-pick-style="${id}"
+                        class="style-menu-item ${state.settings.style === id ? "is-active" : ""}">${escapeHtml(label)}</button>
+              `).join("")}
+            </div>
+          ` : ""}
+        </div>
         <a class="icon-link ${active === "cart" || active === "checkout" ? "active" : ""}" href="#/cart" aria-label="Shopping cart">
           ${icons.bag}
           <span class="cart-count ${count ? "visible" : ""}">${count}</span>
@@ -505,11 +528,8 @@ function pageShell(content, options = {}) {
   const footerMarkup = options.hideFooter ? "" : footer();
   let shellClass = options.shellClass || "";
   if (!options.rawShell) {
-    const style = state.settings.style;
-    if (style === "sakura" || style === "sakura-3d") {
-      if (!shellClass.includes("sakura-shell")) shellClass += " sakura-shell";
-    } else if (style === "vapourwave") {
-      if (!shellClass.includes("vapourwave-shell")) shellClass += " vapourwave-shell";
+    if (state.settings.style === "vapourwave" && !shellClass.includes("vapourwave-shell")) {
+      shellClass += " vapourwave-shell";
     }
   }
   const modalMarkup = state.authModal ? authModalMarkup() : waitlistModalMarkup();
@@ -1606,7 +1626,6 @@ function settingsPage() {
   const profile = state.settings.profile || {};
   const addr = state.settings.address || {};
   const profileSet = !!(profile.fullName || addr.line1 || addr.city);
-  const styleLabel = (styleOptions.find((s) => s[0] === state.settings.style) || styleOptions[0])[1];
 
   const accountMeta = !state.auth.ready
     ? ""
@@ -1624,12 +1643,6 @@ function settingsPage() {
           ${settingsPanel("profile", "Profile &amp; Shipping", profileSet ? "Saved" : "Not set", profileSection())}
           ${settingsPanel("orders", "Order History", orderCount ? `${orderCount} order${orderCount === 1 ? "" : "s"}` : "No orders yet", orderHistorySection())}
           ${settingsPanel("waitlist", "Waitlisted Items", waitlistCount ? `${waitlistCount} item${waitlistCount === 1 ? "" : "s"}` : "None", waitlistSection())}
-          ${settingsPanel("style", "Style", escapeHtml(styleLabel), `
-            <p class="panel-copy">Changes how the whole site looks.</p>
-            <div class="option-grid">
-              ${styleOptions.map((option) => optionCard("style", option, state.settings.style)).join("")}
-            </div>
-          `)}
         </div>
       </section>
     </main>
@@ -2818,6 +2831,23 @@ function bindEvents() {
     });
   });
 
+  document.querySelectorAll("[data-toggle-style]").forEach((el) => {
+    el.addEventListener("click", (event) => {
+      event.stopPropagation();
+      state.styleMenuOpen = !state.styleMenuOpen;
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-pick-style]").forEach((el) => {
+    el.addEventListener("click", () => {
+      state.settings.style = el.dataset.pickStyle;
+      state.styleMenuOpen = false;
+      saveSettings();
+      render();
+    });
+  });
+
   document.querySelectorAll("[data-sort]").forEach((el) => {
     el.addEventListener("click", () => {
       state.sort = el.dataset.sort;
@@ -2872,13 +2902,15 @@ function bindEvents() {
     });
   });
 
-  if ((state.filterOpen || state.sortOpen) && !window.__nebulaPopoverDismiss) {
+  if ((state.filterOpen || state.sortOpen || state.styleMenuOpen) && !window.__nebulaPopoverDismiss) {
     window.__nebulaPopoverDismiss = true;
     document.addEventListener("click", (event) => {
-      if (event.target.closest(".filter-anchor") || event.target.closest(".sort-anchor")) return;
-      if (state.filterOpen || state.sortOpen) {
+      if (event.target.closest(".filter-anchor") || event.target.closest(".sort-anchor")
+          || event.target.closest(".style-anchor")) return;
+      if (state.filterOpen || state.sortOpen || state.styleMenuOpen) {
         state.filterOpen = false;
         state.sortOpen = false;
+        state.styleMenuOpen = false;
         render();
       }
     });
