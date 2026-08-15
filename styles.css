@@ -610,33 +610,37 @@ button {
   object-fit: contain;
 }
 
-/* Celeste stays where it was: mid-upper right. */
+/* .shop-background is position:fixed, so these are placed against the VIEWPORT,
+   not the scrolling page — everything must land inside 0–100% of screen height.
+   Percentages keep the composition intact on any screen depth. */
+
+/* Mid-upper right. */
 .shop-art-celeste {
   right: -34px;
-  top: 152px;
+  top: 10%;
   width: min(318px, 22vw);
 }
 
-/* Clash takes over the top-left slot cople used to hold, sitting a little lower. */
+/* Top-left slot cople used to hold, sitting a little lower than it did. */
 .shop-art-clash {
   left: -96px;
-  top: 268px;
+  top: 24%;
   width: min(430px, 29vw);
   opacity: 0.72;
 }
 
-/* Dragon sits near the middle of the page, nudged right and down of true centre. */
+/* Near the centre, nudged right of and below true centre. */
 .shop-art-dragon {
   left: 42%;
-  top: 1430px;
+  top: 40%;
   width: min(560px, 37vw);
   opacity: 0.68;
 }
 
-/* Cyberpunk sits low, between the bottom-left corner and the bottom centre. */
+/* Low down, between the bottom-left corner and the bottom centre. */
 .shop-art-cyberpunk {
-  left: 12%;
-  top: 1960px;
+  left: 8%;
+  top: 56%;
   width: min(500px, 33vw);
   opacity: 0.68;
 }
@@ -2141,9 +2145,13 @@ button {
   background: transparent;
 }
 
+/* min-height, not height: the tall garment shots exceed it and keep their natural
+   size, while a short/wide shot (the close-ups) gets a taller box than its aspect
+   needs and object-fit centres it vertically instead of pinning it to the top. */
 .product-detail-hero {
   grid-column: 2;
   width: 100%;
+  min-height: 560px;
   max-height: none;
   object-fit: contain;
   justify-self: center;
@@ -3050,6 +3058,10 @@ button {
     min-height: 520px;
   }
 
+  .product-detail-hero {
+    min-height: 440px;
+  }
+
   .product-care {
     grid-column: auto;
   }
@@ -3370,22 +3382,23 @@ button {
     min-height: 300px;
   }
 
+  /* Same viewport-relative reasoning as above, tuned for a phone screen. */
   .shop-art-celeste {
     right: -74px;
-    top: 274px;
+    top: 8%;
     width: 230px;
   }
 
   .shop-art-clash {
     left: -120px;
-    top: 470px;
+    top: 28%;
     width: 300px;
     opacity: 0.55;
   }
 
   .shop-art-dragon {
-    left: 34%;
-    top: 1180px;
+    left: 30%;
+    top: 54%;
     width: 340px;
     opacity: 0.48;
   }
@@ -3436,6 +3449,10 @@ button {
 
   .product-detail-media {
     min-height: 360px;
+  }
+
+  .product-detail-hero {
+    min-height: 300px;
   }
 
   .product-detail-media img {
