@@ -1984,9 +1984,17 @@ button {
   place-items: end center;
 }
 
+/* max-height in px, not 100%: the percentage never resolved against the grid
+   area, so tall garments rendered past the bottom of their box and hung over the
+   name and price below (Wild Encounter overflowed by 102px, the worst of the set,
+   which is what made it look out of line with its neighbours).
+   The white background fills object-fit's letterbox, so the side margin below is
+   pure white rather than the page showing through. */
 .product-card img {
   width: min(100%, 440px);
-  max-height: 100%;
+  max-height: 500px;
+  padding: 0 12px;
+  background: #fff;
   object-fit: contain;
 }
 
