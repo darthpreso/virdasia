@@ -2517,13 +2517,117 @@ async function loadOrders() {
   if (!error && data) state.orders = data;
 }
 
+// The tear animation has to composite over the live shop page, which means real
+// per-pixel alpha. No single video file gives us that everywhere: HEVC-with-alpha
+// (.mov) is Safari-only and VP9-alpha (.webm) is everyone-but-Safari. So the alpha
+// travels inside an ordinary H.264 file instead — colour in the top half of the
+// frame, the matte as greyscale in the bottom half — and this shader welds them
+// back together. One asset, every browser. Falls back to the opaque .mp4 if the
+// context can't be created.
+const TEAR_VERT = `
+attribute vec2 aPos;
+varying vec2 vUv;
+void main() {
+  vUv = vec2((aPos.x + 1.0) * 0.5, 1.0 - (aPos.y + 1.0) * 0.5);
+  gl_Position = vec4(aPos, 0.0, 1.0);
+}`;
+
+const TEAR_FRAG = `
+precision mediump float;
+uniform sampler2D uTex;
+uniform vec2 uCover;
+varying vec2 vUv;
+void main() {
+  vec2 uv = (vUv - 0.5) * uCover + 0.5;
+  if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+    gl_FragColor = vec4(0.0);
+    return;
+  }
+  // Stay a hair off the halfway seam so bilinear sampling can't bleed the matte
+  // into the colour (or vice versa) along the join.
+  vec3 colour = texture2D(uTex, vec2(uv.x, min(uv.y * 0.5, 0.4990))).rgb;
+  float alpha = texture2D(uTex, vec2(uv.x, max(uv.y * 0.5 + 0.5, 0.5010))).g;
+  gl_FragColor = vec4(colour * alpha, alpha); // premultiplied, matching the canvas
+}`;
+
+function createTearCompositor(canvas, video) {
+  const gl = canvas.getContext("webgl", { alpha: true, premultipliedAlpha: true,
+    antialias: false, depth: false });
+  if (!gl) return null;
+
+  const compile = (type, src) => {
+    const sh = gl.createShader(type);
+    gl.shaderSource(sh, src);
+    gl.compileShader(sh);
+    return gl.getShaderParameter(sh, gl.COMPILE_STATUS) ? sh : null;
+  };
+  const vs = compile(gl.VERTEX_SHADER, TEAR_VERT);
+  const fs = compile(gl.FRAGMENT_SHADER, TEAR_FRAG);
+  if (!vs || !fs) return null;
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, vs);
+  gl.attachShader(prog, fs);
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
+  gl.useProgram(prog);
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+  const aPos = gl.getAttribLocation(prog, "aPos");
+  gl.enableVertexAttribArray(aPos);
+  gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, false);
+  const uCover = gl.getUniformLocation(prog, "uCover");
+  gl.clearColor(0, 0, 0, 0);
+
+  let painted = false;
+  return {
+    get painted() { return painted; },
+    draw() {
+      if (video.readyState < 2 || !video.videoWidth) return false;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = Math.round(canvas.clientWidth * dpr);
+      const h = Math.round(canvas.clientHeight * dpr);
+      if (w && h && (canvas.width !== w || canvas.height !== h)) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      // The colour half is the top half, so its aspect is width / (height / 2).
+      const videoAspect = video.videoWidth / (video.videoHeight / 2);
+      const canvasAspect = canvas.width / canvas.height;
+      const cover = canvasAspect > videoAspect
+        ? [1, videoAspect / canvasAspect]
+        : [canvasAspect / videoAspect, 1];
+      gl.uniform2f(uCover, cover[0], cover[1]);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      painted = true;
+      return true;
+    },
+  };
+}
+
 function startShopTransition() {
   if (document.body.classList.contains("is-transitioning")) return;
   const existingOverlay = document.querySelector(".shop-transition");
   if (existingOverlay) existingOverlay.remove();
 
   const overlay = document.createElement("div");
-  overlay.className = "shop-transition";
+  // .is-armed keeps the stage black until the first frame is on screen, so the
+  // shop underneath can't flash through before the animation starts.
+  overlay.className = "shop-transition is-armed";
   document.body.appendChild(overlay);
   document.body.classList.add("is-transitioning");
 
@@ -2532,13 +2636,49 @@ function startShopTransition() {
   transitionVideo.preload = "auto";
   transitionVideo.setAttribute("playsinline", "");
   transitionVideo.muted = true;
-  // Same codec split as the home video. Set via src (not <source>), so pick the
-  // playable file here — otherwise Chrome silently loads nothing and the
-  // transition falls through to its timeout with a blank overlay.
-  transitionVideo.src = transitionVideo.canPlayType("video/quicktime")
-    ? "assets/home-animation-v2.mov"
-    : "assets/home-animation-v2.mp4";
+  transitionVideo.src = "assets/shop-tear-packed.mp4";
   overlay.appendChild(transitionVideo);
+
+  const canvas = document.createElement("canvas");
+  canvas.className = "shop-transition-canvas";
+  overlay.appendChild(canvas);
+
+  const compositor = createTearCompositor(canvas, transitionVideo);
+  // requestVideoFrameCallback fires once per decoded frame rather than once per
+  // display refresh, so the canvas never redraws a frame twice or shows a stale
+  // one. rAF is the fallback where it isn't implemented.
+  const useFrameCallback = typeof transitionVideo.requestVideoFrameCallback === "function";
+  let rafId = 0;
+  let frameCbId = 0;
+  let stopped = false;
+  if (compositor) {
+    overlay.classList.add("is-composited");
+    const paint = () => {
+      if (stopped) return;
+      if (compositor.draw()) overlay.classList.remove("is-armed");
+    };
+    const schedule = () => {
+      if (stopped) return;
+      if (useFrameCallback) frameCbId = transitionVideo.requestVideoFrameCallback(pump);
+      else rafId = window.requestAnimationFrame(pump);
+    };
+    function pump() {
+      if (stopped) return;
+      paint();
+      schedule();
+    }
+    // Paint the moment there is anything to paint, so the black stage lifts even
+    // if the frame callbacks are being throttled.
+    transitionVideo.addEventListener("loadeddata", paint, { once: true });
+    transitionVideo.addEventListener("playing", paint, { once: true });
+    schedule();
+  } else {
+    // No WebGL (very old browsers only): the packed frame would show the matte,
+    // so fall back to the pre-existing opaque cut. No transparency, but the
+    // animation still plays and the transition still lands on the shop.
+    overlay.classList.add("is-unsupported");
+    transitionVideo.src = "assets/home-animation-v2.mp4";
+  }
 
   const revealShop = () => {
     if (window.location.hash !== "#/shop") {
@@ -2552,6 +2692,12 @@ function startShopTransition() {
     revealShop();
     overlay.classList.add("is-fading");
     window.setTimeout(() => {
+      stopped = true;
+      if (rafId) window.cancelAnimationFrame(rafId);
+      if (frameCbId && typeof transitionVideo.cancelVideoFrameCallback === "function") {
+        transitionVideo.cancelVideoFrameCallback(frameCbId);
+      }
+      transitionVideo.pause();
       overlay.remove();
       document.body.classList.remove("is-transitioning");
     }, 520);

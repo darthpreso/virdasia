@@ -401,13 +401,21 @@ button {
   pointer-events: none;
 }
 
+/* Transparent by default — the tear has to reveal the live shop page beneath it,
+   so nothing between the canvas and the page may paint an opaque colour. */
 .shop-transition {
   position: fixed;
   inset: 0;
   z-index: 100;
   overflow: hidden;
-  background: #000;
+  background: transparent;
   transition: opacity 520ms ease;
+}
+
+/* Only until the first composited frame lands, so the shop can't flash through
+   before the animation has drawn anything. */
+.shop-transition.is-armed {
+  background: #000;
 }
 
 .shop-transition.is-fading {
@@ -415,7 +423,22 @@ button {
   pointer-events: none;
 }
 
-.shop-transition-video {
+.shop-transition-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* When compositing, the <video> is only a texture source. It must stay in the
+   layout and keep decoding, so it is hidden with opacity rather than display. */
+.shop-transition.is-composited .shop-transition-video {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.shop-transition.is-unsupported .shop-transition-video {
   filter: brightness(0.88) contrast(1.04);
 }
 
