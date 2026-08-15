@@ -540,10 +540,15 @@ function footer() {
   return `
     <footer class="site-footer">
       <nav class="footer-nav" aria-label="Footer">
+        <!-- Real path, not a hash route: the Journal is static HTML outside the
+             SPA so search engines can index it. This link is also what stops
+             those pages being orphans with no inbound link. -->
+        <a href="/journal/">Journal</a>
         <a href="#/shipping">Shipping & Returns</a>
         <a href="#/terms">Terms Of Service</a>
         <a href="#/privacy">Privacy Policy</a>
         <a href="#/contact">Contact</a>
+        <a href="https://www.instagram.com/virdasiaclothing/" target="_blank" rel="me noopener">Instagram</a>
       </nav>
     </footer>
   `;
@@ -865,8 +870,8 @@ function contactPage() {
           </article>
           <article>
             <h2>Social</h2>
-            <p>Coming soon.</p>
-            <p>Follow along here once our channels are live — this is where drops and restocks get announced first.</p>
+            <p><a href="https://www.instagram.com/virdasiaclothing/" target="_blank" rel="me noopener">@virdasiaclothing</a></p>
+            <p>Follow along on Instagram — this is where drops and restocks get announced first.</p>
           </article>
         </div>
       </section>

@@ -42,7 +42,29 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Playfair+Display:wght@400;500;600;700&display=swap" />
-    <link rel="stylesheet" href="styles.css?v=151" />
+
+    <!-- Organization data. sameAs is how Google ties the Instagram account to this
+         brand rather than treating them as unrelated. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Virdasia",
+        "url": "https://www.virdasia.com/",
+        "logo": "https://www.virdasia.com/assets/virdasia-logo.png",
+        "image": "https://www.virdasia.com/assets/og-image-v2.jpg",
+        "description": "Small-batch outerwear label drawing on anime, myth and fiction. Limited runs, shipped worldwide from Toronto.",
+        "email": "support@virdasia.com",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Toronto",
+          "addressRegion": "ON",
+          "addressCountry": "CA"
+        },
+        "sameAs": ["https://www.instagram.com/virdasiaclothing/"]
+      }
+    </script>
+    <link rel="stylesheet" href="styles.css?v=153" />
   </head>
   <body>
     <div id="app"></div>
@@ -56,6 +78,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"
             integrity="sha384-l8ah+VgaWtk1mvOe9VC+OirC6qHFF4yH7l7mKRidV9MSti3E9F463bMp6ZVN4kuC"
             crossorigin="anonymous"></script>
-    <script src="app.js?v=151"></script>
+    <script src="app.js?v=153"></script>
   </body>
 </html>
