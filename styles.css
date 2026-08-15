@@ -478,12 +478,12 @@ button {
 /* Slogan kicker above each about heading. Italic serif so it reads as an
    epigraph rather than competing with the uppercase .eyebrow above it. */
 .about-slogan {
-  margin: 78px 0 4px;
+  margin: 78px 0 10px;
   color: var(--muted);
   font-family: "EB Garamond", Georgia, "Times New Roman", serif;
-  font-size: 22px;
+  font-size: clamp(26px, 2.5vw, 34px);
   font-style: italic;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-align: center;
 }
 
@@ -604,11 +604,47 @@ button {
   margin-bottom: 8px;
 }
 
+/* Pre-launch marker. On the sakura/vapourwave scenes it sits in the hero's
+   second grid column, opposite "Shop"; each scene mirrors its own h1 weight so
+   it reads as a pair with it rather than as a pasted-on badge. */
+.shop-prelaunch {
+  margin: 0;
+  justify-self: end;
+  align-self: end;
+  line-height: 0.86;
+  text-align: right;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.sakura-hero .shop-prelaunch {
+  margin-bottom: 22px;
+  color: #fff;
+  font-size: clamp(32px, 3.4vw, 60px);
+  font-weight: 900;
+  text-shadow:
+    0 0 14px rgba(255, 255, 255, 0.9),
+    0 0 32px rgba(255, 200, 242, 0.92);
+}
+
+.vapourwave-hero .shop-prelaunch {
+  margin-bottom: 16px;
+  color: rgba(62, 52, 111, 0.68);
+  font-size: clamp(28px, 3vw, 52px);
+  font-weight: 300;
+  /* The right side of the backdrop carries a dark glitch artifact, so this ink
+     colour alone vanishes there. A light halo separates it without recolouring
+     the text away from the matching "Shop". */
+  text-shadow:
+    0 0 18px rgba(255, 255, 255, 0.9),
+    0 0 44px rgba(255, 255, 255, 0.6);
+}
+
 .sakura-shell {
   min-height: 100vh;
   display: flow-root;
-  background-color: #65c2ff;
-  background-image: url("assets/sakura-background-v3.png");
+  background-color: #8462d8;
+  background-image: url("assets/vapourwave-background-v3.png");
   background-size: cover;
   background-position: center top;
   background-attachment: fixed;
@@ -673,7 +709,7 @@ button {
   min-height: 100vh;
   padding: 0 clamp(52px, 7.7vw, 162px) 92px;
   overflow: hidden;
-  background-image: url("assets/sakura-background-v3.png");
+  background-image: url("assets/vapourwave-background-v3.png");
   background-size: cover;
   background-position: center top;
   background-attachment: fixed;
@@ -686,6 +722,7 @@ button {
 
 .sakura-hero {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   min-height: 0;
   align-items: end;
   padding: 160px 0 64px;
@@ -1187,6 +1224,9 @@ button {
 
 .vapourwave-hero {
   z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
   min-height: 0;
   padding: 160px 0 48px;
 }
@@ -2368,7 +2408,7 @@ button {
   padding-top: 180px;
   background-image:
     linear-gradient(90deg, rgba(58, 153, 255, 0.12), rgba(255, 151, 224, 0.16)),
-    url("assets/sakura-background-v3.png");
+    url("assets/vapourwave-background-v3.png");
   background-size: cover;
   background-position: center top;
   background-attachment: fixed;
@@ -3110,6 +3150,25 @@ button {
   .shop-hero .display-title,
   .shop-hero .breadcrumb {
     text-align: center;
+  }
+
+  /* The hero's second column has nowhere to go this narrow — the nowrap marker
+     ran off the right edge — so it drops onto its own row under the copy. */
+  .sakura-hero,
+  .vapourwave-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .shop-prelaunch {
+    justify-self: start;
+    text-align: left;
+  }
+
+  .sakura-hero .shop-prelaunch,
+  .vapourwave-hero .shop-prelaunch {
+    margin-top: 16px;
+    margin-bottom: 0;
+    font-size: 34px;
   }
 
   .shop-page-sakura {

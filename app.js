@@ -230,10 +230,21 @@ const styleOptions = [
   ["vapourwave", "Vapourwave", "Aesthetic OS dreamscape"],
 ];
 
+// The two modes the storefront can run in. "pre" shows waitlist buttons and
+// hides the cart; "full" enables normal shopping.
 const launchModes = [
   ["pre", "Pre-Launch", "Waitlist only · limited spots per item"],
   ["full", "Full-Launch", "Full shopping experience"],
 ];
+
+// Which mode the site is in. Deliberately a code constant and NOT a user
+// setting — visitors have no business switching the storefront's mode, so the
+// settings panel for it was removed. It is also deliberately not read from
+// localStorage: it describes the site, not the device. Persisting it would
+// strand every returning visitor in whatever mode they had cached, so flipping
+// this on launch day would silently do nothing for them.
+// TO GO LIVE: change this to "full".
+const LAUNCH_MODE = "pre";
 
 const backgroundArts = [
   ["cople", "Cherry blossom couple artwork", "assets/bg-cople.png"],
@@ -322,7 +333,6 @@ const state = {
   settings: readJson("nebula-settings", {
     name: "",
     email: "",
-    launchMode: "pre",
     style: "default",
     sakura3dVariant: "polaroid",
   }),
@@ -360,6 +370,9 @@ const state = {
 
 state.settings.sakura3dVariant ||= "polaroid";
 if (state.settings.style === "sakura-3d") state.settings.style = "sakura";
+// The code constant always wins over anything cached on the device, so the mode
+// can never be stale. Assigned into settings so the existing read sites work.
+state.settings.launchMode = LAUNCH_MODE;
 
 // Profile + shipping address live in settings (localStorage now, Supabase-ready later).
 state.settings.profile ||= { fullName: "", phone: "" };
@@ -912,6 +925,12 @@ function filterPopoverMarkup() {
   `;
 }
 
+// Cosmetic pre-launch marker, and nothing more. The shop page's real heading,
+// title, breadcrumb and routing are unchanged underneath it — this only paints
+// a label on top. TO GO LIVE: set this to "" and every instance disappears on
+// its own, with the normal "All Products" heading restored. Nothing else to undo.
+const PRE_LAUNCH_LABEL = "Pre-Launch";
+
 function shopPage() {
   const actionLabel = state.settings.launchMode === "pre" ? "Waitlist · 0/50" : "Add To Cart";
   const isSakura = state.settings.style === "sakura";
@@ -936,6 +955,7 @@ function shopPage() {
                 <h1>Shop</h1>
                 <p class="sakura-subcopy">Wear the worlds<br />you never left.</p>
               </div>
+              ${PRE_LAUNCH_LABEL ? `<p class="shop-prelaunch">${escapeHtml(PRE_LAUNCH_LABEL)}</p>` : ""}
             `
             : isVapourwave
               ? `
@@ -943,8 +963,17 @@ function shopPage() {
                   <h1>Shop</h1>
                   <p class="vapourwave-subcopy">Wear the worlds you never left ▸</p>
                 </div>
+                ${PRE_LAUNCH_LABEL ? `<p class="shop-prelaunch">${escapeHtml(PRE_LAUNCH_LABEL)}</p>` : ""}
               `
-            : `${breadcrumb("All Products", "Shop")}<h1 class="display-title">All Products</h1>`
+            : `${breadcrumb("All Products", "Shop")}${
+                PRE_LAUNCH_LABEL
+                  // The page keeps its real <h1>; it is only moved off-screen so
+                  // the marker can take its place visually. Screen readers still
+                  // announce "All Products", then the marker.
+                  ? `<h1 class="display-title sr-only">All Products</h1>
+                     <p class="display-title">${escapeHtml(PRE_LAUNCH_LABEL)}</p>`
+                  : `<h1 class="display-title">All Products</h1>`
+              }`
         }
       </section>
       ${shopControls}
@@ -1530,7 +1559,6 @@ const SETTINGS_PANEL_DEFAULTS = {
   profile: false,
   orders: false,
   waitlist: false,
-  launch: false,
   style: false,
 };
 
@@ -1578,7 +1606,6 @@ function settingsPage() {
   const profile = state.settings.profile || {};
   const addr = state.settings.address || {};
   const profileSet = !!(profile.fullName || addr.line1 || addr.city);
-  const launchLabel = (launchModes.find((m) => m[0] === state.settings.launchMode) || launchModes[0])[1];
   const styleLabel = (styleOptions.find((s) => s[0] === state.settings.style) || styleOptions[0])[1];
 
   const accountMeta = !state.auth.ready
@@ -1597,12 +1624,6 @@ function settingsPage() {
           ${settingsPanel("profile", "Profile &amp; Shipping", profileSet ? "Saved" : "Not set", profileSection())}
           ${settingsPanel("orders", "Order History", orderCount ? `${orderCount} order${orderCount === 1 ? "" : "s"}` : "No orders yet", orderHistorySection())}
           ${settingsPanel("waitlist", "Waitlisted Items", waitlistCount ? `${waitlistCount} item${waitlistCount === 1 ? "" : "s"}` : "None", waitlistSection())}
-          ${settingsPanel("launch", "Launch Mode", escapeHtml(launchLabel), `
-            <p class="panel-copy">Pre-Launch shows waitlist buttons (limited to 50 per piece). Full-Launch enables full shopping.</p>
-            <div class="option-grid">
-              ${launchModes.map((option) => optionCard("launch", option, state.settings.launchMode)).join("")}
-            </div>
-          `)}
           ${settingsPanel("style", "Style", escapeHtml(styleLabel), `
             <p class="panel-copy">Changes how the whole site looks.</p>
             <div class="option-grid">
@@ -3052,7 +3073,8 @@ function bindEvents() {
   document.querySelectorAll("[data-option-type]").forEach((button) => {
     button.addEventListener("click", () => {
       const { optionType, optionId } = button.dataset;
-      if (optionType === "launch") state.settings.launchMode = optionId;
+      // No "launch" case: the mode is a code constant (LAUNCH_MODE), not a
+      // per-device setting, so there is nothing here to toggle.
       if (optionType === "style") state.settings.style = optionId;
       if (optionType === "sakura3dVariant") state.settings.sakura3dVariant = optionId;
       saveSettings();
