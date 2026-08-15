@@ -6,22 +6,52 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://www.virdasia.com/shop/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.virdasia.com/shop/shadow-grin-fleece/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.virdasia.com/shop/pirate-king-hybrid-jacket/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.virdasia.com/shop/son-of-nolan-jacket/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.virdasia.com/shop/legendary-corduroy-jacket/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.virdasia.com/shop/wild-encounter-knit-sweater/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.virdasia.com/shop/six-paths-sherpa-jacket/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.virdasia.com/shop/eternal-mangekyo-denim-jacket/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.virdasia.com/journal/</loc>
     <lastmod>2026-08-15</lastmod>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.virdasia.com/journal/what-gsm-means/</loc>
-    <lastmod>2026-08-15</lastmod>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://www.virdasia.com/journal/anime-clothing-without-graphic-tees/</loc>
-    <lastmod>2026-08-15</lastmod>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.virdasia.com/journal/sherpa-vs-fleece/</loc>
     <lastmod>2026-08-15</lastmod>
     <priority>0.6</priority>
   </url>
@@ -31,12 +61,22 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.virdasia.com/journal/what-small-batch-actually-means/</loc>
+    <loc>https://www.virdasia.com/journal/how-relaxed-fit-should-fit/</loc>
     <lastmod>2026-08-15</lastmod>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.virdasia.com/journal/how-relaxed-fit-should-fit/</loc>
+    <loc>https://www.virdasia.com/journal/sherpa-vs-fleece/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.virdasia.com/journal/what-gsm-means/</loc>
+    <lastmod>2026-08-15</lastmod>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://www.virdasia.com/journal/what-small-batch-actually-means/</loc>
     <lastmod>2026-08-15</lastmod>
     <priority>0.6</priority>
   </url>
