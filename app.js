@@ -698,6 +698,7 @@ function aboutPage() {
       <section class="narrow about-inner">
         <p class="eyebrow">About</p>
 
+        <p class="about-slogan">Wear the worlds you never left</p>
         <h1 class="display-title about-heading">The Vision</h1>
         <div class="about-copy">
           <p>Virdasia is a place of fantasy. The name is ours, an invented land, somewhere verdant and half-remembered, the kind of world you read your way into as a kid and never fully left.</p>
@@ -931,16 +932,16 @@ function shopPage() {
           isSakuraScene
             ? `
               <div class="sakura-hero-copy">
-                <p class="sakura-kicker">Wear The Future ✦</p>
+                <p class="sakura-kicker">A House of Myths ✦</p>
                 <h1>Shop</h1>
-                <p class="sakura-subcopy">Statement pieces for those<br />who refuse to blend in.</p>
+                <p class="sakura-subcopy">Wear the worlds<br />you never left.</p>
               </div>
             `
             : isVapourwave
               ? `
                 <div class="vapourwave-hero-copy">
                   <h1>Shop</h1>
-                  <p class="vapourwave-subcopy">The future is yours. ▸</p>
+                  <p class="vapourwave-subcopy">Wear the worlds you never left ▸</p>
                 </div>
               `
             : `${breadcrumb("All Products", "Shop")}<h1 class="display-title">All Products</h1>`

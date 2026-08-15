@@ -452,6 +452,22 @@ button {
   font-size: 15px;
 }
 
+/* Slogan kicker above each about heading. Italic serif so it reads as an
+   epigraph rather than competing with the uppercase .eyebrow above it. */
+.about-slogan {
+  margin: 78px 0 4px;
+  color: var(--muted);
+  font-family: "EB Garamond", Georgia, "Times New Roman", serif;
+  font-size: 22px;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+.eyebrow + .about-slogan {
+  margin-top: 0;
+}
+
 .lookbook-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
